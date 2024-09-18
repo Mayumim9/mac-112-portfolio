@@ -26,6 +26,7 @@ survey <- read.csv("https://ajohns24.github.io/data/112/about_us_2024.csv")
 nrow(survey)
 
 # What type of variables do we have?
+str(survey)
 ```
 
 ### EXAMPLE 1: Hangout Preferences {.unnumbered}
@@ -40,10 +41,11 @@ Students were asked, in that moment, where they'd most like to spend time outsid
 
 ```{r}
 # Attach a package needed to use the ggplot function
-
+library(tidyverse)
 
 # Make a ggplot
-
+ggplot(survey, aes(x = hangout)) +
+  geom_bar()
 ```
 
 ```{r echo=FALSE, message=FALSE}
@@ -55,6 +57,12 @@ library(tidyverse)
 Students were asked about their ideal outdoor temperature, in degrees Celsius. How did they answer? What was the typical response? What was the range in responses? Were there any outliers? Build and interpret 2 plots that help address these questions.
 
 ```{r}
+ggplot(survey, aes(x = fave_temp)) +
+  geom_histogram(color = "white")
+
+ggplot(survey, aes(x = fave_temp)) +
+  geom_density()
+
 ```
 
 ::: {.callout-note title="Bar Charts vs. Histograms"}
@@ -105,7 +113,7 @@ weather
 Think: How might we modify the below density plot of `temp_3pm` to distinguish between locations?
 
 ```{r}
-ggplot(weather, aes(x = temp_3pm)) +
+ggplot(weather, aes(x = temp_3pm, fill = location)) +
       geom_density()
 ```
 
@@ -120,7 +128,7 @@ weather <- data.frame(rain_today = c("no", "no", "no", "no", "yes", "no", "yes",
 Think: How might we modify the below bar plot of `location` to distinguish between days on which it did or didn't rain?
 
 ```{r}
-ggplot(weather, aes(x = location)) +
+ggplot(weather, aes(x = location, fill = rain_today)) +
       geom_bar()
 ```
 
@@ -173,6 +181,8 @@ How many, or roughly what percent, of the 3000+ counties did the Republican cand
 -   Then discuss what follow-up questions you might have (and that our data might help us answer).
 
 ```{r}
+ggplot(elections, aes(x = winner_20)) +
+       geom_bar()
 ```
 
 #### Part b {.unnumbered}
@@ -184,6 +194,8 @@ Notice that the distribution of Republican support from county to county is slig
 What follow-up questions do you have?
 
 ```{r}
+ggplot(elections, aes(x = repub_pct_20)) +
+  geom_histogram(color = "white")
 ```
 
 ### Exercise 1: Quantitative vs Quantitative Intuition Check {.unnumbered}
@@ -205,6 +217,8 @@ Try to replicate this using `ggplot()`. THINK:
 ![](https://mac-stat.github.io/images/112/scatterplot_demo.png){width="50%"}
 
 ```{r}
+ggplot(elections, aes(x = repub_pct_16, y = repub_pct_20)) +
+  geom_point()
 ```
 
 ### Exercise 2: 2 Quantitiative Variables {.unnumbered}
@@ -213,7 +227,7 @@ Run each chunk below to build up a a scatterplot of `repub_pct_20` vs `repub_pct
 
 ```{r eval = FALSE}
 # Set up the plotting frame
-# How does this differ than the frame for our histogram of repub_pct_20 alone?
+# This differs from our histogram of repub_pct_20 because there are now two variables being measured. 
 ggplot(elections, aes(y = repub_pct_20, x = repub_pct_16))
 ```
 
@@ -226,7 +240,7 @@ ggplot(elections, aes(y = repub_pct_20, x = repub_pct_16)) +
 
 ```{r eval = FALSE}
 # Change the shape of the points
-# What happens if you change the shape to another number?
+# What happens if you change the shape to another number? (the shape of the individual points change)
 ggplot(elections, aes(y = repub_pct_20, x = repub_pct_16)) +
   geom_point(shape = 3)
 ```
@@ -235,13 +249,13 @@ ggplot(elections, aes(y = repub_pct_20, x = repub_pct_16)) +
 # YOU TRY: Modify the code to make the points "orange"
 # NOTE: Try to anticipate if "color" or "fill" will be useful here. Then try both.
 ggplot(elections, aes(y = repub_pct_20, x = repub_pct_16)) +
-  geom_point()
+  geom_point(color = "orange")
 ```
 
 ```{r eval = FALSE}
 # Add a layer that represents each county by the state it's in
 # Take note of the geom and the info it needs to run!
-ggplot(elections, aes(y = repub_pct_20, x = repub_pct_16)) +
+ggplot(elections, aes(y = repub_pct_20, x = repub_pct_16, color = state_name)) +
   geom_text(aes(label = state_abbr))
 ```
 
@@ -268,6 +282,8 @@ ggplot(elections, aes(y = repub_pct_20, x = repub_pct_16)) +
 Construct a new plot that contains the model smooth but does *not* include the individual point glyphs.
 
 ```{r}
+ggplot(elections, aes(y = repub_pct_20, x = repub_pct_16)) +
+  geom_smooth()
 ```
 
 #### Part b {.unnumbered}
@@ -286,11 +302,13 @@ To examine how the 2020 results are related to some county demographics, constru
 
 ```{r}
 # Scatterplot of repub_pct_20 vs median_rent
-
+ggplot(elections, aes(x = median_rent, y = repub_pct_20)) +
+  geom_point()
 
 
 # Scatterplot of repub_pct_20 vs median_age
-
+ggplot(elections, aes(x = median_age, y = repub_pct_20)) +
+  geom_point()
 
 
 ```
@@ -339,7 +357,7 @@ We can also visualize the relationship between `repub_pct_20` and `historical` u
 ![](https://mac-stat.github.io/images/112/density_demo.png){width="50%"}
 
 ```{r}
-ggplot(elections, aes(x = repub_pct_20)) +
+ggplot(elections, aes(x = repub_pct_20, fill = historical)) +
   geom_density()
 ```
 
@@ -348,20 +366,20 @@ ggplot(elections, aes(x = repub_pct_20)) +
 Work through the chunks below and address the comments therein.
 
 ```{r eval = FALSE}
-# Name two "bad" things about this plot
+# Two bad things about this plot are that the labels are unclear and teh colors don't align with their labels. 
 ggplot(elections, aes(x = repub_pct_20, fill = historical)) +
   geom_density()
 ```
 
 ```{r eval = FALSE}
-# What does scale_fill_manual do?
+# What does scale_fill_manual do? (this function assigns specific colors)
 ggplot(elections, aes(x = repub_pct_20, fill = historical)) +
   geom_density() +
   scale_fill_manual(values = c("blue", "purple", "red"))
 ```
 
 ```{r eval = FALSE}
-# What does alpha = 0.5 do?
+# What does alpha = 0.5 do? (it changes the transparency of the colors)
 # Play around with different values of alpha, between 0 and 1
 ggplot(elections, aes(x = repub_pct_20, fill = historical)) +
   geom_density(alpha = 0.5) +
@@ -369,7 +387,7 @@ ggplot(elections, aes(x = repub_pct_20, fill = historical)) +
 ```
 
 ```{r eval = FALSE}
-# What does facet_wrap do?!
+# What does facet_wrap do?! (It seperates out each categorical variable into its own plot)
 ggplot(elections, aes(x = repub_pct_20, fill = historical)) +
   geom_density() +
   scale_fill_manual(values = c("blue", "purple", "red")) +
