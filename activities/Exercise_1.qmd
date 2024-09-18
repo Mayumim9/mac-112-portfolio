@@ -114,7 +114,7 @@ We can do simple calculations in RStudio! Type the following lines in the **cons
 4/2
 4^2
 4*2
-4(2)
+4*(2)
 ```
 
 ::: {.callout-important title="Pause"}
@@ -178,10 +178,35 @@ Make sure you're still in sync with your group.
 Use the functions you learned above to do the following:
 
 -   Count the number of letters in "data".
+
+```{r}
+nchar("data")
+```
+
 -   Create the sequence 3, 6, 9, 12. You might do this 2 ways.
+
+```{r}
+seq(from = 3, to = 12, by = 3)
+```
+
 -   Create a sequence of 4 numbers that start at 1 and end at 10. You might do this 2 ways.
+
+```{r}
+seq(from = 1, to = 10, by = 3)
+```
+
 -   Repeat the number "5" 8 times.
+
+```{r}
+rep(5, 8)
+```
+
 -   CHALLENGE: *Combine* 2 functions to produce the sequence 3, 6, 9, 12, 3, 6, 9, 12
+
+```{r}
+rep(seq(from = 3, to = 12, by = 3), 2)
+```
+
 
 ### Exercise 6: Save it for later {-}
 
