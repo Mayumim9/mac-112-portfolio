@@ -248,8 +248,23 @@ Make sure you're still in sync with your group.
 ### Exercise 7: Practice {-}
 
 -   Name and store your current age in years.
+
+```{r}
+my_age <- 21
+```
+
 -   Confirm that your age is stored correctly by typing the name and pressing Return/Enter.
+
+```{r}
+my_age
+```
+
 -   Use your stored age to calculate how old you'll be in 17 years.
+
+```{r}
+my_age + 17
+```
+
 
 ### Exercise 8: Code = communication {-}
 
