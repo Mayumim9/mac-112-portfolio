@@ -422,14 +422,15 @@ Spend at most 5 minutes on the following intuition check. Adjust the code below 
 
 ```{r}
 # Plot 1: adjust this to recreate the top plot
-ggplot(elections, aes(x = historical)) +
+ggplot(elections, aes(x = historical, fill = winner_20)) +
   geom_bar()
 ```
 
 ```{r}
 # Plot 2: adjust this to recreate the bottom plot
 ggplot(elections, aes(x = winner_20)) +
-  geom_bar()
+  geom_bar() +
+  facet_wrap(~ historical)
 ```
 
 ### Exercise 12: Categorical vs Categorical {.unnumbered}
@@ -493,13 +494,16 @@ Reflect before doing anything. What types of variables are these? How might you 
 
 ```{r}
 # How do 3pm temperatures (temp3pm) differ by location?
-
+ggplot(weather, aes(x = temp3pm, fill = location)) +
+  geom_density(alpha = 0.5) 
 
 
 ```
 
 ```{r}
 # How might we predict the 3pm temperature (temp3pm) by the 9am temperature (temp9am)?
+ggplot(weather, aes(y = temp3pm, x = temp9am)) + 
+  geom_point()
 
 
 
@@ -507,6 +511,8 @@ Reflect before doing anything. What types of variables are these? How might you 
 
 ```{r}
 # How do the number of rainy days (raintoday) differ by location?
+ggplot(weather, aes(x = location, fill = raintoday)) + 
+  geom_bar()
 
 
 ```
