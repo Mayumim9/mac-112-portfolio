@@ -164,10 +164,10 @@ Seq(2, 10, 3)
 
 We'll learn lots and lots of functions this semester. Nobody has every function memorized. That said, it does help to connect function names with their purpose. Do that for each function you used above.
 
--   `sqrt()` = square root
--   `nchar()` = ???
--   `rep()` = ???
--   `seq()` = ???
+-   `sqrt()` = Square root
+-   `nchar()` = Number of characters
+-   `rep()` = Replicate
+-   `seq()` = Sequence generator
 
 ::: {.callout-important title="Pause"}
 Make sure you're still in sync with your group.
