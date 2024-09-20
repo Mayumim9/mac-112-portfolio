@@ -321,9 +321,6 @@ library(leaflet)
 
 # Just a plotting frame
 leaflet(data = starbucks_mn) %>% 
-  addTiles()
-
-leaflet(data = starbucks_mn) %>% 
   addTiles() %>% 
   addMarkers(lng = ~Longitude, lat = ~Latitude)
 
@@ -350,6 +347,8 @@ Let's start with the `ggplot()` tools we already know. Construct a scatterplot o
 It's pretty cool that the plots we already know can provide some spatial context. But what *don't* you like about this plot?
 
 ```{r}
+ggplot(starbucks, aes(x = Longitude, y = Latitude)) +
+  geom_point(alpha = 0.2, size = 0.2)
 ```
 
 #### Exercise 4: Adding a country-level background {.unnumbered}
@@ -402,6 +401,7 @@ ggplot(world_boundaries) +
 ##### Part c {.unnumbered}
 
 Summarize what you learned about Starbucks from this map.
+**Starbucks are extremely popular in the United States and East Asia.**
 
 #### Exercise 5: Zooming in on some countries {.unnumbered}
 
@@ -496,16 +496,16 @@ head(midwest_boundaries)
 Adjust the code below to make the plot! Remove the `#` to run it.
 
 ```{r}
-# ggplot(___) + 
-#   geom___() + 
-#   geom___(
-#     data = ___,
-#     aes(x = ___, y = ___),
-#     alpha = 0.7,
-#     size = 0.2, 
-#     color = 'darkgreen'
-#   ) + 
-#   theme_map()
+ggplot(midwest_boundaries) + 
+   geom_sf() + 
+   geom_point(
+     data = starbucks_midwest,
+     aes(x = Longitude, y = Latitude),
+     alpha = 0.7,
+     size = 0.2, 
+     color = 'darkgreen'
+   ) + 
+   theme_map()
 ```
 
 #### Exercise 7: Contour maps {.unnumbered}
@@ -530,8 +530,8 @@ ggplot(cma_boundaries) +
 Now check out the contour map.
 
 ```{r}
-# What changed in the plot?
-# What changed in our code?!
+# The points are now contours
+# we also changed geom_point to geom_density_2d
 ggplot(cma_boundaries) + 
   geom_sf() + 
   geom_density_2d(
