@@ -160,6 +160,7 @@ In designing your viz, think about *comparison*. Good viz make it easy for peopl
 
 ## Exercises
 
+
 ### Exercise 1: Professionalism {.unnumbered}
 
 Let's examine weather in 3 Australian locations.
@@ -191,7 +192,7 @@ Replace A, B, C, and D in the code below to:
 ```{r}
 ggplot(weather, aes(y = temp3pm, x = temp9am, color = location)) + 
   geom_point() + 
-  labs(x = "A", y = "B", title = "C", color = "D")  
+  labs(x = "Temp @ 9am", y = "Temp @ 3pm", title = "Temperature at 3pm and 9pm in Australian Towns", color = "Location")  
 ```
 
 #### Part b {.unnumbered}
@@ -203,11 +204,11 @@ When we're including our plot in an article, paper, book, or other similar outle
 -   Render your Rmd and check out how the figure caption appears.
 
 ```{r}
-#| fig-cap: "???"
+#| fig-cap: "Comparison of Australian towns temperatures at 9am and 3pm"
 
 ggplot(weather, aes(y = temp3pm, x = temp9am, color = location)) + 
   geom_point() + 
-  labs(x = "???", y = "???", color = "???")  
+  labs(x = "Temp @ 9am", y = "Temp @ 3pm", color = "Location")  
 ```
 
 \
