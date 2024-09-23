@@ -460,6 +460,17 @@
     ]
   },
   {
+    "objectID": "activities/Exercise_7.html",
+    "href": "activities/Exercise_7.html",
+    "title": "",
+    "section": "",
+    "text": "Activities7  Exercise_7.html Code",
+    "crumbs": [
+      "Activities",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Exercise_7.html</span>"
+    ]
+  },
+  {
     "objectID": "notes/README.html",
     "href": "notes/README.html",
     "title": "Notes",
@@ -472,12 +483,12 @@
   {
     "objectID": "notes/note-01.html",
     "href": "notes/note-01.html",
-    "title": "7  Exercise 1 Notes",
+    "title": "8  Exercise 1 Notes",
     "section": "",
     "text": "I learned some helpful functions in this section, such as seq() and nchar(). I had some difficulty when remebering to put quotation marks in the right spot, but overall I understood all of the assignments.",
     "crumbs": [
       "Notes",
-      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Exercise 1 Notes</span>"
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Exercise 1 Notes</span>"
     ]
   }
 ]
