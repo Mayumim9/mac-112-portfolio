@@ -22,8 +22,6 @@ For more information about the topics covered in this chapter, refer to the reso
 -   [Telling a story (Chp 29, html)](https://clauswilke.com/dataviz/telling-a-story.html) by Wilke
 :::
 
-{{< include activity-instructions.qmd >}}
-
 ## Warm-up
 
 **Recall: Benefits of Visualizations**
@@ -37,11 +35,11 @@ For more information about the topics covered in this chapter, refer to the reso
 
 ### No One Right Viz {.unnumbered}
 
-There is no one right way to visualize a data set, eg, check out the 100 ways used to visualize one dataset: <https://100.datavizproject.com/> The visualized data was featured in [this TidyTuesday](https://github.com/rfordatascience/tidytuesday/blob/master/data/2024/2024-02-06/readme.md)! 
+There is no one right way to visualize a data set, eg, check out the 100 ways used to visualize one dataset: <https://100.datavizproject.com/> The visualized data was featured in [this TidyTuesday](https://github.com/rfordatascience/tidytuesday/blob/master/data/2024/2024-02-06/readme.md)!
 
 #### Activity: Plot Critique {.unnumbered}
 
-In groups: 
+In groups:
 
 -   Scroll through the plots.
 -   Identify at least 1 plot that you feel illuminates some important aspect of the data.
@@ -113,7 +111,7 @@ knitr::include_graphics("https://mac-stat.github.io/images/112/bad_viz/bad_viz_c
 
 ### Effective Viz {.unnumbered}
 
-You can take a whole course in Data Viz at Mac!  The topic of effective viz is too big and nuanced to boil down into a simple list. Here are some basics:
+You can take a whole course in Data Viz at Mac! The topic of effective viz is too big and nuanced to boil down into a simple list. Here are some basics:
 
 #### Professionalism {.unnumbered}
 
@@ -147,19 +145,17 @@ In designing your viz, think about *comparison*. Good viz make it easy for peopl
 
     -   **Power**\
         Challenge structures of power. Support data due process, act as data advocates, pressure unethical analytical behavior.
-
 -   To this list, [Data Feminism](https://data-feminism.mitpress.mit.edu/) authors Catherine D'Ignazio and Lauren F. Klein added:
     -   **Emotion & Embodiment**\
-    Value multiple forms of knowledge, including the knowledge that comes from people as living, feeling bodies in the world.
+        Value multiple forms of knowledge, including the knowledge that comes from people as living, feeling bodies in the world.
 
     -   **Pluralism**\
-    The most complete knowledge comes from synthesizing multiple perspectives
+        The most complete knowledge comes from synthesizing multiple perspectives
 
     -   **Context**\
-    Data are not neutral or objective
+        Data are not neutral or objective
 
 ## Exercises
-
 
 ### Exercise 1: Professionalism {.unnumbered}
 
@@ -204,7 +200,7 @@ When we're including our plot in an article, paper, book, or other similar outle
 -   Render your Rmd and check out how the figure caption appears.
 
 ```{r}
-#| fig-cap: "Comparison of Australian towns temperatures at 9am and 3pm"
+#| fig-cap: "Comparison of temperatures at 9am and 3pm in three different Australian locations "
 
 ggplot(weather, aes(y = temp3pm, x = temp9am, color = location)) + 
   geom_point() + 
@@ -222,7 +218,7 @@ Let's now make a graphic more accessible.
 
 ```{r}
 #| fig-cap: "Density plots of 3pm temperatures in 3 Australian locations."
-#| fig-alt: "???"
+#| fig-alt: "This density plot shows that between three different locations in Australia, Uluru has the highest temperatures, Wollongong the second highest and Hobart has the lowest temperatures at 3pm. "
 
 ggplot(weather, aes(x = temp3pm, fill = location)) + 
   geom_density(alpha = 0.5) + 
@@ -302,7 +298,7 @@ At a minimum, our data viz should not mislead. Reconsider the climate change exa
 
 #### Part b {.unnumbered}
 
-Again, data viz ethical considerations go beyond whether or not a plot is misleading. As described in the warm-up, we need to consider: visibility, privacy, power, emotion & embodiment, pluralism, & context. Depending upon the audience and goals of a data viz, addressing these points might require more nuance. Mainly, the viz tools we've learned are a great base or foundation, but aren't the only approaches to data viz. 
+Again, data viz ethical considerations go beyond whether or not a plot is misleading. As described in the warm-up, we need to consider: visibility, privacy, power, emotion & embodiment, pluralism, & context. Depending upon the audience and goals of a data viz, addressing these points might require more nuance. Mainly, the viz tools we've learned are a great base or foundation, but aren't the only approaches to data viz.
 
 Pick one or more of the following examples of data viz to discuss with your group. How do the approaches taken:
 
@@ -314,9 +310,9 @@ Pick one or more of the following examples of data viz to discuss with your grou
 
 Example: **W.E.B. Du Bois (1868–1963)**
 
-Du Bois ("Doo Boys") was a "sociologist, socialist, historian, civil rights activist, Pan-Africanist, author, writer, and editor"[^07-effective-viz-1]. He was also a *pioneer* in elevating emotion and embodiment in data visualization. For the Paris World Fair of 1900, Du Bois and his team of students from Atlanta University presented 60 data visualizations of the Black experience in America, less than 50 years after the abolishment of slavery. Du Bois noted: "I wanted to set down its aim and method in some outstanding way which would bring my work to notice by the thinking world." That is, he wanted to increase the impact of his work by partnering technical visualizations with design that better connects to lived experiences. NOTE: This work uses language common to that time period and addresses the topic of slavery. Check out:
+Du Bois ("Doo Boys") was a "sociologist, socialist, historian, civil rights activist, Pan-Africanist, author, writer, and editor"[^exercise_7-1]. He was also a *pioneer* in elevating emotion and embodiment in data visualization. For the Paris World Fair of 1900, Du Bois and his team of students from Atlanta University presented 60 data visualizations of the Black experience in America, less than 50 years after the abolishment of slavery. Du Bois noted: "I wanted to set down its aim and method in some outstanding way which would bring my work to notice by the thinking world." That is, he wanted to increase the impact of his work by partnering technical visualizations with design that better connects to lived experiences. NOTE: This work uses language common to that time period and addresses the topic of slavery. Check out:
 
-[^07-effective-viz-1]: https://en.wikipedia.org/wiki/W.\_E.\_B.\_Du_Bois
+[^exercise_7-1]: https://en.wikipedia.org/wiki/W.\_E.\_B.\_Du_Bois
 
 -   A [complete set of the data visualizations provided by Anthony Starks](https://speakerdeck.com/ajstarks/du-bois-visualizations-originals) (@ajstarks).
 -   An [article by Allen Hillery](https://dataliteracy.com/web-du-bois-story-of-resilience/) (@AlDatavizguy).
@@ -378,7 +374,7 @@ Think about the following questions:
 
 ### Exercise 5: Design Details {.unnumbered}
 
-This final exercise is just "food for thought".  It's more of a discussion than an exercise, and gets into some of the finer design details and data viz theory. Go as deep or not deep as you'd like here.
+This final exercise is just "food for thought". It's more of a discussion than an exercise, and gets into some of the finer design details and data viz theory. Go as deep or not deep as you'd like here.
 
 In refining the details of our data viz, [Visualize This](https://www.amazon.com/Visualize-This-FlowingData-Visualization-Statistics/dp/0470944889/) and [Storytelling with Data](https://www.amazon.com/Storytelling-Data-Visualization-Business-Professionals/dp/1119002257) provide some of *their* guiding principles. But again, every context is different.
 
@@ -388,9 +384,9 @@ In refining the details of our data viz, [Visualize This](https://www.amazon.com
 -   It is easier to judge length than it is to judge area or angles.
 -   Be thoughtful about how your categories are ordered for categorical data.
 
-Getting into even more of the nitty gritty, we need to be mindful of what geometric elements and aesthetics we use. The following elements/aesthetics are listed in roughly descending order of human ability to perceive and compare nearby objects:[^07-effective-viz-2]
+Getting into even more of the nitty gritty, we need to be mindful of what geometric elements and aesthetics we use. The following elements/aesthetics are listed in roughly descending order of human ability to perceive and compare nearby objects:[^exercise_7-2]
 
-[^07-effective-viz-2]: B. S. Baumer, D. T. Kaplan, and N. J. Horton, *Modern Data Science with R*, 2017, p. 15.
+[^exercise_7-2]: B. S. Baumer, D. T. Kaplan, and N. J. Horton, *Modern Data Science with R*, 2017, p. 15.
 
 1.  Position
 2.  Length
