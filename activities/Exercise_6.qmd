@@ -88,13 +88,13 @@ head(energy)
 
 Included are the following variables:
 
-| variable  | meaning                                                                                                      |
-|:-----------------|:-----------------------------------------------------|
-| therms    | a measure of energy use (the more energy used, the larger the therms)                                        |
-| address   | a or b                                                                                                       |
-| renovated | whether the location had been renovated, yes or no                                                           |
-| month     | from 1 to 12                                                                                                 |
-| hdd       | monthly heating degree days. a proxy measure of outside temperatures (the higher the hdd, the COLDER it was) |
+| variable | meaning |
+|:---|:---|
+| therms | a measure of energy use (the more energy used, the larger the therms) |
+| address | a or b |
+| renovated | whether the location had been renovated, yes or no |
+| month | from 1 to 12 |
+| hdd | monthly heating degree days. a proxy measure of outside temperatures (the higher the hdd, the COLDER it was) |
 
 ::: {.callout-important title="Instructions"}
 -   Construct a plot that addresses each research question
@@ -400,8 +400,7 @@ ggplot(world_boundaries) +
 
 ##### Part c {.unnumbered}
 
-Summarize what you learned about Starbucks from this map.
-**Starbucks are extremely popular in the United States and East Asia.**
+Summarize what you learned about Starbucks from this map. **Starbucks are extremely popular in the United States and East Asia.**
 
 #### Exercise 5: Zooming in on some countries {.unnumbered}
 

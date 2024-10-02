@@ -20,6 +20,7 @@ book:
       - activities/Exercise_5.qmd
       - activities/Exercise_6.qmd
       - activities/Exercise_7.qmd
+      - activities/Exercise_8.qmd
       
     - part: notes/README.qmd
       chapters: 
