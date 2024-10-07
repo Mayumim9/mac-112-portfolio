@@ -1,5 +1,5 @@
 ---
-title: "Exercise 7 - Effective Viz"
+title: "Lesson 7 - Effective Viz"
 number-sections: true
 execute: 
   warning: false

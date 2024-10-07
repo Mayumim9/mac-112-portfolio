@@ -1,5 +1,5 @@
 ---
-title: "Exercise 5 - Multivariate Viz"
+title: "Lesson 5 - Multivariate Viz"
 number-sections: true
 execute: 
   warning: false

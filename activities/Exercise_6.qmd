@@ -1,5 +1,5 @@
 ---
-title: "Exercise 6 - Spatial viz"
+title: "Lesson 6 - Spatial viz"
 number-sections: true
 execute: 
   warning: false
@@ -89,7 +89,7 @@ head(energy)
 Included are the following variables:
 
 | variable | meaning |
-|:---|:---|
+|:-----------------------------------|:-----------------------------------|
 | therms | a measure of energy use (the more energy used, the larger the therms) |
 | address | a or b |
 | renovated | whether the location had been renovated, yes or no |

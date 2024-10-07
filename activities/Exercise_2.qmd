@@ -1,5 +1,5 @@
 ---
-title: "Exercise 2 - RStudio Workshop"
+title: "Lesson 2 - RStudio Workshop"
 number-sections: true
 ---
 

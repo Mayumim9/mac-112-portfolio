@@ -1,5 +1,5 @@
 ---
-title: "Exercise 8: Wrangling Verbs"
+title: "Lesson 8 - Wrangling Verbs"
 number-sections: true
 execute: 
   warning: false
