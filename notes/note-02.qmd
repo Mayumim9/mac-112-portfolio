@@ -1,3 +1,12 @@
 ---
-title: "Note 02"
+title: "Lesson 8 Notes"
 ---
+
+6 wrangling verbs: 
+
+- **arrange**: arrange the rows according to some column
+- **filter**: filter out or obtain a subset of the rows
+- **select**: select a subset of columns
+- **mutate**: mutate or create a column
+- **summarize**: calculate a numerical summary of a column
+- **group_by**: group the rows by a specified column

@@ -1,5 +1,5 @@
 ---
-title: "Exercise 1 Notes"
+title: "Lesson 1 Notes"
 ---
 
 I learned some helpful functions in this section, such as seq() and nchar(). I had some difficulty when remebering to put quotation marks in the right spot, but overall I understood all of the assignments. 
