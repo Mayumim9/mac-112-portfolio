@@ -364,14 +364,14 @@ To comment/uncomment several lines of code at once, highlight them then click <k
 
 ```{r}
 # Keep only data on counties in Hawaii
-# elections_small |>
-#  filter(___ ___ ___)
+elections_small |>
+  filter(___ ___ ___)
 ```
 
 ```{r}
 # What does this do?
-# elections_small |> 
-#   filter(state_name %in% c("Hawaii", "Delaware"))
+ elections_small |> 
+   filter(state_name %in% c("Hawaii", "Delaware"))
 ```
 
 ```{r}
@@ -644,9 +644,9 @@ Let's talk about the last 2 verbs. `summarize()` (or equivalently `summarise()`)
 Finally, `group_by()` groups the units of observation or rows of a data frame by a specified set of variables. Alone, this function doesn't change the appearance of our dataset or seem to do anything at all:
 
 ```{r}
-# elections_small |> 
-#   group_by(state_name) |> 
-#   head()
+elections_small |> 
+   group_by(state_name) |> 
+   head()
 ```
 
 Though it does change the underlying structure of the dataset:
