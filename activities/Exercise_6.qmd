@@ -1,5 +1,5 @@
 ---
-title: "Lesson 6 - Spatial viz"
+title: "Lesson 6 - Wrangling Verbs"
 number-sections: true
 execute: 
   warning: false
@@ -10,745 +10,806 @@ code-fold: false
 ---
 
 ::: {.callout-caution title="Learning Goals"}
--   Plot data points on top of a map (`ggplot()`).
--   Create choropleth maps (`geom_map()`).
--   Understand the basics of creating a map using `leaflet`, including adding points and choropleths to a base map.
+-   Explore the following wrangling verbs: `select`, `mutate`, `filter`, `arrange`, `summarize`, `group_by`
+-   Use the native pipe operator `|>`
 :::
 
 ::: {.callout-note title="Additional Resources"}
 For more information about the topics covered in this chapter, refer to the resources below:
 
--   [Creating maps with leaflet (YouTube)](https://www.youtube.com/embed/w5U62wUki3E) by Lisa Lendway
--   [More leaflet (YouTube)](https://www.youtube.com/embed/U07OQ3V-W2k) by Lisa Lendway
--   [Spatial data visualization (Chp 17, intro and 17.1, html)](https://mdsr-book.github.io/mdsr2e/ch-spatial.html) by Baumer et al
--   [Detailed leaflet documenation (html)](https://rstudio.github.io/leaflet/)
--   [leaflet cheat sheet (pdf)](https://ugoproto.github.io/ugo_r_doc/pdf/leaflet-cheat-sheet.pdf)
--   [Provider map previews (html)](http://leaflet-extras.github.io/leaflet-providers/preview/)
--   [Tutorial (html)](https://learn.r-journalism.com/en/mapping/census_maps/census-maps/) by Andrew Ba Tran, investigative data reporter at Washington Post
--   For more advanced work with spatial mapping, GIS in R, etc. see the [sf package (html)](https://r-spatial.github.io/sf/).
+-   [Intro to dplyr (YouTube)](https://www.youtube.com/watch?v=dqP0DejI7lw) by Lisa Lendway
+-   [Demonstration of dplyr (YouTube)](https://www.youtube.com/watch?v=PgZvq7ZPvEE&feature=youtu.be) by Lisa Lendway
+-   [Data Transformation (html)](https://r4ds.hadley.nz/data-transform.html) by Wickham, Çetinkaya-Rundel, & Grolemund
+-   [A Grammar for Data Wrangling (html)](https://mdsr-book.github.io/mdsr2e/ch-dataI.html) by Baumer, Kaplan, and Horton
 :::
 
-::: {.callout-important title="Instructions"}
-**General**
 
--   Be kind to yourself.
--   Collaborate with and be kind to others. You are expected to work together as a group.
--   Ask questions. Remember that we won't discuss these exercises as a class.
+## Data Wrangling Motivation
 
-**Activity Specific**
-
-Help each other with the following:
-
--   Create a new Quarto document in the activities folder of your portfolio project and do not forgot to include it in `_quarto.yml` file. Then click the `</> Code` link at the top right corner of this page and copy the code into the created Quarto document. This is where you'll take notes. Remember that the portfolio is yours, so take notes in whatever way is best for you.
--   **Don't start the Exercises section before we get there as a class.** First, engage in class discussion and eventually collaborate with your group on the exercises!
-:::
-
-::: {.callout-important title="Instructions"}
-Run the following commands in the Console to install the packages used in this activity into your machine if they are not already installed.
+Recall the elections data by U.S. county:
 
 ```{r}
-#| eval: false
-
-install.packages(c("sf", "maps", "RColorBrewer", "gplots", "socviz", "leaflet", "devtools"))
-devtools::install_github("ropensci/rnaturalearthhires")
-```
-:::
-
-## Review
-
-In the previous activity, we explored a Simpson's Paradox--it seemed that:
-
--   States with higher spending...
--   tend to have lower average SAT scores.
-
-BUT this was explained by a *confounding* or *omitted* or *lurking* variable: the % of students in a state that take the SAT:
-
--   States with higher spending...
--   tend to have a higher % of students of students that take the SAT...
--   which then "leads to" lower average SAT scores.
-
-Thus, *when controlling for the % of students that take the SAT*, more spending is correlated with higher scores.
-
-Let's explore a Simpson's paradox related to Mac!
-
-Back in the 2000s, Macalester invested in insulating a few campus-owned houses, with the hopes of leading to energy savings. <!-- 180/182 Vernon Ave, 1662 Princeton Ave, and 1668 Princeton Ave --> Former Mac prof Danny Kaplan accessed monthly data on energy use and other info for these addresses, before and after renovations:
-
-```{r echo = FALSE}
-# Load tidyverse package for plotting and wrangling
+# Load tidyverse & data
 library(tidyverse)
-
-# Import the data and only keep 2 addresses
-energy <- read.csv("https://mac-stat.github.io/data/MacNaturalGas.csv") %>% 
-  mutate(date = as.Date(paste0(month, "/1/", year), "%m/%d/%Y")) %>% 
-  filter(address != "c")
-
-# Check it out
-head(energy)
+elections <- read.csv("https://mac-stat.github.io/data/election_2020_county.csv")
 ```
 
-Included are the following variables:
+We've used data viz to explore some general patterns in the election outcomes. For example, a map!
 
-| variable | meaning |
-|:-----------------------------------|:-----------------------------------|
-| therms | a measure of energy use (the more energy used, the larger the therms) |
-| address | a or b |
-| renovated | whether the location had been renovated, yes or no |
-| month | from 1 to 12 |
-| hdd | monthly heating degree days. a proxy measure of outside temperatures (the higher the hdd, the COLDER it was) |
+```{r fig.width = 8}
+# Get a background map
+library(socviz)
+data(county_map)
 
-::: {.callout-important title="Instructions"}
--   Construct a plot that addresses each research question
--   Include a 1-sentence summary of the plot.
+# Make a choropleth map
+library(RColorBrewer)  # For the color scale
+library(ggthemes) # For theme_map
+elections |> 
+  mutate(county_fips = as.character(county_fips)) |> 
+  mutate(county_fips = 
+           ifelse(nchar(county_fips) == 4, paste0("0", county_fips), county_fips)) |> 
+  ggplot(aes(map_id = county_fips, fill = cut(repub_pct_20, breaks = seq(0, 100, by = 10)))) +
+    geom_map(map = county_map) +
+    scale_fill_manual(values = rev(brewer.pal(10, "RdBu")), name = "% Republican") +
+    expand_limits(x = county_map$long, y = county_map$lat)  + 
+    theme_map() +
+    theme(legend.position = "right") + 
+    coord_equal()
+
+```
+
+Consider some fairly basic follow-up questions, each of which we cannot answer precisely (or sometimes even at all) using our data viz tools:
+
+-   How many total people voted for the Democratic and Republican candidates in 2020?
+-   What about in each state?
+-   In just the state of Minnesota:
+    -   Which counties had the highest and lowest Democratic vote in 2020?
+    -   How did the Democratic vote in each county *change* from 2016 to 2020?
+
+\
+\
+\
+\
+
+### Goals of Unit 2: Data Wrangling {-}
+
+We really cannot do anything with data (viz, modeling, etc) *unless* we can wrangle the data. The following is a typical quote. I agree with the 90% -- data wrangling isn't something we have to do before we can do data science, it *is* data science! But let's rethink the 10% -- data wrangling is a fun and empowering puzzle!
+
+![](https://mac-stat.github.io/images/112/david_robinson.png)
+
+The goals of Unit 2 are to explore how to:
+
+-   Get data into the tidy shape / format we need for analysis. For example, we might want to:
+    -   keep only certain observations
+    -   define new variables
+    -   reformat or "clean" existing variables
+    -   combine various datasets
+    -   process "string" or text data
+-   Numerically (not just visually) explore and summarize various characteristics of the variables in our dataset.
+
+\
+\
+\
+\
+
+### Tidyverse Wrangling Tools {-}
+
+We'll continue to use packages that are part of the `tidyverse` which share a common general grammar and structure.
+
+![](https://mac-stat.github.io/images/112/tidyverse.png)
+
+\
+\
+\
+\
+
+## Warm-Up
+
+There are lots and lots of steps that can go into data wrangling, thus lots and lots of relevant R functions. BUT just 6 functions can get us very far. People refer to these as the 6 main **wrangling verbs** or functions:
+
+-   why "verbs"? in the `tidyverse` grammar, functions serve as *action words*
+-   the 6 verbs are all stored in the `dplyr` package within the `tidyverse`
+-   each verb acts on a data frame and returns a data frame
+
+\
+\
+
+| verb        | action                                            |
+|:------------|:--------------------------------------------------|
+| `arrange`   | **arrange** the *rows* according to some *column* |
+| `filter`    | **filter** out or obtain a subset of the *rows*   |
+| `select`    | **select** a subset of *columns*                  |
+| `mutate`    | **mutate** or create a *column*                   |
+| `summarize` | calculate a numerical **summary** of a *column*   |
+| `group_by`  | **group** the *rows* by a specified *column*      |
+
+\
+\
+\
+\
+
+**EXAMPLE 1**
+
+Which verb would help us...
+
+a.  keep *only* information about state names, county names, and the 2020 and 2016 Democratic support (not the 2012 results, demographics, etc)
+
+b.  get *only* the data on Minnesota
+
+c.  define a new variable which calculates the *change* in Democratic support from 2016 to 2020, using `dem_pct_20` and `dem_pct_16`
+
+d.  sort the counties from highest to lowest Democratic support
+
+e.  determine the total number of votes cast across all counties
+
+\
+\
+\
+\
+
+**EXAMPLE 2: select columns**
+
+To get a sense for the code structure, let's explore a couple verbs together. To start, let's simplify our dataset to include only some variables of interest. Specifically, `select()` only the *columns* relevant to state names, county names, and the 2020 and 2016 Democratic support:
+
+```{r eval = FALSE}
+# What's the first argument? The second?
+select(elections, c(state_name, county_name, dem_pct_20, dem_pct_16))
+```
+
+Let's re-do this with the **pipe function** `|>`:
+
+```{r eval = FALSE}
+elections |> 
+  select(state_name, county_name, dem_pct_20, dem_pct_16)
+```
+
+\
+\
+\
+\
+
+::: {.callout-note title="Pipe Function `|>`"}
+`|>` "passes" objects, usually datasets, to a function:
+
+`object |> function()` is the same as `function(object)`
 :::
 
-### Example 1 {.unnumbered}
+\
+\
+\
+\
 
-What was range in, and typical, energy used each month, as measured by `therms`? How does this differ by address?
+**EXAMPLE 3: filter rows**
 
-```{r}
+Let's `filter()` out only the *rows* related to Minnesota (MN):
+
+```{r eval = FALSE}
+# Without a pipe
+filter(elections, state_name == "Minnesota")
 ```
 
-### Example 2 {.unnumbered}
-
-How did energy use (`therms`) change over time (`date`) at the two addresses?
-
-```{r}
+```{r eval = FALSE}
+# With a pipe
+elections |> 
+  filter(state_name == "Minnesota")
 ```
 
-### Example 3 {.unnumbered}
+\
+\
+\
+\
 
-How did the typical energy use (`therms`) at the two addresses change before and after they were `renovated`?
+::: {.callout-note title="`==` vs `=`"}
+We use `a == b` to check whether `a` *matches* `b`.
 
-```{r}
-```
-
-### Example 4 {.unnumbered}
-
-That seems unfortunate that energy usage went *up* after renovations. But also fishy.
-
-Take 5 minutes in your groups to try and explain what's going on here. Think: What *confounding*, *lurking*, or *omitted* variable related to energy usage are we ignoring here? Try to make some plots to prove your point.
+We use `a = b` to *define* that `a` is equal to `b`. We typically use `=` for this purpose inside a function, and `<-` for this purpose outside a function.
 
 ```{r}
+# Ex: "=" defines x
+x = 2
+x
 ```
 
-### Example 5 {.unnumbered}
+```{r}
+# Ex: "==" checks whether x is/matches 3
+x == 3
+```
+:::
 
-Let's summarize the punchlines by filling in the ???. It seemed that:
+\
+\
+\
+\
 
--   After renovation...
--   energy use increased.
+**EXAMPLE 4: filter and select**
 
-BUT this was explained by a *confounding* or *omitted* or *lurking* variable: ???
+Let's *combine* `select()` and `filter()` to create a new dataset with info about the county names, and 2020 and 2016 Democratic support among Minnesota counties.
 
--   After renovation...
--   ???...
--   which then leads to higher energy use.
+```{r eval = FALSE}
+# Without pipes
+filter(select(elections, c(state_name, county_name, dem_pct_20, dem_pct_16)), state_name == "Minnesota")
+```
 
-Thus, *when controlling for* ???, renovations led to *decreased* energy use.
+```{r eval = FALSE}
+# With pipes: all verbs in 1 row
+elections |> select(state_name, county_name, dem_pct_20, dem_pct_16) |> filter(state_name == "Minnesota")
+```
 
-## New stuff
+```{r eval = FALSE}
+# With pipes: each verb in a new row
+elections |> 
+  select(state_name, county_name, dem_pct_20, dem_pct_16) |> 
+  filter(state_name == "Minnesota")
+```
 
-**Types of spatial viz:**
+```{r eval = FALSE}
+# We can even do this with UN-tidyverse code in "base" R
+elections[elections$state_name == "Minnesota", c(1, 4, 8, 12)]
+```
 
--   **Point Maps**: plotting locations of *individual observations*\
-    example: [bigfoot sightings](https://experience.arcgis.com/experience/9cc90686aa164853a1355f310f66ede0)
+::: {.callout-warning title="Reflection"}
+Why will we typically use:
 
--   **Contour Maps**: plotting the *density* or distribution of observations (not the individual observations themselves)
+-   tidyverse code
+-   the pipe function `|>`
+-   each verb on a new row
+:::
 
--   **Choropleth Maps**: plotting outcomes in different *regions*
+\
+\
+\
+\
 
-    -   [NYT article on effects of redlining](https://www.nytimes.com/interactive/2020/08/24/climate/racism-redlining-cities-global-warming.html?fbclid=IwAR1iX20gZcHt-HERYeJs0t2fjSXRJh2aBYYSfSkpc50dBvfByBCWezTSXbw)
-    -   [Minnesota Reformer article on how Mpls / St Paul voted on 2021 ballot measures related to mayoral, policing, and rent policies](https://minnesotareformer.com/2021/11/04/maps-how-minneapolis-voted-on-key-ballot-questions/)
+**EXAMPLE 5: order of operations**
 
-These spatial maps can be **static** or **dynamic/interactive**.
+Sometimes, the order of operations matters. For example: putting on socks, then shoes produces a different result than putting on shoes, then socks. Sometimes order doesn't matter. For example: Pouring cereal into a bowl, then adding milk produces the same result as pouring milk into a bowl, then adding cereal (though one order is obviously better than the other ;)) Above (also copied below), we `select`ed some columns and then `filter`ed some rows:
+
+```{r eval = FALSE}
+elections |> 
+  select(state_name, county_name, dem_pct_20, dem_pct_16) |> 
+  filter(state_name == "Minnesota")
+```
+
+Would we get the same result if we reversed `select()` and `filter()`? Think first, then try it.
+
+```{r eval = FALSE}
+# Try it
+elections |> 
+  filter(state_name == "Minnesota") |>
+  select(state_name, county_name, dem_pct_20, dem_pct_16) 
+```
+
+\
+\
+\
+\
+
+**EXAMPLE 6: Storing the results**
+
+Typically:
+
+-   We want to store our data wrangling results.
+-   It's good practice to do so under a *new* name. We want to preserve, thus don't want to *overwrite*, the original data (especially if our code contains errors!!).
+
+```{r}
+# Store the results
+mn <- elections |> 
+  select(state_name, county_name, dem_pct_20, dem_pct_16) |> 
+  filter(state_name == "Minnesota")
+
+# Always check it out to confirm it's what you want it to be!
+head(mn)
+nrow(mn)
+nrow(elections)
+```
 
 ## Exercises
 
-### Preview
+### Exercise 1: select practice {-}
 
-You'll explore some R spatial viz tools below. In general, there are two important pieces to every map:
+6 verbs: `select`, `filter`, `arrange`, `mutate`, `summarize`, `group_by`
 
-**Piece 1: A dataset**
+Use `select()` to create a simplified dataset that we'll use throughout the exercises below.
 
-This dataset must include either:
+-   Store this dataset as `elections_small`.
+-   Only keep the following variables: state_name, county_name, total_votes_20, repub_pct_20, dem_pct_20, total_votes_16, dem_pct_16
 
--   location coordinates for your points of interest (for point maps); or
--   variable outcomes for your regions of interest (for choropleth maps)
+```{r}
+# Define elections_small
+elections_small <- elections |>
+  select(state_name, county_name, total_votes_20, repub_pct_20, dem_pct_20, total_votes_16, dem_pct_16)
+
+# Check out the first 6 rows to confirm your code did what you think it did!
+head(elections_small)
+```
 
 \
+\
+\
+\
 
-**Piece 2: A background map**
+### Exercise 2: filter demo {-}
 
-We need latitude and longitude coordinates to specify the boundaries for your regions of interest (eg: countries, states). This is where it gets really sticky!
+6 verbs: `select`, `filter`, `arrange`, `mutate`, `summarize`, `group_by`
 
--   County-level, state-level, country-level, continent-level info live in multiple places.
+Whereas `select()` selects certain *variables* or columns, `filter()` keeps certain *units of observation* or rows relative to their outcome on certain variables. To this end, we must:
 
--   Where we grab this info *can* depend upon whether we want to make a point map or a choropleth map. (The background maps can be used somewhat interchangeably, but it requires extra code :/)
+-   Identify the variable(s) that are relevant to the filter.
 
--   Where we grab this info can also depend upon the structure of our data and how much data wrangling / cleaning we're up for. For choropleth maps, the labels of regions in our data must match those in the background map. For example, if our data labels states with their abbreviations (eg: MN) and the background map refers to them as full names in lower case (eg: minnesota), we have to wrangle our data so that it matches the background map.
+-   Use a "logical comparison operator" to define which values of the variable to *keep*:
 
-In short, the code for spatial viz gets very specialized. The goal of these exercises is to:
+    | symbol             | meaning                   |
+    |:-------------------|:--------------------------|
+    | `==`               | equal to                  |
+    | `!=`               | not equal to              |
+    | `>`                | greater than              |
+    | `>=`               | greater than or equal to  |
+    | `<`                | less than                 |
+    | `<=`               | less than or equal to     |
+    | `%in% c(???, ???)` | a list of multiple values |
 
--   play around and experience the wide variety of spatial viz tools out there
--   understand the difference between point maps and choropleth maps
--   have fun
+-   Use quotes `""` when specifying outcomes of interest for a categorical variable.
 
-You can skip around as you wish and it's totally fine if you don't finish everything. Just come back at some point to play around.
+\
+\
 
-### Part 1: Interactive points on a map with `leaflet`
+::: {.callout-tip title="Commenting/Uncommenting Code"}
 
-[Leaflet](https://leafletjs.com/) is an open-source JavaScript library for creating maps. We can use it inside R through the `leaflet` package.
+To comment/uncomment several lines of code at once, highlight them then click <kbd>ctrl/cmd+shift+c</kbd>.
 
-This uses a different plotting framework than `ggplot2`, but still has a `tidyverse` feel (which will become more clear as we learn other tidyverse tools!).
+:::
 
-The general steps are as follows:
-
-1.  Create a *map widget* by calling `leaflet()` and telling it the data to use.
-2.  Add a *base map* using `addTiles()` (the default) or `addProviderTiles()`.
-3.  Add *layers* to the map using layer functions (e.g. `addMarkers()`, `addPolygons()`).
-4.  Print the map widget to *display* it.
-
-#### Exercise 1: A leaflet with markers / points {.unnumbered}
-
-Earlier this semester, I asked for the latitude and longitude of one of your favorite places. I rounded these to the nearest whole number, so that they're near to but not exactly at those places. Let's load the data and map it!
-
-```{r}
-fave_places <- read.csv("https://ajohns24.github.io/data/112/our_fave_places.csv")
-
-# Check it out
-head(fave_places)
-```
-
-##### Part a {.unnumbered}
-
-You can use a "two-finger scroll" to zoom in and out.
+\
+\
 
 ```{r}
-# Load the leaflet package
-library(leaflet)
-
-# Just a plotting frame
-leaflet(data = fave_places)
+# Keep only data on counties in Hawaii
+elections_small |>
+  filter(state_name == "Hawaii")
 ```
 
 ```{r}
-# Now what do we have?
-leaflet(data = fave_places) %>% 
-  addTiles()
+# What does this do?
+# It gathers data on two states
+ elections_small |> 
+   filter(state_name %in% c("Hawaii", "Delaware"))
 ```
 
 ```{r}
-# Now what do we have?
-# longitude and latitude refer to the variables in our data
-leaflet(data = fave_places) %>% 
-  addTiles() %>% 
-  addMarkers(lng = ~longitude, lat = ~latitude)
+# Keep only data on counties where the Republican got MORE THAN 93.97% of the vote in 2020
+# THINK: What variable is relevant here?
+elections_small |> 
+   filter(repub_pct_20 > "93.97")
 ```
 
 ```{r}
-# Since we named them "longitude" and "latitude", the function
-# automatically recognizes these variables. No need to write them!
-leaflet(data = fave_places) %>% 
-  addTiles() %>% 
-  addMarkers()
+# Keep only data on counties where the Republican got AT LEAST 93.97% of the vote in 2020
+# This should have 1 more row than your answer above
+elections_small |> 
+   filter(repub_pct_20 >= "93.97")
 ```
 
-##### Part b {.unnumbered}
-
-**PLAY AROUND!** This map is interactive. Zoom in on one location. Keep zooming -- what level of detail can you get into? How does that detail depend upon where you try to zoom in (thus what are the limitations of this tool)?
-
-#### Exercise 2: Details {.unnumbered}
-
-We can change all sorts of details in leaflet maps.
+We can also filter with respect to 2 rules! Here, think what variables are relevant.
 
 ```{r}
-# Load package needed to change color
-library(gplots)
+# Keep only data on counties in Texas where the Democrat got more than 65% of the vote in 2020
+# Do this 2 ways.
+# Method 1: 2 filters with 1 condition each
+elections_small |> 
+  filter(state_name == "Texas") |> 
+  filter(dem_pct_20 > "65")
 
-# We can add colored circles instead of markers at each location
-leaflet(data = fave_places) %>% 
-  addTiles() %>% 
-  addCircles(color = col2hex("red"))
+# Method 2: 1 filter with 2 conditions
+elections_small |> 
+  filter(state_name == "Texas", dem_pct_20 > "65")
 ```
 
-```{r}
-# We can change the background
-# Mark locations with yellow dots
-# And connect the dots, in their order in the dataset, with green lines
-# (These green lines don't mean anything here, but would if this were somebody's travel path!)
-leaflet(data = fave_places) %>%
-  addProviderTiles("USGS") %>%
-  addCircles(weight = 10, opacity = 1, color = col2hex("yellow")) %>%
-  addPolylines(
-    lng = ~longitude,
-    lat = ~latitude,
-    color = col2hex("green")
-  )
-```
+\
+\
+\
+\
 
-In general:
+### Exercise 3: arrange demo {-}
 
--   `addProviderTiles()` changes the base map.\
-    To explore all available provider base maps, type `providers` in the console. (Though some don't work :/)
+6 verbs: `select`, `filter`, `arrange`, `mutate`, `summarize`, `group_by`
 
--   Use `addMarkers()` or `addCircles()` to mark locations. Type `?addControl` into the console to pull up a help file which summarizes the aesthetics of these markers and how you can change them. For example:
+`arrange()` arranges or sorts the *rows* in a dataset according to a given column or variable, in ascending or descending order:
 
-    -   `weight` = how thick to make the lines, points, pixels
-    -   `opacity` = transparency (like `alpha` in `ggplot2`)
-    -   colors need to be in "hex" form. We used the `col2hex()` function from the `gplots` library to do that
-
-#### Exercise 3: Your turn {.unnumbered}
-
-The `starbucks` data, compiled by Danny Kaplan, contains information about every Starbucks in the world at the time the data were collected, including `Latitude` and `Longitude`:
+`arrange(variable)`, `arrange(desc(variable))`
 
 ```{r}
-# Import starbucks location data
-starbucks <- read.csv("https://mac-stat.github.io/data/starbucks.csv")
-```
-
-Let's focus on only those in Minnesota for now:
-
-```{r}
-# Don't worry about the syntax
-starbucks_mn <- starbucks %>%   
-  filter(Country == "US", State.Province == "MN")
+# Arrange the counties in elections_small from lowest to highest percentage of 2020 Republican support
+# Print out just the first 6 rows
+# elections_small |> 
+#   arrange(___) |> 
+#   head()
 ```
 
 ```{r}
-
-# Load the leaflet package
-library(leaflet)
-
-# Just a plotting frame
-leaflet(data = starbucks_mn) %>% 
-  addTiles() %>% 
-  addMarkers(lng = ~Longitude, lat = ~Latitude)
-
+# Arrange the counties in elections_small from highest to lowest percentage of 2020 Republican support
+# Print out just the first 6 rows
 ```
 
-Create a leaflet map of the Starbucks locations in Minnesota. Keep it simple -- go back to Exercise 1 for an example.
+\
+\
+\
+\
 
-### Part 2: Static points on a map
+### Exercise 4: mutate demo {-}
 
-Leaflet is very powerful and fun. But:
+6 verbs: `select`, `filter`, `arrange`, `mutate`, `summarize`, `group_by`
 
--   It's not great when we have lots of points to map -- it takes lots of time.
--   It makes good interactive maps, but we often need a static map (eg: we can print interactive maps!).
+`mutate()` can either transform / mutate an existing variable (column), or define a new variable based on existing ones.
 
-Let's explore how to make point maps with `ggplot()`, not `leaflet()`.
-
-#### Exercise 3: A simple scatterplot {.unnumbered}
-
-Let's start with the `ggplot()` tools we already know. Construct a scatterplot of all `starbucks` locations, not just those in Minnesota, with:
-
--   Latitude and Longitude coordinates (which goes on the y-axis?!)
--   Make the points transparent (alpha = 0.2) and smaller (size = 0.2)
-
-It's pretty cool that the plots we already know can provide some spatial context. But what *don't* you like about this plot?
+#### Part a {-}
 
 ```{r}
-ggplot(starbucks, aes(x = Longitude, y = Latitude)) +
-  geom_point(alpha = 0.2, size = 0.2)
-```
-
-#### Exercise 4: Adding a country-level background {.unnumbered}
-
-Let's add a background map of *country-level* boundaries.
-
-#### Part a {.unnumbered}
-
-First, we can grab country-level boundaries from the `rnaturalearth` package.
-
-```{r}
-# Load the package
-library(rnaturalearth)
-
-# Get info about country boundaries across the world
-# in a "sf" or simple feature format
-world_boundaries <- ne_countries(returnclass = "sf")
-```
-
-In your **console**, type `world_boundaries` to check out what's stored there. Don't print it our in your Rmd -- printing it would be really messy there (even just the `head()`).
-
-##### Part b {.unnumbered}
-
-Run the chunks below to build up a new map.
-
-```{r}
-# What does this code produce?
-# What geom are we using for the point map?
-ggplot(world_boundaries) + 
-  geom_sf()
+# What did this code do?
+# elections_small |> 
+#   mutate(diff_20 = repub_pct_20 - dem_pct_20) |> 
+#   head()
 ```
 
 ```{r}
-# Load package needed to change map theme
-library(mosaic)
-
-# Add a point for each Starbucks
-# NOTE: The Starbucks info is in our starbucks data, not world_boundaries
-# How does this change how we use geom_point?!
-ggplot(world_boundaries) + 
-  geom_sf() + 
-  geom_point(
-    data = starbucks,
-    aes(x = Longitude, y = Latitude),
-    alpha = 0.3, size = 0.2, color = "darkgreen"
-  ) +
-  theme_map()
-```
-
-##### Part c {.unnumbered}
-
-Summarize what you learned about Starbucks from this map. **Starbucks are extremely popular in the United States and East Asia.**
-
-#### Exercise 5: Zooming in on some countries {.unnumbered}
-
-Instead of `world_boundaries <- ne_countries(returnclass = 'sf')` we could zoom in on...
-
--   the continent of Africa: `ne_countries(continent = 'Africa', returnclass = 'sf')`
--   a set of countries: `ne_countries(country = c('france', 'united kingdom', 'germany'), returnclass = 'sf')`
--   boundaries within a country: `ne_states(country = 'united states of america', returnclass = 'sf')`
-
-Our goal here will be to map the Starbucks locations in Canada, Mexico, and the US.
-
-##### Part a {.unnumbered}
-
-To make this map, we again need two pieces of information.
-
-1.  Data on Starbucks for *only* Canada, Mexico, and the US, labeled as "CA", "MX", "US" in the `starbucks` data.
-
-```{r}
-# We'll learn this syntax soon! Don't worry about it now.
-starbucks_cma <- starbucks %>% 
-  filter(Country %in% c('CA', 'MX', 'US'))
-```
-
-2.  A background map of state- and national-level boundaries in Canada, Mexico, and the US. This requires `ne_states()` in the `rnaturalearth` package where the countries are labeled 'canada', 'mexico', 'united states of america'.
-
-```{r}
-cma_boundaries <- ne_states(
-  country = c("canada", "mexico", "united states of america"),
-  returnclass = "sf")
-```
-
-##### Part b {.unnumbered}
-
-Make the map!
-
-```{r}
-# Just the boundaries
-ggplot(cma_boundaries) + 
-  geom_sf()
+# What did this code do?
+# elections_small |> 
+#   mutate(repub_votes_20 = round(total_votes_20 * repub_pct_20/100)) |> 
+#   head()
 ```
 
 ```{r}
-# Add the points
-# And zoom in
-ggplot(cma_boundaries) + 
-  geom_sf() + 
-  geom_point(
-    data = starbucks_cma,
-    aes(x = Longitude, y = Latitude),
-    alpha = 0.3,
-    size = 0.2,
-    color = "darkgreen"
-  ) +
-  coord_sf(xlim = c(-179.14, -50)) +
-  theme_map()
+# What did this code do?
+# elections_small |> 
+#   mutate(repub_win_20 = repub_pct_20 > dem_pct_20) |> 
+#   head()
 ```
 
-#### Exercise 6: A state and county-level map {.unnumbered}
-
-Let's get an even *higher* resolution map of Starbucks locations within the states of Minnesota, Wisconsin, North Dakota, and South Dakota, with a background map at the county-level.
-
-#### Part a {.unnumbered}
-
-To make this map, we again need two pieces of information.
-
-1.  Data on Starbucks for *only* the states of interest.
+#### Part b {-}
 
 ```{r}
-starbucks_midwest <- starbucks %>% 
-  filter(State.Province %in% c("MN", "ND", "SD", "WI"))
-```
-
-2.  A background map of state- and county-level boundaries in these states. This requires `st_as_sf()` in the `sf` package, and `map()` in the `maps` package, where the countries are labeled 'minnesota', 'north dakota', etc.
-
-```{r}
-# Load packages
-library(sf)
-library(maps)
-
-# Get the boundaries
-midwest_boundaries <- st_as_sf(
-  maps::map("county",
-            region = c("minnesota", "wisconsin", "north dakota", "south dakota"), 
-            fill = TRUE, plot = FALSE))
-
-# Check it out
-head(midwest_boundaries)
-```
-
-##### Part b {.unnumbered}
-
-Adjust the code below to make the plot! Remove the `#` to run it.
-
-```{r}
-ggplot(midwest_boundaries) + 
-   geom_sf() + 
-   geom_point(
-     data = starbucks_midwest,
-     aes(x = Longitude, y = Latitude),
-     alpha = 0.7,
-     size = 0.2, 
-     color = 'darkgreen'
-   ) + 
-   theme_map()
-```
-
-#### Exercise 7: Contour maps {.unnumbered}
-
-Especially when there are lots of point locations, and those locations start overlapping on a map, it can be tough to visualize areas of higher *density*. Consider the Starbucks locations in Canada, Mexico, and the US that we mapped earlier:
-
-```{r}
-# Point map (we made this earlier)
-ggplot(cma_boundaries) + 
-  geom_sf() + 
-  geom_point(
-    data = starbucks_cma,
-    aes(x = Longitude, y = Latitude),
-    alpha = 0.3,
-    size = 0.2,
-    color = "darkgreen"
-  ) +
-  coord_sf(xlim = c(-179.14, -50), ylim = c(14.54, 83.11)) +
-  theme_map()
-```
-
-Now check out the contour map.
-
-```{r}
-# The points are now contours
-# we also changed geom_point to geom_density_2d
-ggplot(cma_boundaries) + 
-  geom_sf() + 
-  geom_density_2d(
-    data = starbucks_cma,
-    aes(x = Longitude, y = Latitude),
-    size = 0.2,
-    color = "darkgreen"
-  ) +
-  coord_sf(xlim = c(-179.14, -50), ylim = c(14.54, 83.11)) +
-  theme_map()
-```
-
-### Part 3: Choropleth maps
-
-Spatial data isn't always in the form of point locations! For example, recall the state and county-level data on presidential elections.
-
-```{r}
-elections_by_state <-  read.csv("https://mac-stat.github.io/data/election_2020_by_state.csv")
-elections_by_counties <- read.csv("https://mac-stat.github.io/data/election_2020_county.csv")
-```
-
-In these datasets, we're interested in the overall election outcome by region (state or county), not the specific geographic location of some observation. Let's wrangle our data first. We'll focus on just a few variables of interest, and create a new variable (`repub_20_categories`) that *discretizes* the `repub_pct_20` variable into increments of 5 percentage points (for states) or 10 percentage points (for counties):
-
-```{r}
-# Don't worry about the code!
-
-elections_by_state <- elections_by_state %>% 
-  filter(state_abbr != "DC") %>% 
-  select(state_name, state_abbr, repub_pct_20) %>% 
-  mutate(repub_20_categories = 
-           cut(repub_pct_20, 
-               breaks = seq(30, 70, by = 5), 
-               labels = c("30-34", "35-39", "40-44", "45-49",
-                          "50-54", "55-59", "60-64", "65-70"), 
-               include.lowest = TRUE))
-
-elections_by_counties <- elections_by_counties %>% 
-  select(state_name, state_abbr, county_name, county_fips,
-          repub_pct_20, median_age, median_rent) %>% 
-  mutate(repub_20_categories = 
-           cut(repub_pct_20, 
-               breaks = seq(0, 100, by = 10),
-               labels = c("0-9", "10-19", "20-29", "30-39", "40-49",
-                          "50-59", "60-69", "70-79", "80-89", "90-100"),
-               include.lowest = TRUE))
-```
-
-#### Exercise 8: State-level choropleth maps {.unnumbered}
-
-Let's map the 2020 Republican support in each *state*, `repub_pct_20`.
-
-#### Part a {.unnumbered}
-
-We again need two pieces of information.
-
-1.  Data on elections in each state, which we already have: `elections_by_state`.
-
-2.  A background map of state boundaries in the US. The boundaries we used for point maps don't work here. (Optional detail: they're `sf` objects and we now need a `data.frame` object.) Instead, we can use the `map_data()` function from the `ggplot2` package:
-
-```{r}
-# Get the latitude and longitude coordinates of state boundaries
-states_map <- map_data("state")
-
-# Check it out
-head(states_map)
-```
-
-##### Pause {.unnumbered}
-
-**Important detail:** Note that the `region` variable in `states_map`, and the `state_name` variable in `elections_by_state` both label states by the full name in lower case letters. This is critical to the background map and our data being able to communicate.
-
-```{r}
-head(states_map)
-head(elections_by_state) 
-```
-
-##### Part b {.unnumbered}
-
-Now map `repub_pct_20` by state.
-
-```{r}
-# Note where the dataset, elections_by_state, is used
-# Note where the background map, states_map, is used
-ggplot(elections_by_state, aes(map_id = state_name, fill = repub_pct_20)) +
-  geom_map(map = states_map) +
-  expand_limits(x = states_map$long, y = states_map$lat) +
-  theme_map() 
+# You try
+# Define a variable that calculates the change in Dem support in 2020 vs 2016
+#elections_small |> 
+#  mutate(_____) |> 
+#  head()
 ```
 
 ```{r}
-# Make it nicer!
-ggplot(elections_by_state, aes(map_id = state_name, fill = repub_pct_20)) +
-  geom_map(map = states_map) +
-  expand_limits(x = states_map$long, y = states_map$lat) +
-  theme_map() + 
-  scale_fill_gradientn(name = "% Republican", colors = c("blue", "purple", "red"), values = scales::rescale(seq(0, 100, by = 5)))
+# You try
+# Define a variable that determines whether the Dem support was higher in 2020 than in 2016 (TRUE/FALSE)
+#elections_small |> 
+#  mutate(_____) |> 
+#  head()
 ```
 
-It's not easy to get fine control over the color scale for the quantitative `repub_pct_20` variable. Instead, let's plot the *discretized* version, `repub_20_categories`:
+\
+\
+\
+\
+
+### Exercise 5: Pipe series {-}
+
+Let's now combine these verbs into a pipe series!
+
+#### Part a {-}
+
+::: {.callout-important title="Think then Run"}
+
+BEFORE running the below chunk, what do you think it will produce?
+
+:::
 
 ```{r}
-ggplot(elections_by_state, aes(map_id = state_name, fill = repub_20_categories)) +
-  geom_map(map = states_map) +
-  expand_limits(x = states_map$long, y = states_map$lat) +
-  theme_map()
+# elections_small |> 
+#   filter(state_name == "Wisconsin",
+#          repub_pct_20 < dem_pct_20) |> 
+#   arrange(desc(total_votes_20)) |> 
+#   head()
+```
+
+#### Part b {-}
+
+::: {.callout-important title="Think then Run"}
+
+BEFORE trying, what do you think will happen if you change the order of filter and arrange:
+
+-   the results will be the same
+-   we'll get an error
+-   we won't get an error, but the results will be different
+
+:::
+
+```{r}
+# Now try it. Change the order of filter and arrange below.
+# elections_small |> 
+#   filter(state_name == "Wisconsin",
+#          repub_pct_20 < dem_pct_20) |> 
+#   arrange(desc(total_votes_20)) |> 
+#   head()
+```
+
+#### Part c {-}
+
+So the order of `filter()` and `arrange()` did *not* matter -- rerranging them produces the same results. BUT what is one *advantage* of filtering before arranging?
+
+#### Part d {-}
+
+::: {.callout-important title="Think then Run"}
+
+BEFORE running the below chunk, what do you think it will produce?
+
+:::
+
+```{r}
+# elections_small |> 
+#   filter(state_name == "Delaware") |> 
+#   mutate(repub_win_20 = repub_pct_20 > dem_pct_20) |> 
+#   select(county_name, repub_pct_20, dem_pct_20, repub_win_20)
+```
+
+#### Part e {-}
+
+::: {.callout-important title="Think then Run"}
+
+BEFORE trying, what do you think will happen if you change the order of mutate and select:
+
+-   the results will be the same
+-   we'll get an error
+-   we won't get an error, but the results will be different
+
+:::
+
+```{r}
+# Now try it. Change the order of mutate and select below.
+# elections_small |> 
+#   filter(state_name == "Delaware") |> 
+#   mutate(repub_win_20 = repub_pct_20 > dem_pct_20) |> 
+#   select(county_name, repub_pct_20, dem_pct_20, repub_win_20)
+```
+
+\
+\
+\
+\
+
+### Exercise 6: DIY pipe series {-}
+
+We've now learned 4 of the 6 wrangling verbs: `select`, `filter`, `mutate`, `arrange.` Let's practice combining these into pipe series. Here are some hot tips:
+
+-   Before writing any code, translate the prompt: how many distinct wrangling steps are needed and what verb do we need in each step?
+-   Add each verb one at a time -- don't try writing a whole chunk at once.
+
+### Part a {-}
+
+Show just the counties in Minnesota and their Democratic 2020 vote percentage, from highest to lowest. Your answer should have just 2 columns.
+
+```{r}
+```
+
+#### Part b {-}
+
+Create a new dataset named `mn_wi` that sorts the counties in Minnesota and Wisconsin from lowest to highest in terms of the *change* in Democratic vote percentage in 2020 vs 2016. This dataset should include the following variables (and only these variables): `state_name`, `county_name`, `dem_pct_20`, `dem_pct_16`, and a variable measuring the change in Democratic vote percentage in 2020 vs 2016.
+
+```{r}
+# Define the dataset
+# Only store the results once you're confident that they're correct
+
+
+# Check out the first 6 rows to confirm your results
+
+```
+
+#### Part c {-}
+
+Construct and discuss a plot of the county-level change in Democratic vote percent in 2020 vs 2016, and how this differs between Minnesota and Wisconsin.
+
+```{r}
+```
+
+\
+\
+\
+\
+
+### Exercise 7: summarize demo {-}
+
+6 verbs: `select`, `filter`, `arrange`, `mutate`, `summarize`, `group_by`
+
+Let's talk about the last 2 verbs. `summarize()` (or equivalently `summarise()`) takes an entire data frame as input and outputs a single row with one or more summary statistics. For each chunk below, indicate what the code does.
+
+```{r}
+# What does this do?
+# elections_small |> 
+#   summarize(median(repub_pct_20))
 ```
 
 ```{r}
-# Load package needed for refining color palette
-library(RColorBrewer)
-
-# Now fix the colors
-ggplot(elections_by_state, aes(map_id = state_name, fill = repub_20_categories)) +
-  geom_map(map = states_map) +
-  expand_limits(x = states_map$long, y = states_map$lat) +
-  theme_map() + 
-  scale_fill_manual(values = rev(brewer.pal(8, "RdBu")), name = "% Republican")
+# What does this do?
+# elections_small |> 
+#   summarize(median_repub = median(repub_pct_20))
 ```
-
-##### Part c {.unnumbered}
-
-We can add other layers, like points, on top of a choropleth map. Add a Starbucks layer! Do you notice any relationship between Starbucks and elections? Or are we just doing things at this point? ;)
 
 ```{r}
-# Get only the starbucks data from the US
-starbucks_us <- starbucks %>% 
-  filter(Country == "US")
-
-# Map it
-ggplot(elections_by_state, aes(map_id = state_name, fill = repub_20_categories)) +
-  geom_map(map = states_map) +
-  geom_point(
-    data = starbucks_us,
-    aes(x = Longitude, y = Latitude),
-    size = 0.05,
-    alpha = 0.2,
-    inherit.aes = FALSE
-  ) +
-  expand_limits(x = states_map$long, y = states_map$lat) +
-  theme_map() + 
-  scale_fill_manual(values = rev(brewer.pal(8, "RdBu")), name = "% Republican")
+# What does this do?
+# elections_small |> 
+#   summarize(median_repub = median(repub_pct_20), total_votes = sum(total_votes_20))
 ```
 
-**Details (if you're curious)**
+\
+\
+\
+\
 
--   `map_id` is a required aesthetic for `geom_map()`.
-    -   It specifies which variable in our dataset indicates the region (here `state_name`).
-    -   It connects this variable (`state_name`) to the `region` variable in our mapping background (`states_map`). These variables must have the same possible outcomes in order to be matched up (`alabama`, `alaska`, `arizona`,...).
--   `expand_limits()` assures that the map covers the entire area it's supposed to, by pulling longitudes and latitudes from the `states_map`.
+### Exercise 8: `summarize` + `group_by` demo {-}
 
-##### Part d {.unnumbered}
+6 verbs: `select`, `filter`, `arrange`, `mutate`, `summarize`, `group_by`
 
-We used `geom_sf()` for point maps. What `geom` do we use for choropleth maps?
-
-### Exercise 9: County-level choropleth maps {.unnumbered}
-
-Let's map the 2020 Republican support in each *county*.
-
-##### Part a {.unnumbered}
-
-We again need two pieces of information.
-
-1.  Data on elections in each county, which we already have: `elections_by_county`.
-
-2.  A background map of county boundaries in the US, stored in the `county_map` dataset in the `socviz` package:
+Finally, `group_by()` groups the units of observation or rows of a data frame by a specified set of variables. Alone, this function doesn't change the appearance of our dataset or seem to do anything at all:
 
 ```{r}
-# Get the latitude and longitude coordinates of county boundaries
-library(socviz)
-data(county_map) 
-
-# Check it out
-head(county_map)
+elections_small |> 
+   group_by(state_name) |> 
+   head()
 ```
 
-##### Pause {.unnumbered}
-
-**Important detail:** We officially have a headache. Our `county_map` refers to each county by a **5-number** `id`. Our `elections_by_counties` data refers to each county by a `county_fips` code, which is *mostly* the same as `id`, BUT drops any 0's at the beginning of the code.
+Though it does change the underlying structure of the dataset:
 
 ```{r}
-head(county_map)
-head(elections_by_counties)
+# Check out the structure before and after group_by
+# elections_small |> 
+#   class()
+# 
+# elections_small |> 
+#   group_by(state_name) |> 
+#   class()
 ```
 
-This just means that we have to wrangle the data so that it can communicate with the background map.
+Where it really shines is in partnership with `summarize()`.
 
 ```{r}
-# Add 0's at the beginning of any fips_code that's fewer than 5 numbers long
-# Don't worry about the syntax
-elections_by_counties <- elections_by_counties %>% 
-  mutate(county_fips = as.character(county_fips)) %>% 
-  mutate(county_fips = 
-           ifelse(nchar(county_fips) == 4, paste0("0", county_fips), county_fips))
+# What does this do?
+# (What if we didn't use group_by?)
+# elections_small |> 
+#   group_by(state_name) |> 
+#   summarize(median_repub = median(repub_pct_20), total_votes = sum(total_votes_20)) 
 ```
 
-##### Part b {.unnumbered}
+::: {.callout-warning title="Reflect"}
 
-*Now* map Republican support by county. Let's go straight to the discretized `repub_20_categories` variable, and a good color scale.
+Notice that `group_by()` with `summarize()` produces new data frame or tibble! But the units of observation are now states instead of counties within states.
+
+:::
+
+\
+\
+\
+\
+
+### Exercise 9: DIY {-}
+
+Let's practice (some of) our 6 verbs: `select`, `filter`, `arrange`, `mutate`, `summarize`, `group_by` Remember:
+
+-   Before writing any code, translate the given prompts: how many distinct wrangling steps are needed and what verb do we need in each step?
+-   Add each verb one at a time.
+
+#### Part a {-}
+
+NOTE: Part a is a challenge exercise. If you get really stuck, move on to Part b which is the same overall question, but with hints.
 
 ```{r}
-ggplot(elections_by_counties, aes(map_id = county_fips, fill = repub_20_categories)) +
-  geom_map(map = county_map) +
-  scale_fill_manual(values = rev(brewer.pal(10, "RdBu")), name = "% Republican") +
-  expand_limits(x = county_map$long, y = county_map$lat) +
-  theme_map() +
-  theme(legend.position = "right") + 
-  coord_equal()
+# Sort the *states* from the most to least total votes cast in 2020
+
 ```
 
-#### Exercise 10: Play around! {.unnumbered}
+```{r}
+# In 2020, what were the total number of votes for the Democratic candidate and the total number of votes for the Republican candidate in each *state*?
 
-Construct county-level maps of `median_rent` and `median_age`.
+```
 
-#### Exercise 11: Choropleth maps with leaflet {.unnumbered}
+```{r}
+# What states did the Democratic candidate win in 2020?
 
-Though `ggplot()` is often better for this purpose, we can also make choropleth maps with `leaflet()`. If you're curious, check out the `leaflet` documentation:
+```
 
-<https://rstudio.github.io/leaflet/choropleths.html>
+#### Part b {-}
+
+```{r}
+# Sort the states from the most to least total votes cast in 2020
+# HINT: Calculate the total number of votes in each state, then sort
+
+```
+
+```{r}
+# In 2020, what were the total number of votes for the Democratic candidate and the total number of votes for the Republican candidate in each state?
+# HINT: First calculate the number of Dem and Repub votes in each *county*
+# Then group and summarize these by state
+
+```
+
+```{r}
+# What states did the Democratic candidate win in 2020?
+# HINT: Start with the results from the previous chunk, and then keep only some rows
+
+```
+
+\
+\
+\
+\
+
+### Exercise 10: Practice on new data {-}
+
+Recall the World Cup football/soccer data from TidyTuesday:
+
+```{r}
+world_cup <- read.csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-11-29/worldcups.csv")
+```
+
+You can find a codebook [here](https://github.com/rfordatascience/tidytuesday/tree/master/data/2022/2022-11-29). Use (some of) our 6 verbs (`select`, `filter`, `arrange`, `mutate`, `summarize`, `group_by`) and data viz to address the following prompts.
+
+```{r}
+# In what years did Brazil win the World Cup?
+
+```
+
+```{r}
+# What were the 6 World Cups with the highest attendance?
+
+```
+
+```{r}
+# Construct a univariate plot of goals_scored (no wrangling necessary)
+# This provides a visual summary of how the number of goals_scored varies from World Cup to World Cup
+
+```
+
+```{r}
+# Let's follow up the plot with some more precise numerical summaries
+# Calculate the min, median, and max number of goals_scored across all World Cups
+# NOTE: Visually compare these numerical summaries to what you observed in the plot
+
+```
+
+```{r}
+# Construct a bivariate plot of how the number of goals_scored in the World Cup has changed over the years
+# No wrangling necessary
+
+```
+
+```{r}
+# Our above summaries might be a bit misleading.
+# The number of games played at the World Cup varies.
+# Construct a bivariate plot of how the typical number of goals per game has changed over the years
+
+
+```
+
+\
+\
+\
+\
+
+### Exercise 11: Practice on your data {-}
+
+Return to the TidyTuesday data you're using in Homework 3. Use your new wrangling skills to play around. What new insights can you gain?!
+
+\
+\
+\
+\
+
+::: content-hidden
+## Wrap-up
+
+-   Homework 3 is due Tuesday!
+-   Make sure to complete any exercises from today's activity before our next class.
+-   Reach out on Slack, in office hours, etc.
+
+\
+\
+\
+\
+:::
 
 ## Solutions
 
@@ -756,208 +817,331 @@ Though `ggplot()` is often better for this purpose, we can also make choropleth 
 
 <summary>Click for Solutions</summary>
 
-### Example 1 {.unnumbered}
+### EXAMPLE 1
 
-Both addresses used between 0 and 450 therms per month. There seem to be two types of months -- those with lower use around 50 therms and those with higher use around 300/400 therms.
+a.  select
+b.  filter
+c.  mutate
+d.  arrange
+e.  summarize
+
+\
+\
+\
+\
+
+### Exercise 1: select practice {-}
 
 ```{r}
-ggplot(energy, aes(x = therms, fill = address)) + 
-  geom_density(alpha = 0.5)
+# Define elections_small
+elections_small <- elections |>
+  select(state_name, county_name, total_votes_20, repub_pct_20, dem_pct_20, total_votes_16, dem_pct_16)
+
+# Check out the first 6 rows to confirm your code did what you think it did!
+head(elections_small)
+
 ```
 
-### Example 2 {.unnumbered}
+\
+\
+\
+\
 
-Energy use is seasonal, with higher usage in winter months. It seems that address a uses slightly more energy.
+### Exercise 2: filter demo {-}
 
 ```{r}
-ggplot(energy, aes(y = therms, x = date, color = address)) + 
-  geom_point()
-ggplot(energy, aes(y = therms, x = date, color = address)) + 
+# Keep only data on counties in Hawaii
+elections_small |>
+ filter(state_name == "Hawaii")
+```
+
+```{r}
+# Keep counties in Hawaii AND Delaware
+elections_small |> 
+  filter(state_name %in% c("Hawaii", "Delaware"))
+```
+
+```{r}
+# Keep only data on counties where the Republican got MORE THAN 93.97% of the vote in 2020
+elections_small |> 
+  filter(repub_pct_20 > 93.97)
+```
+
+```{r}
+# Keep only data on counties where the Republican got AT LEAST 93.97% of the vote in 2020
+# This should have 1 more row than your answer above
+elections_small |> 
+  filter(repub_pct_20 >= 93.97)
+```
+
+```{r}
+# Keep only data on counties in Texas where the Democrat got more than 65% of the vote in 2020
+# Do this 2 ways.
+# Method 1: 2 filters with 1 condition each
+elections_small |>
+ filter(state_name == "Texas") |>
+ filter(dem_pct_20 > 65)
+
+# Method 2: 1 filter with 2 conditions
+elections_small |>
+ filter(state_name == "Texas", dem_pct_20 > 65)
+```
+
+\
+\
+\
+\
+
+### Exercise 3: arrange demo {-}
+
+```{r}
+# Arrange the counties in elections_small from lowest to highest percentage of 2020 Republican support
+# Print out just the first 6 rows
+elections_small |>
+  arrange(repub_pct_20) |>
+  head()
+```
+
+```{r}
+# Arrange the counties in elections_small from highest to lowest percentage of 2020 Republican support
+# Print out just the first 6 rows
+elections_small |>
+  arrange(desc(repub_pct_20)) |>
+  head()
+```
+
+\
+\
+\
+\
+
+### Exercise 4: mutate demo {-}
+
+```{r}
+# Define diff_20, the difference btwn the Repub and Dem percent in 2020
+elections_small |> 
+  mutate(diff_20 = repub_pct_20 - dem_pct_20) |> 
+  head()
+```
+
+```{r}
+# Define repub_votes_20, the number (not percent) of Repub votes in 2020
+elections_small |> 
+  mutate(repub_votes_20 = round(total_votes_20 * repub_pct_20/100)) |> 
+  head()
+```
+
+```{r}
+# Define repub_win_20, whether the Repub won in 2020 (TRUE or FALSE!)
+elections_small |> 
+  mutate(repub_win_20 = repub_pct_20 > dem_pct_20) |> 
+  head()
+```
+
+\
+\
+\
+\
+
+### Exercise 5: Pipe series {-}
+
+#### Part c {-}
+
+It's more "computationally efficient" to get rid of some rows before arranging.
+
+#### Part e {-}
+
+We can't select a variable before we define it!
+
+\
+\
+\
+\
+
+### Exercise 6: DIY pipe series {-}
+
+#### Part a {-}
+
+Here's my translation:
+
+-   just the counties in Minnesota ---\> filter
+-   just the counties in Minnesota and their Democratic 2020 vote percentage ---\> select
+-   from highest to lowest ---\> arrange
+
+```{r}
+# Remember to try this 1 line at a time
+elections_small |> 
+  filter(state_name == "Minnesota") |> 
+  select(county_name, dem_pct_20) |> 
+  arrange(desc(dem_pct_20))
+
+```
+
+#### Part b {-}
+
+Here's my translation:
+
+-   counties in Minnesota and Wisconsin ---\> filter
+-   change in Democratic vote percentage in 2020 vs 2016 ---\> mutate (we don't already have this)
+-   sorts the counties from highest to lowest ---\> arrange
+-   include the following variables (and only these variables) ---\> select
+
+```{r}
+# Remember to try this 1 line at a time before storing!
+mn_wi <- elections_small |> 
+  filter(state_name %in% c("Minnesota", "Wisconsin")) |> 
+  select(state_name, county_name, dem_pct_20, dem_pct_16) |>
+  mutate(dem_change = dem_pct_20 - dem_pct_16) |> 
+  arrange(dem_change)
+  
+# Check it out
+head(mn_wi)
+```
+
+#### Part c {-}
+
+There was a stronger Dem shift from 2016 to 2020 in Minnesota. Further, in most counties across both states, the percent Dem tended to be higher in 2020 than in 2016.
+
+```{r}
+ggplot(mn_wi, aes(x = dem_change, fill = state_name)) + 
+  geom_density(alpha = 0.5)
+ggplot(mn_wi, aes(y = dem_change, x = state_name)) + 
+  geom_boxplot()
+```
+
+\
+\
+\
+\
+
+### Exercise 7: summarize demo {-}
+
+```{r}
+# Calculate the median Repub vote percentage in 2020 across all counties
+elections_small |> 
+  summarize(median(repub_pct_20))
+```
+
+```{r}
+# Calculate the median Repub vote percentage in 2020 across all counties
+# AND name it "median_repub"
+elections_small |> 
+  summarize(median_repub = median(repub_pct_20))
+```
+
+```{r}
+# Calculate the median Repub vote percentage in 2020 across all counties
+# AND the total number of votes across all counties
+# AND name the results
+elections_small |> 
+  summarize(median_repub = median(repub_pct_20), total_votes = sum(total_votes_20))
+```
+
+\
+\
+\
+\
+
+### Exercise 8: `summarize` + `group_by` demo {-}
+
+```{r}
+# Calculate the median 2020 Repub percent and total votes BY STATE
+elections_small |> 
+  group_by(state_name) |> 
+  summarize(median_repub = median(repub_pct_20), total_votes = sum(total_votes_20)) 
+```
+
+\
+\
+\
+\
+
+### Exercise 9: DIY {-}
+
+#### Part a {-}
+
+```{r}
+# Sort the states from the most to least total votes in 2020
+elections_small |> 
+  group_by(state_name) |> 
+  summarize(total = sum(total_votes_20)) |> 
+  arrange(desc(total))
+```
+
+```{r}
+# In 2020, what were the total number of votes for the Democratic candidate and the total number of votes for the Republican candidate in each *state*?
+elections_small |> 
+  mutate(dem_votes_20 = round(total_votes_20 * dem_pct_20 / 100), 
+         repub_votes_20 = round(total_votes_20 * repub_pct_20 / 100)) |> 
+  group_by(state_name) |> 
+  summarize(dem_total = sum(dem_votes_20),
+            repub_total = sum(repub_votes_20))
+```
+
+```{r}
+# What states did the Democratic candidate win in 2020?
+elections_small |> 
+  mutate(dem_votes_20 = round(total_votes_20 * dem_pct_20 / 100), 
+         repub_votes_20 = round(total_votes_20 * repub_pct_20 / 100)) |> 
+  group_by(state_name) |> 
+  summarize(dem_total = sum(dem_votes_20),
+            repub_total = sum(repub_votes_20)) |> 
+  filter(dem_total > repub_total)
+```
+
+\
+\
+\
+\
+
+### Exercise 10: Practice on new data {-}
+
+```{r}
+# In what years did Brazil win the World Cup?
+world_cup |> 
+  filter(winner == "Brazil")
+```
+
+```{r}
+# What were the 6 World Cups with the highest attendance?
+world_cup |> 
+  arrange(desc(attendance)) |> 
+  head()
+```
+
+```{r}
+# Construct a univariate plot of goals_scored (no wrangling necessary)
+# This provides a visual summary of how the number of goals_scored varies from World Cup to World Cup
+ggplot(world_cup, aes(x = goals_scored)) + 
+  geom_histogram(color = "white")
+```
+
+```{r}
+# Let's follow up the plot with some more precise numerical summaries
+# Calculate the min, median, and max number of goals_scored across all World Cups
+# NOTE: Visually compare these numerical summaries to what you observed in the plot
+world_cup |> 
+  summarize(min(goals_scored), median(goals_scored), max(goals_scored))
+```
+
+```{r}
+# Construct a bivariate plot of how the number of goals_scored in the World Cup has changed over the years
+# No wrangling necessary
+ggplot(world_cup, aes(x = year, y = goals_scored)) + 
+  geom_point() + 
   geom_line()
 ```
 
-### Example 3 {.unnumbered}
-
-At both addresses, typical energy use *increased* after renovations.
-
 ```{r}
-ggplot(energy, aes(y = therms, x = renovated)) + 
-  geom_boxplot() + 
-  facet_wrap(~ address)
+# Our above summaries might be a bit misleading.
+# The number of games played at the World Cup varies.
+# Construct a bivariate plot of how the typical number of goals per game has changed over the years
+per_game_data <- world_cup |> 
+  mutate(goals_per_game = goals_scored / games)
 
-# A density plot isn't very helpful for comparing typical therms in this example!
-ggplot(energy, aes(x = therms, fill = renovated)) + 
-  geom_density(alpha = 0.5) + 
-  facet_wrap(~ address)
-```
-
-### Example 4 {.unnumbered}
-
-lurking variable = outdoor temperature (as reflected by hdd)
-
-```{r}
-# It happened to be colder outside after renovations (higher hdd)
-ggplot(energy, aes(y = hdd, x = renovated)) + 
-  geom_boxplot() + 
-  facet_wrap(~ address)
-
-# When controlling for outside temps (via hdd), energy use decreased post-renovation
-ggplot(energy, aes(y = therms, x = hdd, color = renovated)) + 
-  geom_point(alpha = 0.5) + 
-  geom_smooth(method = "lm", se = FALSE) + 
-  facet_wrap(~ address)
-```
-
-### Example 5 {.unnumbered}
-
-BUT this was explained by a *confounding* or *omitted* or *lurking* variable: `hdd` (outdoor temperature)
-
--   After renovation...
--   *it happened to be colder*...
--   which then leads to higher energy use.
-
-Thus, *when controlling for* outdoor temps, renovations led to *decreased* energy use.
-
-### Exercise 3: Your turn {.unnumbered}
-
-```{r}
-leaflet(data = starbucks_mn) %>% 
-  addTiles() %>% 
-  addMarkers()
-```
-
-### Exercise 3: A simple scatterplot {.unnumbered}
-
-It would be nice to also have some actual reference maps of countries in the background.
-
-```{r}
-ggplot(starbucks, aes(y = Latitude, x = Longitude)) + 
-  geom_point(size = 0.5)
-```
-
-### Exercise 6: A state and county-level map {.unnumbered}
-
-#### Part b {.unnumbered}
-
-Adjust the code below to make the plot! Remove the `#` to run it.
-
-```{r}
-ggplot(midwest_boundaries) +
-  geom_sf() +
-  geom_point(
-    data = starbucks_midwest,
-    aes(x = Longitude, y = Latitude),
-    alpha = 0.7,
-    size = 0.2,
-    color = 'darkgreen'
-  ) +
-  theme_map()
-```
-
-### Exercise 7: Contour maps {.unnumbered}
-
-Especially when there are lots of point locations, and those locations start overlapping on a map, it can be tough to visualize areas of higher *density*. Consider the Starbucks locations in Canada, Mexico, and the US that we mapped earlier:
-
-```{r}
-# Point map (we made this earlier)
-ggplot(cma_boundaries) + 
-  geom_sf() + 
-  geom_point(
-    data = starbucks_cma,
-    aes(x = Longitude, y = Latitude),
-    alpha = 0.3,
-    size = 0.2,
-    color = "darkgreen"
-  ) +
-  coord_sf(xlim = c(-179.14, -50), ylim = c(14.54, 83.11)) +
-  theme_map()
-```
-
-Now check out the contour map.
-
-```{r}
-# What changed in the plot?
-# What changed in our code?!
-ggplot(cma_boundaries) + 
-  geom_sf() + 
-  geom_density_2d(
-    data = starbucks_cma,
-    aes(x = Longitude, y = Latitude),
-    size = 0.2,
-    color = "darkgreen"
-  ) +
-  coord_sf(xlim = c(-179.14, -50), ylim = c(14.54, 83.11)) +
-  theme_map()
-```
-
-### Exercises Part 3: Choropleth maps {.unnumbered}
-
-Spatial data isn't always in the form of point locations! For example, recall the state and county-level data on presidential elections.
-
-```{r}
-elections_by_state <-  read.csv("https://mac-stat.github.io/data/election_2020_by_state.csv")
-elections_by_counties <- read.csv("https://mac-stat.github.io/data/election_2020_county.csv")
-```
-
-In these datasets, we're interested in the overall election outcome by region (state or county), not the specific geographic location of some observation. Let's wrangle our data first.
-
-We'll focus on just a few variables of interest, and create a new variable (`repub_20_categories`) that *discretizes* the `repub_pct_20` variable into increments of 5 percentage points (for states) or 10 percentage points (for counties):
-
-```{r}
-# Don't worry about the code!
-
-elections_by_state <- elections_by_state %>% 
-  filter(state_abbr != "DC") %>% 
-  select(state_name, state_abbr, repub_pct_20) %>% 
-  mutate(repub_20_categories = 
-           cut(repub_pct_20, 
-               breaks = seq(30, 70, by = 5), 
-               labels = c("30-34", "35-39", "40-44", "45-49",
-                          "50-54", "55-59", "60-64", "65-70"), 
-               include.lowest = TRUE))
-
-elections_by_counties <- elections_by_counties %>% 
-  select(state_name, state_abbr, county_name, county_fips,
-          repub_pct_20, median_age, median_rent) %>% 
-  mutate(repub_20_categories = 
-           cut(repub_pct_20, 
-               breaks = seq(0, 100, by = 10),
-               labels = c("0-9", "10-19", "20-29", "30-39", "40-49",
-                          "50-59", "60-69", "70-79", "80-89", "90-100"),
-               include.lowest = TRUE))
-
-# Add 0's at the beginning of any fips_code that's fewer than 5 numbers long
-# Don't worry about the syntax
-elections_by_counties <- elections_by_counties %>% 
-  mutate(county_fips = as.character(county_fips)) %>% 
-  mutate(county_fips = 
-           ifelse(nchar(county_fips) == 4, paste0("0", county_fips), county_fips))
-```
-
-### Exercise 8: State-level choropleth maps {.unnumbered}
-
-#### Part d {.unnumbered}
-
-`geom_map()`
-
-### Exercise 10: Play around! {.unnumbered}
-
-```{r}
-ggplot(elections_by_counties, aes(map_id = county_fips, fill = median_rent)) +
-  geom_map(map = county_map) +
-  expand_limits(x = county_map$long, y = county_map$lat) +
-  theme_map() +
-  theme(legend.position = "right") + 
-  coord_equal() + 
-  scale_fill_gradientn(name = "median rent", colors = c("white", "lightgreen", "darkgreen"))
-
-ggplot(elections_by_counties, aes(map_id = county_fips, fill = median_age)) +
-  geom_map(map = county_map) +
-  expand_limits(x = county_map$long, y = county_map$lat) +
-  theme_map() +
-  theme(legend.position = "right") + 
-  coord_equal() + 
-  scale_fill_gradientn(name = "median age", colors = terrain.colors(10))
+ggplot(per_game_data, aes(x = year, y = goals_per_game)) + 
+  geom_point() + 
+  geom_line()
 ```
 
 </details>

@@ -1,538 +1,963 @@
 ---
-title: "Lesson 4 - Bivariate Viz"
+title: "Lesson 4 - Spatial viz"
+number-sections: true
+execute: 
+  warning: false
+fig-env: 'figure'
+fig-pos: 'h'
+fig-align: center
+code-fold: false
 ---
 
+::: {.callout-caution title="Learning Goals"}
+-   Plot data points on top of a map (`ggplot()`).
+-   Create choropleth maps (`geom_map()`).
+-   Understand the basics of creating a map using `leaflet`, including adding points and choropleths to a base map.
+:::
+
+::: {.callout-note title="Additional Resources"}
+For more information about the topics covered in this chapter, refer to the resources below:
+
+-   [Creating maps with leaflet (YouTube)](https://www.youtube.com/embed/w5U62wUki3E) by Lisa Lendway
+-   [More leaflet (YouTube)](https://www.youtube.com/embed/U07OQ3V-W2k) by Lisa Lendway
+-   [Spatial data visualization (Chp 17, intro and 17.1, html)](https://mdsr-book.github.io/mdsr2e/ch-spatial.html) by Baumer et al
+-   [Detailed leaflet documenation (html)](https://rstudio.github.io/leaflet/)
+-   [leaflet cheat sheet (pdf)](https://ugoproto.github.io/ugo_r_doc/pdf/leaflet-cheat-sheet.pdf)
+-   [Provider map previews (html)](http://leaflet-extras.github.io/leaflet-providers/preview/)
+-   [Tutorial (html)](https://learn.r-journalism.com/en/mapping/census_maps/census-maps/) by Andrew Ba Tran, investigative data reporter at Washington Post
+-   For more advanced work with spatial mapping, GIS in R, etc. see the [sf package (html)](https://r-spatial.github.io/sf/).
+:::
+
+::: {.callout-important title="Instructions"}
+**General**
+
+-   Be kind to yourself.
+-   Collaborate with and be kind to others. You are expected to work together as a group.
+-   Ask questions. Remember that we won't discuss these exercises as a class.
+
+**Activity Specific**
+
+Help each other with the following:
+
+-   Create a new Quarto document in the activities folder of your portfolio project and do not forgot to include it in `_quarto.yml` file. Then click the `</> Code` link at the top right corner of this page and copy the code into the created Quarto document. This is where you'll take notes. Remember that the portfolio is yours, so take notes in whatever way is best for you.
+-   **Don't start the Exercises section before we get there as a class.** First, engage in class discussion and eventually collaborate with your group on the exercises!
+:::
+
+::: {.callout-important title="Instructions"}
+Run the following commands in the Console to install the packages used in this activity into your machine if they are not already installed.
+
 ```{r}
-#| echo: false
-#| message: false
+#| eval: false
 
-# Load packages
-library(tidyverse)
-library(tint)
-library(mosaic)
-
+install.packages(c("sf", "maps", "RColorBrewer", "gplots", "socviz", "leaflet", "devtools"))
+devtools::install_github("ropensci/rnaturalearthhires")
 ```
+:::
 
 ## Review
 
-Let's review some *univariate* concepts and code using our class survey data. If the answers aren't at the top of your mind, don't fret! We've barely started speaking this new language, and learned a ton of vocab last week, so you naturally won't remember it all.
+In the previous activity, we explored a Simpson's Paradox--it seemed that:
 
-```{r}
-# Import data
-survey <- read.csv("https://ajohns24.github.io/data/112/about_us_2024.csv")
+-   States with higher spending...
+-   tend to have lower average SAT scores.
 
-# How many students have now filled out the survey?
+BUT this was explained by a *confounding* or *omitted* or *lurking* variable: the % of students in a state that take the SAT:
 
-nrow(survey)
+-   States with higher spending...
+-   tend to have a higher % of students of students that take the SAT...
+-   which then "leads to" lower average SAT scores.
 
-# What type of variables do we have?
-str(survey)
-```
+Thus, *when controlling for the % of students that take the SAT*, more spending is correlated with higher scores.
 
-### EXAMPLE 1: Hangout Preferences {.unnumbered}
+Let's explore a Simpson's paradox related to Mac!
 
-Students were asked, in that moment, where they'd most like to spend time outside. How did they answer? Was there a lot of agreement or a lot of variability in answers? Build and interpret a plot that helps address these questions while reviewing:
+Back in the 2000s, Macalester invested in insulating a few campus-owned houses, with the hopes of leading to energy savings. <!-- 180/182 Vernon Ave, 1662 Princeton Ave, and 1668 Princeton Ave --> Former Mac prof Danny Kaplan accessed monthly data on energy use and other info for these addresses, before and after renovations:
 
--   "code as communication"
--   connecting with the components of a plot:
-    -   set up a **frame**
-    -   add a **layer** / geometric element
-    -   change the **theme**, e.g. axis labels, color, fill
-
-```{r}
-# Attach a package needed to use the ggplot function
+```{r echo = FALSE}
+# Load tidyverse package for plotting and wrangling
 library(tidyverse)
 
-# Make a ggplot
-ggplot(survey, aes(x = hangout)) +
-  geom_bar()
+# Import the data and only keep 2 addresses
+energy <- read.csv("https://mac-stat.github.io/data/MacNaturalGas.csv") %>% 
+  mutate(date = as.Date(paste0(month, "/1/", year), "%m/%d/%Y")) %>% 
+  filter(address != "c")
+
+# Check it out
+head(energy)
 ```
 
-```{r echo=FALSE, message=FALSE}
-library(tidyverse)
-```
+Included are the following variables:
 
-### EXAMPLE 2: Temperature Preferences {.unnumbered}
+| variable | meaning |
+|:-----------------------------------|:-----------------------------------|
+| therms | a measure of energy use (the more energy used, the larger the therms) |
+| address | a or b |
+| renovated | whether the location had been renovated, yes or no |
+| month | from 1 to 12 |
+| hdd | monthly heating degree days. a proxy measure of outside temperatures (the higher the hdd, the COLDER it was) |
 
-Students were asked about their ideal outdoor temperature, in degrees Celsius. How did they answer? What was the typical response? What was the range in responses? Were there any outliers? Build and interpret 2 plots that help address these questions.
-
-```{r}
-ggplot(survey, aes(x = fave_temp)) +
-  geom_histogram(color = "white")
-
-ggplot(survey, aes(x = fave_temp)) +
-  geom_density()
-
-```
-
-::: {.callout-note title="Bar Charts vs. Histograms"}
-Bar charts & histograms can appear pretty similar, but they do different things.
-
--   **Bar charts** count up the number of observations of each outcome of a variable. They're good for *categorical* variables, or *quantitative* variables with only a handful of possible outcomes.
--   **Histograms** count up the number of observations that fall into different numerical *ranges* of variable. They're good for *quantitative* variables, especially those with many different observed outcomes.
+::: {.callout-important title="Instructions"}
+-   Construct a plot that addresses each research question
+-   Include a 1-sentence summary of the plot.
 :::
+
+### Example 1 {.unnumbered}
+
+What was range in, and typical, energy used each month, as measured by `therms`? How does this differ by address?
+
+```{r}
+```
+
+### Example 2 {.unnumbered}
+
+How did energy use (`therms`) change over time (`date`) at the two addresses?
+
+```{r}
+```
+
+### Example 3 {.unnumbered}
+
+How did the typical energy use (`therms`) at the two addresses change before and after they were `renovated`?
+
+```{r}
+```
+
+### Example 4 {.unnumbered}
+
+That seems unfortunate that energy usage went *up* after renovations. But also fishy.
+
+Take 5 minutes in your groups to try and explain what's going on here. Think: What *confounding*, *lurking*, or *omitted* variable related to energy usage are we ignoring here? Try to make some plots to prove your point.
+
+```{r}
+```
+
+### Example 5 {.unnumbered}
+
+Let's summarize the punchlines by filling in the ???. It seemed that:
+
+-   After renovation...
+-   energy use increased.
+
+BUT this was explained by a *confounding* or *omitted* or *lurking* variable: ???
+
+-   After renovation...
+-   ???...
+-   which then leads to higher energy use.
+
+Thus, *when controlling for* ???, renovations led to *decreased* energy use.
 
 ## New stuff
 
-Thus far, we've been studying one variable at a time, using *univariate* plots. But once we get a sense of how individual variables behave on their own, our questions often turn to *relationships* among variables. For example, in our `hikes` data:
+**Types of spatial viz:**
 
--   How much `time` does it take to complete a hike? ------\> How is `time` related to a hike's `elevation`? What about its `length`?
--   How does difficult `rating` vary from hike to hike? -------\> How is difficulty `rating` related to a hike's `ascent`?
+-   **Point Maps**: plotting locations of *individual observations*\
+    example: [bigfoot sightings](https://experience.arcgis.com/experience/9cc90686aa164853a1355f310f66ede0)
 
-### Exploring relationships
+-   **Contour Maps**: plotting the *density* or distribution of observations (not the individual observations themselves)
 
-Exploring univariate patterns often sparks follow-up questions about **relationships** between 2+ variables. Often, but not always, variables take on specific roles:
+-   **Choropleth Maps**: plotting outcomes in different *regions*
 
--   **response variable**: the variable whose variability we would like to explain (`time` to complete a hike)
--   **predictors**: variables that might explain some of the variability in the response (a hike's `elevation` or `length`)
+    -   [NYT article on effects of redlining](https://www.nytimes.com/interactive/2020/08/24/climate/racism-redlining-cities-global-warming.html?fbclid=IwAR1iX20gZcHt-HERYeJs0t2fjSXRJh2aBYYSfSkpc50dBvfByBCWezTSXbw)
+    -   [Minnesota Reformer article on how Mpls / St Paul voted on 2021 ballot measures related to mayoral, policing, and rent policies](https://minnesotareformer.com/2021/11/04/maps-how-minneapolis-voted-on-key-ballot-questions/)
 
-Visualizations can help explore:
+These spatial maps can be **static** or **dynamic/interactive**.
 
--   relationship *trends* (direction and form)
--   relationship *strength* (degree of variability from the trend)
--   *outliers* in the relationship
+## Exercises
 
-#### EXAMPLE 3 {.unnumbered}
+### Preview
 
-For each pair of variables below, sketch on paper a visualization of their relationship. Focus on general viz process, don't worry about the exact details. The data here are totally made up.
+You'll explore some R spatial viz tools below. In general, there are two important pieces to every map:
 
-a.  3pm temperature (response) vs 9am temperature (predictor)
+**Piece 1: A dataset**
 
-```{r}
-data.frame(temp_3pm = c(24, 26, 20, 15, 15, 15), temp_9am = c(14, 18, 15, 13, 11, 11))
-```
+This dataset must include either:
 
-b.  3pm temperature (response) vs location (predictor)
+-   location coordinates for your points of interest (for point maps); or
+-   variable outcomes for your regions of interest (for choropleth maps)
 
-```{r}
-weather <- data.frame(temp_3pm = c(24, 26, 20, 15, 15, 0, 40, 60, 57, 44, 51, 75),
-                      location = rep(c("A", "B"), each = 6))
-weather
-```
+\
 
-Think: How might we modify the below density plot of `temp_3pm` to distinguish between locations?
+**Piece 2: A background map**
 
-```{r}
-ggplot(weather, aes(x = temp_3pm, fill = location)) +
-      geom_density()
-```
+We need latitude and longitude coordinates to specify the boundaries for your regions of interest (eg: countries, states). This is where it gets really sticky!
 
-c.  `rain_today` (the response) and `location` (the predictor)
+-   County-level, state-level, country-level, continent-level info live in multiple places.
 
-```{r}
-weather <- data.frame(rain_today = c("no", "no", "no", "no", "yes", "no", "yes", "no", "yes", "yes", "no", "yes"),
-                        location = c(rep("A", 7), rep("B", 5)))
-    weather
-```
+-   Where we grab this info *can* depend upon whether we want to make a point map or a choropleth map. (The background maps can be used somewhat interchangeably, but it requires extra code :/)
 
-Think: How might we modify the below bar plot of `location` to distinguish between days on which it did or didn't rain?
+-   Where we grab this info can also depend upon the structure of our data and how much data wrangling / cleaning we're up for. For choropleth maps, the labels of regions in our data must match those in the background map. For example, if our data labels states with their abbreviations (eg: MN) and the background map refers to them as full names in lower case (eg: minnesota), we have to wrangle our data so that it matches the background map.
 
-```{r}
-ggplot(weather, aes(x = location, fill = rain_today)) +
-      geom_bar()
-```
+In short, the code for spatial viz gets very specialized. The goal of these exercises is to:
 
-### General guidance for building bivariate plots
+-   play around and experience the wide variety of spatial viz tools out there
+-   understand the difference between point maps and choropleth maps
+-   have fun
 
-As with univariate plots, an appropriate visualization for the relationship between 2 variables depends upon whether the variables are **quantitative** or **categorical**. In general:
+You can skip around as you wish and it's totally fine if you don't finish everything. Just come back at some point to play around.
 
--   Each **quantitative variable** requires a new *axis* (or a quantitative *scale* if we run out of axes).
--   Each **categorical variable** requires a new way to "group" the graphic (eg: using colors, shapes, separate facets, etc)
--   For visualizations in which **overlap** in glyphs or plots obscures the patterns, try faceting or transparency.
+### Part 1: Interactive points on a map with `leaflet`
 
-## Exercises (required)
+[Leaflet](https://leafletjs.com/) is an open-source JavaScript library for creating maps. We can use it inside R through the `leaflet` package.
 
-[Github user Tony McGovern](https://github.com/tonmcg/US_County_Level_Election_Results_08-20) has compiled and made available 2020/2016/2012 presidential election results for most of 3000+ U.S. counties, except Alaska. (Image: [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Map_of_USA_with_county_outlines_(black_%26_white).png))
+This uses a different plotting framework than `ggplot2`, but still has a `tidyverse` feel (which will become more clear as we learn other tidyverse tools!).
 
-![](https://upload.wikimedia.org/wikipedia/commons/6/68/Map_of_USA_with_county_outlines_%28black_%26_white%29.png)
+The general steps are as follows:
 
-A wrangled version of this data, is imported below, after being combined with:
+1.  Create a *map widget* by calling `leaflet()` and telling it the data to use.
+2.  Add a *base map* using `addTiles()` (the default) or `addProviderTiles()`.
+3.  Add *layers* to the map using layer functions (e.g. `addMarkers()`, `addPolygons()`).
+4.  Print the map widget to *display* it.
 
--   2013 county-level demographics from the `df_county_demographics` data set from the `choroplethr` R package
--   historical voting trends in the state in which the county falls (from <https://www.270towin.com/content/blue-and-red-states>):
-    -   red = consistently Republican
-    -   blue = consistently Democratic
-    -   purple = something in between
+#### Exercise 1: A leaflet with markers / points {.unnumbered}
+
+Earlier this semester, I asked for the latitude and longitude of one of your favorite places. I rounded these to the nearest whole number, so that they're near to but not exactly at those places. Let's load the data and map it!
 
 ```{r}
-# Load data
-elections <- read.csv("https://mac-stat.github.io/data/election_2020_county.csv")
+fave_places <- read.csv("https://ajohns24.github.io/data/112/our_fave_places.csv")
 
 # Check it out
-head(elections)
+head(fave_places)
 ```
 
-We'll use this data to explore voting outcomes within the U.S.'s 2-party system. Here's a list of candidates by year:
+##### Part a {.unnumbered}
 
-| year | Republican candidate | Democratic candidate |
-|:-----|:---------------------|:---------------------|
-| 2020 | Donald Trump         | Joe Biden            |
-| 2016 | Donald Trump         | Hillary Clinton      |
-| 2012 | Mitt Romney          | Barack Obama         |
+You can use a "two-finger scroll" to zoom in and out.
 
-### Exercise 0: Review {.unnumbered}
+```{r}
+# Load the leaflet package
+library(leaflet)
+
+# Just a plotting frame
+leaflet(data = fave_places)
+```
+
+```{r}
+# Now what do we have?
+leaflet(data = fave_places) %>% 
+  addTiles()
+```
+
+```{r}
+# Now what do we have?
+# longitude and latitude refer to the variables in our data
+leaflet(data = fave_places) %>% 
+  addTiles() %>% 
+  addMarkers(lng = ~longitude, lat = ~latitude)
+```
+
+```{r}
+# Since we named them "longitude" and "latitude", the function
+# automatically recognizes these variables. No need to write them!
+leaflet(data = fave_places) %>% 
+  addTiles() %>% 
+  addMarkers()
+```
+
+##### Part b {.unnumbered}
+
+**PLAY AROUND!** This map is interactive. Zoom in on one location. Keep zooming -- what level of detail can you get into? How does that detail depend upon where you try to zoom in (thus what are the limitations of this tool)?
+
+#### Exercise 2: Details {.unnumbered}
+
+We can change all sorts of details in leaflet maps.
+
+```{r}
+# Load package needed to change color
+library(gplots)
+
+# We can add colored circles instead of markers at each location
+leaflet(data = fave_places) %>% 
+  addTiles() %>% 
+  addCircles(color = col2hex("red"))
+```
+
+```{r}
+# We can change the background
+# Mark locations with yellow dots
+# And connect the dots, in their order in the dataset, with green lines
+# (These green lines don't mean anything here, but would if this were somebody's travel path!)
+leaflet(data = fave_places) %>%
+  addProviderTiles("USGS") %>%
+  addCircles(weight = 10, opacity = 1, color = col2hex("yellow")) %>%
+  addPolylines(
+    lng = ~longitude,
+    lat = ~latitude,
+    color = col2hex("green")
+  )
+```
+
+In general:
+
+-   `addProviderTiles()` changes the base map.\
+    To explore all available provider base maps, type `providers` in the console. (Though some don't work :/)
+
+-   Use `addMarkers()` or `addCircles()` to mark locations. Type `?addControl` into the console to pull up a help file which summarizes the aesthetics of these markers and how you can change them. For example:
+
+    -   `weight` = how thick to make the lines, points, pixels
+    -   `opacity` = transparency (like `alpha` in `ggplot2`)
+    -   colors need to be in "hex" form. We used the `col2hex()` function from the `gplots` library to do that
+
+#### Exercise 3: Your turn {.unnumbered}
+
+The `starbucks` data, compiled by Danny Kaplan, contains information about every Starbucks in the world at the time the data were collected, including `Latitude` and `Longitude`:
+
+```{r}
+# Import starbucks location data
+starbucks <- read.csv("https://mac-stat.github.io/data/starbucks.csv")
+```
+
+Let's focus on only those in Minnesota for now:
+
+```{r}
+# Don't worry about the syntax
+starbucks_mn <- starbucks %>%   
+  filter(Country == "US", State.Province == "MN")
+```
+
+```{r}
+
+# Load the leaflet package
+library(leaflet)
+
+# Just a plotting frame
+leaflet(data = starbucks_mn) %>% 
+  addTiles() %>% 
+  addMarkers(lng = ~Longitude, lat = ~Latitude)
+
+```
+
+Create a leaflet map of the Starbucks locations in Minnesota. Keep it simple -- go back to Exercise 1 for an example.
+
+### Part 2: Static points on a map
+
+Leaflet is very powerful and fun. But:
+
+-   It's not great when we have lots of points to map -- it takes lots of time.
+-   It makes good interactive maps, but we often need a static map (eg: we can print interactive maps!).
+
+Let's explore how to make point maps with `ggplot()`, not `leaflet()`.
+
+#### Exercise 3: A simple scatterplot {.unnumbered}
+
+Let's start with the `ggplot()` tools we already know. Construct a scatterplot of all `starbucks` locations, not just those in Minnesota, with:
+
+-   Latitude and Longitude coordinates (which goes on the y-axis?!)
+-   Make the points transparent (alpha = 0.2) and smaller (size = 0.2)
+
+It's pretty cool that the plots we already know can provide some spatial context. But what *don't* you like about this plot?
+
+```{r}
+ggplot(starbucks, aes(x = Longitude, y = Latitude)) +
+  geom_point(alpha = 0.2, size = 0.2)
+```
+
+#### Exercise 4: Adding a country-level background {.unnumbered}
+
+Let's add a background map of *country-level* boundaries.
 
 #### Part a {.unnumbered}
 
-How many, or roughly what percent, of the 3000+ counties did the Republican candidate win in 2020?
-
--   Take a guess.
--   Then make a plot of the `winner` variable.
--   Then discuss what follow-up questions you might have (and that our data might help us answer).
+First, we can grab country-level boundaries from the `rnaturalearth` package.
 
 ```{r}
-ggplot(elections, aes(x = winner_20)) +
-       geom_bar()
+# Load the package
+library(rnaturalearth)
+
+# Get info about country boundaries across the world
+# in a "sf" or simple feature format
+world_boundaries <- ne_countries(returnclass = "sf")
 ```
 
-#### Part b {.unnumbered}
+In your **console**, type `world_boundaries` to check out what's stored there. Don't print it our in your Rmd -- printing it would be really messy there (even just the `head()`).
 
-The `repub_pct_20` variable provides more detail about the Republican support in each county. Construct a plot of `repub_pct_20`.
+##### Part b {.unnumbered}
 
-Notice that the distribution of Republican support from county to county is slightly **left skewed** or **negatively skewed**.
-
-What follow-up questions do you have?
+Run the chunks below to build up a new map.
 
 ```{r}
-ggplot(elections, aes(x = repub_pct_20)) +
-  geom_histogram(color = "white")
-```
-
-### Exercise 1: Quantitative vs Quantitative Intuition Check {.unnumbered}
-
-::: {.callout-important title="Be Quick"}
-Don't spend more than 3 minutes on this!
-:::
-
-Below is a **scatterplot** of the Republican support in 2020 vs 2016. Notice that:
-
--   both variables are quantitative, and get their own axes
--   the *response* variable is on the y-axis, demonstrating how `repub_pct_20` might be predicted by `repub_pct_16`, not vice versa
-
-Try to replicate this using `ggplot()`. THINK:
-
--   What info do you need to set up the canvas?
--   What geometric layer (`geom_???`) might add these dots / points for each county? We haven't learned this yet, just take some guesses.
-
-![](https://mac-stat.github.io/images/112/scatterplot_demo.png){width="50%"}
-
-```{r}
-ggplot(elections, aes(x = repub_pct_16, y = repub_pct_20)) +
-  geom_point()
-```
-
-### Exercise 2: 2 Quantitiative Variables {.unnumbered}
-
-Run each chunk below to build up a a scatterplot of `repub_pct_20` vs `repub_pct_16` with different *glyphs* representing each county. Address or think about any prompts in the comments (`#`).
-
-```{r eval = FALSE}
-# Set up the plotting frame
-# This differs from our histogram of repub_pct_20 because there are now two variables being measured. 
-ggplot(elections, aes(y = repub_pct_20, x = repub_pct_16))
-```
-
-```{r eval = FALSE}
-# Add a layer of points for each county
-# Take note of the geom!
-ggplot(elections, aes(y = repub_pct_20, x = repub_pct_16)) +
-  geom_point()
-```
-
-```{r eval = FALSE}
-# Change the shape of the points
-# What happens if you change the shape to another number? (the shape of the individual points change)
-ggplot(elections, aes(y = repub_pct_20, x = repub_pct_16)) +
-  geom_point(shape = 3)
+# What does this code produce?
+# What geom are we using for the point map?
+ggplot(world_boundaries) + 
+  geom_sf()
 ```
 
 ```{r}
-# YOU TRY: Modify the code to make the points "orange"
-# NOTE: Try to anticipate if "color" or "fill" will be useful here. Then try both.
-ggplot(elections, aes(y = repub_pct_20, x = repub_pct_16)) +
-  geom_point(color = "orange")
+# Load package needed to change map theme
+library(mosaic)
+
+# Add a point for each Starbucks
+# NOTE: The Starbucks info is in our starbucks data, not world_boundaries
+# How does this change how we use geom_point?!
+ggplot(world_boundaries) + 
+  geom_sf() + 
+  geom_point(
+    data = starbucks,
+    aes(x = Longitude, y = Latitude),
+    alpha = 0.3, size = 0.2, color = "darkgreen"
+  ) +
+  theme_map()
 ```
 
-```{r eval = FALSE}
-# Add a layer that represents each county by the state it's in
-# Take note of the geom and the info it needs to run!
-ggplot(elections, aes(y = repub_pct_20, x = repub_pct_16, color = state_name)) +
-  geom_text(aes(label = state_abbr))
+##### Part c {.unnumbered}
+
+Summarize what you learned about Starbucks from this map. **Starbucks are extremely popular in the United States and East Asia.**
+
+#### Exercise 5: Zooming in on some countries {.unnumbered}
+
+Instead of `world_boundaries <- ne_countries(returnclass = 'sf')` we could zoom in on...
+
+-   the continent of Africa: `ne_countries(continent = 'Africa', returnclass = 'sf')`
+-   a set of countries: `ne_countries(country = c('france', 'united kingdom', 'germany'), returnclass = 'sf')`
+-   boundaries within a country: `ne_states(country = 'united states of america', returnclass = 'sf')`
+
+Our goal here will be to map the Starbucks locations in Canada, Mexico, and the US.
+
+##### Part a {.unnumbered}
+
+To make this map, we again need two pieces of information.
+
+1.  Data on Starbucks for *only* Canada, Mexico, and the US, labeled as "CA", "MX", "US" in the `starbucks` data.
+
+```{r}
+# We'll learn this syntax soon! Don't worry about it now.
+starbucks_cma <- starbucks %>% 
+  filter(Country %in% c('CA', 'MX', 'US'))
 ```
 
-### Exercise 3: Reflect {.unnumbered}
+2.  A background map of state- and national-level boundaries in Canada, Mexico, and the US. This requires `ne_states()` in the `rnaturalearth` package where the countries are labeled 'canada', 'mexico', 'united states of america'.
 
-Summarize the relationship between the Republican support in 2020 and 2016. Be sure to comment on:
-
--   the strength of the relationship (weak/moderate/strong)\
--   the direction of the relationship (positive/negative)\
--   outliers (in what state do counties deviate from the national trend? Any ideas why this might be the case?)
-
-### Exercise 4: Visualizing trend {.unnumbered}
-
-The trend of the relationship between `repub_pct_20` and `repub_pct_16` is clearly positive and (mostly) linear. We can highlight this trend by adding a model "smooth" to the plot:
-
-```{r eval = FALSE}
-ggplot(elections, aes(y = repub_pct_20, x = repub_pct_16)) +
-  geom_point() +
-  geom_smooth()
+```{r}
+cma_boundaries <- ne_states(
+  country = c("canada", "mexico", "united states of america"),
+  returnclass = "sf")
 ```
+
+##### Part b {.unnumbered}
+
+Make the map!
+
+```{r}
+# Just the boundaries
+ggplot(cma_boundaries) + 
+  geom_sf()
+```
+
+```{r}
+# Add the points
+# And zoom in
+ggplot(cma_boundaries) + 
+  geom_sf() + 
+  geom_point(
+    data = starbucks_cma,
+    aes(x = Longitude, y = Latitude),
+    alpha = 0.3,
+    size = 0.2,
+    color = "darkgreen"
+  ) +
+  coord_sf(xlim = c(-179.14, -50)) +
+  theme_map()
+```
+
+#### Exercise 6: A state and county-level map {.unnumbered}
+
+Let's get an even *higher* resolution map of Starbucks locations within the states of Minnesota, Wisconsin, North Dakota, and South Dakota, with a background map at the county-level.
 
 #### Part a {.unnumbered}
 
-Construct a new plot that contains the model smooth but does *not* include the individual point glyphs.
+To make this map, we again need two pieces of information.
+
+1.  Data on Starbucks for *only* the states of interest.
 
 ```{r}
-ggplot(elections, aes(y = repub_pct_20, x = repub_pct_16)) +
-  geom_smooth()
+starbucks_midwest <- starbucks %>% 
+  filter(State.Province %in% c("MN", "ND", "SD", "WI"))
 ```
 
-#### Part b {.unnumbered}
-
-By default, `geom_smooth()` adds a smooth, localized model line. To examine the "best" *linear model*, we can specify `method = "lm"`. It's pretty similar in this example!
-
-```{r eval = FALSE}
-ggplot(elections, aes(y = repub_pct_20, x = repub_pct_16)) +
-  geom_point() +
-  geom_smooth(method = "lm")
-```
-
-### Exercise 5: Your Turn {.unnumbered}
-
-To examine how the 2020 results are related to some county demographics, construct scatterplots of `repub_pct_20` vs `median_rent`, and `repub_pct_20` vs `median_age`. Summarize the relationship between these two variables and comment on which is the better predictor of `repub_pct_20`, `median_rent` or `median_age`.
+2.  A background map of state- and county-level boundaries in these states. This requires `st_as_sf()` in the `sf` package, and `map()` in the `maps` package, where the countries are labeled 'minnesota', 'north dakota', etc.
 
 ```{r}
-# Scatterplot of repub_pct_20 vs median_rent
-ggplot(elections, aes(x = median_rent, y = repub_pct_20)) +
-  geom_point()
+# Load packages
+library(sf)
+library(maps)
 
+# Get the boundaries
+midwest_boundaries <- st_as_sf(
+  maps::map("county",
+            region = c("minnesota", "wisconsin", "north dakota", "south dakota"), 
+            fill = TRUE, plot = FALSE))
 
-# Scatterplot of repub_pct_20 vs median_age
-ggplot(elections, aes(x = median_age, y = repub_pct_20)) +
-  geom_point()
-
-
+# Check it out
+head(midwest_boundaries)
 ```
 
-### Exercise 6: A Sad Scatterplot {.unnumbered}
+##### Part b {.unnumbered}
 
-Next, let's explore the relationship between a county's 2020 Republican support `repub_pct_20` and the `historical` political trends in its state. In this case `repub_pct_20` is **quantitative**, but `historical` is **categorical**. Explain why a scatterplot might *not* be an effective visualization for exploring this relationship. (What questions does / doesn't it help answer?)
+Adjust the code below to make the plot! Remove the `#` to run it.
 
 ```{r}
-ggplot(elections, aes(y = repub_pct_20, x = historical)) +
-  geom_point()
+ggplot(midwest_boundaries) + 
+   geom_sf() + 
+   geom_point(
+     data = starbucks_midwest,
+     aes(x = Longitude, y = Latitude),
+     alpha = 0.7,
+     size = 0.2, 
+     color = 'darkgreen'
+   ) + 
+   theme_map()
 ```
 
-### Exercise 7: Quantitative vs Categorical -- Violins & Boxes {.unnumbered}
+#### Exercise 7: Contour maps {.unnumbered}
 
-Though the above scatterplot *did* group the counties by `historical` category, it's nearly impossible to pick out meaningful patterns in 2020 Republican support in each category. Let's try adding 2 different `geom` layers to the frame:
-
-```{r eval = FALSE}
-# Side-by-side violin plots
-ggplot(elections, aes(y = repub_pct_20, x = historical)) +
-  geom_violin()
-```
-
-```{r eval = FALSE}
-# Side-by-side boxplots (defined below)
-ggplot(elections, aes(y = repub_pct_20, x = historical)) +
-  geom_boxplot()
-```
-
-Box plots are constructed from five numbers - the minimum, 25th percentile, median, 75th percentile, and maximum value of a quantitative variable:
-
-![](https://mac-stat.github.io/images/112/boxplot.png){width="50%"}
-
-**REFLECT:**
-
-Summarize what you've learned about the 2020 Republican county-level support within and between red/purple/blue states.
-
-### Exercise 8: Quantitative vs Categorical -- Intuition Check {.unnumbered}
-
-::: {.callout-important title="Be Quick"}
-Don't spend more than 3 minutes on this!
-:::
-
-We can also visualize the relationship between `repub_pct_20` and `historical` using our familiar density plots. In the plot below, notice that we simply created a separate density plot for each `historical` category. (The plot itself is "bad" but we'll fix it below.) Try to adjust the code chunk below, which starts with a density plot of `repub_pct_20` alone, to re-create this image.
-
-![](https://mac-stat.github.io/images/112/density_demo.png){width="50%"}
+Especially when there are lots of point locations, and those locations start overlapping on a map, it can be tough to visualize areas of higher *density*. Consider the Starbucks locations in Canada, Mexico, and the US that we mapped earlier:
 
 ```{r}
-ggplot(elections, aes(x = repub_pct_20, fill = historical)) +
-  geom_density()
+# Point map (we made this earlier)
+ggplot(cma_boundaries) + 
+  geom_sf() + 
+  geom_point(
+    data = starbucks_cma,
+    aes(x = Longitude, y = Latitude),
+    alpha = 0.3,
+    size = 0.2,
+    color = "darkgreen"
+  ) +
+  coord_sf(xlim = c(-179.14, -50), ylim = c(14.54, 83.11)) +
+  theme_map()
 ```
 
-### Exercise 9: Quantitative vs Categorical -- Density Plots {.unnumbered}
-
-Work through the chunks below and address the comments therein.
-
-```{r eval = FALSE}
-# Two bad things about this plot are that the labels are unclear and teh colors don't align with their labels. 
-ggplot(elections, aes(x = repub_pct_20, fill = historical)) +
-  geom_density()
-```
-
-```{r eval = FALSE}
-# What does scale_fill_manual do? (this function assigns specific colors)
-ggplot(elections, aes(x = repub_pct_20, fill = historical)) +
-  geom_density() +
-  scale_fill_manual(values = c("blue", "purple", "red"))
-```
-
-```{r eval = FALSE}
-# What does alpha = 0.5 do? (it changes the transparency of the colors)
-# Play around with different values of alpha, between 0 and 1
-ggplot(elections, aes(x = repub_pct_20, fill = historical)) +
-  geom_density(alpha = 0.5) +
-  scale_fill_manual(values = c("blue", "purple", "red"))
-```
-
-```{r eval = FALSE}
-# What does facet_wrap do?! (It seperates out each categorical variable into its own plot)
-ggplot(elections, aes(x = repub_pct_20, fill = historical)) +
-  geom_density() +
-  scale_fill_manual(values = c("blue", "purple", "red")) +
-  facet_wrap(~ historical)
-```
-
-```{r eval = FALSE}
-# Let's try a similar grouping strategy with a histogram instead of density plot.
-# Why is this terrible?
-ggplot(elections, aes(x = repub_pct_20, fill = historical)) +
-  geom_histogram(color = "white") +
-  scale_fill_manual(values = c("blue", "purple", "red"))
-```
-
-### Exercise 10 {.unnumbered}
-
-We've now learned 3 (of many) ways to visualize the relationship between a quantitative and categorical variable: side-by-side violins, boxplots, and density plots.
-
--   Which do you like best?
--   What is one pro of density plots relative to boxplots?
--   What is one con of density plots relative to boxplots?
-
-### Exercise 11: Categorical vs Categorical -- Intuition Check {.unnumbered}
-
-Finally, let's simply explore who *won* each county in 2020 (`winner_20`) and how this breaks down by `historical` voting trends in the state. That is, let's explore the relationship between 2 categorical variables! Following the same themes as above, we can utilize grouping features such as fill/color or facets to distinguish between different categories of `winner_20` and `historical`.
-
-::: {.callout-important title="Be Quick"}
-Spend at most 5 minutes on the following intuition check. Adjust the code below to recreate the following two plots.
-:::
-
-![](https://mac-stat.github.io/images/112/barplot_demo.png){width="60%"}
+Now check out the contour map.
 
 ```{r}
-# Plot 1: adjust this to recreate the top plot
-ggplot(elections, aes(x = historical, fill = winner_20)) +
-  geom_bar()
+# The points are now contours
+# we also changed geom_point to geom_density_2d
+ggplot(cma_boundaries) + 
+  geom_sf() + 
+  geom_density_2d(
+    data = starbucks_cma,
+    aes(x = Longitude, y = Latitude),
+    size = 0.2,
+    color = "darkgreen"
+  ) +
+  coord_sf(xlim = c(-179.14, -50), ylim = c(14.54, 83.11)) +
+  theme_map()
 ```
+
+### Part 3: Choropleth maps
+
+Spatial data isn't always in the form of point locations! For example, recall the state and county-level data on presidential elections.
 
 ```{r}
-# Plot 2: adjust this to recreate the bottom plot
-ggplot(elections, aes(x = winner_20)) +
-  geom_bar() +
-  facet_wrap(~ historical)
+elections_by_state <-  read.csv("https://mac-stat.github.io/data/election_2020_by_state.csv")
+elections_by_counties <- read.csv("https://mac-stat.github.io/data/election_2020_county.csv")
 ```
 
-### Exercise 12: Categorical vs Categorical {.unnumbered}
+In these datasets, we're interested in the overall election outcome by region (state or county), not the specific geographic location of some observation. Let's wrangle our data first. We'll focus on just a few variables of interest, and create a new variable (`repub_20_categories`) that *discretizes* the `repub_pct_20` variable into increments of 5 percentage points (for states) or 10 percentage points (for counties):
 
-Construct the following 4 bar plot visualizations.
+```{r}
+# Don't worry about the code!
 
-```{r eval = FALSE}
-# A stacked bar plot
-# How are the "historical" and "winner_20" variables mapped to the plot, i.e. what roles do they play?
-ggplot(elections, aes(x = historical, fill = winner_20)) +
-  geom_bar()
+elections_by_state <- elections_by_state %>% 
+  filter(state_abbr != "DC") %>% 
+  select(state_name, state_abbr, repub_pct_20) %>% 
+  mutate(repub_20_categories = 
+           cut(repub_pct_20, 
+               breaks = seq(30, 70, by = 5), 
+               labels = c("30-34", "35-39", "40-44", "45-49",
+                          "50-54", "55-59", "60-64", "65-70"), 
+               include.lowest = TRUE))
+
+elections_by_counties <- elections_by_counties %>% 
+  select(state_name, state_abbr, county_name, county_fips,
+          repub_pct_20, median_age, median_rent) %>% 
+  mutate(repub_20_categories = 
+           cut(repub_pct_20, 
+               breaks = seq(0, 100, by = 10),
+               labels = c("0-9", "10-19", "20-29", "30-39", "40-49",
+                          "50-59", "60-69", "70-79", "80-89", "90-100"),
+               include.lowest = TRUE))
 ```
 
-```{r eval = FALSE}
-# A faceted bar plot
-ggplot(elections, aes(x = winner_20)) +
-  geom_bar() +
-  facet_wrap(~ historical)
-```
+#### Exercise 8: State-level choropleth maps {.unnumbered}
 
-```{r eval = FALSE}
-# A side-by-side bar plot
-# Note the new argument to geom_bar
-ggplot(elections, aes(x = historical, fill = winner_20)) +
-  geom_bar(position = "dodge")
-```
-
-```{r eval = FALSE}
-# A proportional bar plot
-# Note the new argument to geom_bar
-ggplot(elections, aes(x = historical, fill = winner_20)) +
-  geom_bar(position = "fill")
-```
+Let's map the 2020 Republican support in each *state*, `repub_pct_20`.
 
 #### Part a {.unnumbered}
 
-Name one pro and one con of using the "proportional bar plot" instead of one of the other three options.
+We again need two pieces of information.
+
+1.  Data on elections in each state, which we already have: `elections_by_state`.
+
+2.  A background map of state boundaries in the US. The boundaries we used for point maps don't work here. (Optional detail: they're `sf` objects and we now need a `data.frame` object.) Instead, we can use the `map_data()` function from the `ggplot2` package:
+
+```{r}
+# Get the latitude and longitude coordinates of state boundaries
+states_map <- map_data("state")
+
+# Check it out
+head(states_map)
+```
+
+##### Pause {.unnumbered}
+
+**Important detail:** Note that the `region` variable in `states_map`, and the `state_name` variable in `elections_by_state` both label states by the full name in lower case letters. This is critical to the background map and our data being able to communicate.
+
+```{r}
+head(states_map)
+head(elections_by_state) 
+```
+
+##### Part b {.unnumbered}
+
+Now map `repub_pct_20` by state.
+
+```{r}
+# Note where the dataset, elections_by_state, is used
+# Note where the background map, states_map, is used
+ggplot(elections_by_state, aes(map_id = state_name, fill = repub_pct_20)) +
+  geom_map(map = states_map) +
+  expand_limits(x = states_map$long, y = states_map$lat) +
+  theme_map() 
+```
+
+```{r}
+# Make it nicer!
+ggplot(elections_by_state, aes(map_id = state_name, fill = repub_pct_20)) +
+  geom_map(map = states_map) +
+  expand_limits(x = states_map$long, y = states_map$lat) +
+  theme_map() + 
+  scale_fill_gradientn(name = "% Republican", colors = c("blue", "purple", "red"), values = scales::rescale(seq(0, 100, by = 5)))
+```
+
+It's not easy to get fine control over the color scale for the quantitative `repub_pct_20` variable. Instead, let's plot the *discretized* version, `repub_20_categories`:
+
+```{r}
+ggplot(elections_by_state, aes(map_id = state_name, fill = repub_20_categories)) +
+  geom_map(map = states_map) +
+  expand_limits(x = states_map$long, y = states_map$lat) +
+  theme_map()
+```
+
+```{r}
+# Load package needed for refining color palette
+library(RColorBrewer)
+
+# Now fix the colors
+ggplot(elections_by_state, aes(map_id = state_name, fill = repub_20_categories)) +
+  geom_map(map = states_map) +
+  expand_limits(x = states_map$long, y = states_map$lat) +
+  theme_map() + 
+  scale_fill_manual(values = rev(brewer.pal(8, "RdBu")), name = "% Republican")
+```
+
+##### Part c {.unnumbered}
+
+We can add other layers, like points, on top of a choropleth map. Add a Starbucks layer! Do you notice any relationship between Starbucks and elections? Or are we just doing things at this point? ;)
+
+```{r}
+# Get only the starbucks data from the US
+starbucks_us <- starbucks %>% 
+  filter(Country == "US")
+
+# Map it
+ggplot(elections_by_state, aes(map_id = state_name, fill = repub_20_categories)) +
+  geom_map(map = states_map) +
+  geom_point(
+    data = starbucks_us,
+    aes(x = Longitude, y = Latitude),
+    size = 0.05,
+    alpha = 0.2,
+    inherit.aes = FALSE
+  ) +
+  expand_limits(x = states_map$long, y = states_map$lat) +
+  theme_map() + 
+  scale_fill_manual(values = rev(brewer.pal(8, "RdBu")), name = "% Republican")
+```
+
+**Details (if you're curious)**
+
+-   `map_id` is a required aesthetic for `geom_map()`.
+    -   It specifies which variable in our dataset indicates the region (here `state_name`).
+    -   It connects this variable (`state_name`) to the `region` variable in our mapping background (`states_map`). These variables must have the same possible outcomes in order to be matched up (`alabama`, `alaska`, `arizona`,...).
+-   `expand_limits()` assures that the map covers the entire area it's supposed to, by pulling longitudes and latitudes from the `states_map`.
+
+##### Part d {.unnumbered}
+
+We used `geom_sf()` for point maps. What `geom` do we use for choropleth maps?
+
+### Exercise 9: County-level choropleth maps {.unnumbered}
+
+Let's map the 2020 Republican support in each *county*.
+
+##### Part a {.unnumbered}
+
+We again need two pieces of information.
+
+1.  Data on elections in each county, which we already have: `elections_by_county`.
+
+2.  A background map of county boundaries in the US, stored in the `county_map` dataset in the `socviz` package:
+
+```{r}
+# Get the latitude and longitude coordinates of county boundaries
+library(socviz)
+data(county_map) 
+
+# Check it out
+head(county_map)
+```
+
+##### Pause {.unnumbered}
+
+**Important detail:** We officially have a headache. Our `county_map` refers to each county by a **5-number** `id`. Our `elections_by_counties` data refers to each county by a `county_fips` code, which is *mostly* the same as `id`, BUT drops any 0's at the beginning of the code.
+
+```{r}
+head(county_map)
+head(elections_by_counties)
+```
+
+This just means that we have to wrangle the data so that it can communicate with the background map.
+
+```{r}
+# Add 0's at the beginning of any fips_code that's fewer than 5 numbers long
+# Don't worry about the syntax
+elections_by_counties <- elections_by_counties %>% 
+  mutate(county_fips = as.character(county_fips)) %>% 
+  mutate(county_fips = 
+           ifelse(nchar(county_fips) == 4, paste0("0", county_fips), county_fips))
+```
+
+##### Part b {.unnumbered}
+
+*Now* map Republican support by county. Let's go straight to the discretized `repub_20_categories` variable, and a good color scale.
+
+```{r}
+ggplot(elections_by_counties, aes(map_id = county_fips, fill = repub_20_categories)) +
+  geom_map(map = county_map) +
+  scale_fill_manual(values = rev(brewer.pal(10, "RdBu")), name = "% Republican") +
+  expand_limits(x = county_map$long, y = county_map$lat) +
+  theme_map() +
+  theme(legend.position = "right") + 
+  coord_equal()
+```
+
+#### Exercise 10: Play around! {.unnumbered}
+
+Construct county-level maps of `median_rent` and `median_age`.
+
+#### Exercise 11: Choropleth maps with leaflet {.unnumbered}
+
+Though `ggplot()` is often better for this purpose, we can also make choropleth maps with `leaflet()`. If you're curious, check out the `leaflet` documentation:
+
+<https://rstudio.github.io/leaflet/choropleths.html>
+
+## Solutions
+
+<details>
+
+<summary>Click for Solutions</summary>
+
+### Example 1 {.unnumbered}
+
+Both addresses used between 0 and 450 therms per month. There seem to be two types of months -- those with lower use around 50 therms and those with higher use around 300/400 therms.
+
+```{r}
+ggplot(energy, aes(x = therms, fill = address)) + 
+  geom_density(alpha = 0.5)
+```
+
+### Example 2 {.unnumbered}
+
+Energy use is seasonal, with higher usage in winter months. It seems that address a uses slightly more energy.
+
+```{r}
+ggplot(energy, aes(y = therms, x = date, color = address)) + 
+  geom_point()
+ggplot(energy, aes(y = therms, x = date, color = address)) + 
+  geom_line()
+```
+
+### Example 3 {.unnumbered}
+
+At both addresses, typical energy use *increased* after renovations.
+
+```{r}
+ggplot(energy, aes(y = therms, x = renovated)) + 
+  geom_boxplot() + 
+  facet_wrap(~ address)
+
+# A density plot isn't very helpful for comparing typical therms in this example!
+ggplot(energy, aes(x = therms, fill = renovated)) + 
+  geom_density(alpha = 0.5) + 
+  facet_wrap(~ address)
+```
+
+### Example 4 {.unnumbered}
+
+lurking variable = outdoor temperature (as reflected by hdd)
+
+```{r}
+# It happened to be colder outside after renovations (higher hdd)
+ggplot(energy, aes(y = hdd, x = renovated)) + 
+  geom_boxplot() + 
+  facet_wrap(~ address)
+
+# When controlling for outside temps (via hdd), energy use decreased post-renovation
+ggplot(energy, aes(y = therms, x = hdd, color = renovated)) + 
+  geom_point(alpha = 0.5) + 
+  geom_smooth(method = "lm", se = FALSE) + 
+  facet_wrap(~ address)
+```
+
+### Example 5 {.unnumbered}
+
+BUT this was explained by a *confounding* or *omitted* or *lurking* variable: `hdd` (outdoor temperature)
+
+-   After renovation...
+-   *it happened to be colder*...
+-   which then leads to higher energy use.
+
+Thus, *when controlling for* outdoor temps, renovations led to *decreased* energy use.
+
+### Exercise 3: Your turn {.unnumbered}
+
+```{r}
+leaflet(data = starbucks_mn) %>% 
+  addTiles() %>% 
+  addMarkers()
+```
+
+### Exercise 3: A simple scatterplot {.unnumbered}
+
+It would be nice to also have some actual reference maps of countries in the background.
+
+```{r}
+ggplot(starbucks, aes(y = Latitude, x = Longitude)) + 
+  geom_point(size = 0.5)
+```
+
+### Exercise 6: A state and county-level map {.unnumbered}
 
 #### Part b {.unnumbered}
 
-What's your favorite bar plot from part and why?
-
-### Exercise 13: Practice (now or later) {.unnumbered}
-
-::: {.callout-important title="Decide"}
-Decide what's best for you:
-
--   Try this extra practice now.
--   Reflect on the above exercises and come back to this extra practice later (but before the next class).
-:::
-
-Import some daily weather data from a few locations in Australia:
+Adjust the code below to make the plot! Remove the `#` to run it.
 
 ```{r}
-weather <- read.csv("https://mac-stat.github.io/data/weather_3_locations.csv")
+ggplot(midwest_boundaries) +
+  geom_sf() +
+  geom_point(
+    data = starbucks_midwest,
+    aes(x = Longitude, y = Latitude),
+    alpha = 0.7,
+    size = 0.2,
+    color = 'darkgreen'
+  ) +
+  theme_map()
 ```
 
-Construct plots that address the research questions in each chunk. You might make multiple plots--there are many ways to do things!. However, don't just throw spaghetti at the wall.
+### Exercise 7: Contour maps {.unnumbered}
 
-Reflect before doing anything. What types of variables are these? How might you plot just 1 of the variables, and then tweak the plot to incorporate the other?
+Especially when there are lots of point locations, and those locations start overlapping on a map, it can be tough to visualize areas of higher *density*. Consider the Starbucks locations in Canada, Mexico, and the US that we mapped earlier:
 
 ```{r}
-# How do 3pm temperatures (temp3pm) differ by location?
-ggplot(weather, aes(x = temp3pm, fill = location)) +
-  geom_density(alpha = 0.5) 
-
-
+# Point map (we made this earlier)
+ggplot(cma_boundaries) + 
+  geom_sf() + 
+  geom_point(
+    data = starbucks_cma,
+    aes(x = Longitude, y = Latitude),
+    alpha = 0.3,
+    size = 0.2,
+    color = "darkgreen"
+  ) +
+  coord_sf(xlim = c(-179.14, -50), ylim = c(14.54, 83.11)) +
+  theme_map()
 ```
+
+Now check out the contour map.
 
 ```{r}
-# How might we predict the 3pm temperature (temp3pm) by the 9am temperature (temp9am)?
-ggplot(weather, aes(y = temp3pm, x = temp9am)) + 
-  geom_point()
-
-
-
+# What changed in the plot?
+# What changed in our code?!
+ggplot(cma_boundaries) + 
+  geom_sf() + 
+  geom_density_2d(
+    data = starbucks_cma,
+    aes(x = Longitude, y = Latitude),
+    size = 0.2,
+    color = "darkgreen"
+  ) +
+  coord_sf(xlim = c(-179.14, -50), ylim = c(14.54, 83.11)) +
+  theme_map()
 ```
+
+### Exercises Part 3: Choropleth maps {.unnumbered}
+
+Spatial data isn't always in the form of point locations! For example, recall the state and county-level data on presidential elections.
 
 ```{r}
-# How do the number of rainy days (raintoday) differ by location?
-ggplot(weather, aes(x = location, fill = raintoday)) + 
-  geom_bar()
-
-
+elections_by_state <-  read.csv("https://mac-stat.github.io/data/election_2020_by_state.csv")
+elections_by_counties <- read.csv("https://mac-stat.github.io/data/election_2020_county.csv")
 ```
 
-::: content-hidden
-## Wrap-up
+In these datasets, we're interested in the overall election outcome by region (state or county), not the specific geographic location of some observation. Let's wrangle our data first.
 
-Today's activity:
+We'll focus on just a few variables of interest, and create a new variable (`repub_20_categories`) that *discretizes* the `repub_pct_20` variable into increments of 5 percentage points (for states) or 10 percentage points (for counties):
 
--   Knit when you're done.
--   If you're working on Mac's server, remember to download and store both the .Rmd and .html on your computer.
--   If you didn't finish in class, no problem. Finish up outside of class and check solutions in the online manual.
+```{r}
+# Don't worry about the code!
 
-Homework plan:
+elections_by_state <- elections_by_state %>% 
+  filter(state_abbr != "DC") %>% 
+  select(state_name, state_abbr, repub_pct_20) %>% 
+  mutate(repub_20_categories = 
+           cut(repub_pct_20, 
+               breaks = seq(30, 70, by = 5), 
+               labels = c("30-34", "35-39", "40-44", "45-49",
+                          "50-54", "55-59", "60-64", "65-70"), 
+               include.lowest = TRUE))
 
--   The data viz unit will have 2 homeworks.\
-    Homework 2 will largely be drill / practice with some guiding prompts. Homework 3 will be provide more experience working in open-ended settings.
--   Homework 2 is due in 9 days, but you should chip away at it slowly so that you have time to absorb and ask questions. It's not designed to finish in 1 sitting.
+elections_by_counties <- elections_by_counties %>% 
+  select(state_name, state_abbr, county_name, county_fips,
+          repub_pct_20, median_age, median_rent) %>% 
+  mutate(repub_20_categories = 
+           cut(repub_pct_20, 
+               breaks = seq(0, 100, by = 10),
+               labels = c("0-9", "10-19", "20-29", "30-39", "40-49",
+                          "50-59", "60-69", "70-79", "80-89", "90-100"),
+               include.lowest = TRUE))
 
-MSCS listserv:
+# Add 0's at the beginning of any fips_code that's fewer than 5 numbers long
+# Don't worry about the syntax
+elections_by_counties <- elections_by_counties %>% 
+  mutate(county_fips = as.character(county_fips)) %>% 
+  mutate(county_fips = 
+           ifelse(nchar(county_fips) == 4, paste0("0", county_fips), county_fips))
+```
 
-If you’re an MSCS major / minor, or plan to be, I strongly encourage you to sign up for the [MSCS community listserv](https://docs.google.com/document/d/1Z2Ex-_z_8vm2ZhgdT4le-DwieUCtYZM8dDysaj6bseI/edit). This is where we share information about department events, internships opportunities, etc.
-:::
+### Exercise 8: State-level choropleth maps {.unnumbered}
+
+#### Part d {.unnumbered}
+
+`geom_map()`
+
+### Exercise 10: Play around! {.unnumbered}
+
+```{r}
+ggplot(elections_by_counties, aes(map_id = county_fips, fill = median_rent)) +
+  geom_map(map = county_map) +
+  expand_limits(x = county_map$long, y = county_map$lat) +
+  theme_map() +
+  theme(legend.position = "right") + 
+  coord_equal() + 
+  scale_fill_gradientn(name = "median rent", colors = c("white", "lightgreen", "darkgreen"))
+
+ggplot(elections_by_counties, aes(map_id = county_fips, fill = median_age)) +
+  geom_map(map = county_map) +
+  expand_limits(x = county_map$long, y = county_map$lat) +
+  theme_map() +
+  theme(legend.position = "right") + 
+  coord_equal() + 
+  scale_fill_gradientn(name = "median age", colors = terrain.colors(10))
+```
+
+</details>

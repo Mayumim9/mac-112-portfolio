@@ -1,362 +1,658 @@
 ---
-title: "Lesson 1 - Welcome"
-number-sections: true
+title: "Lesson 1 - Univariate Viz"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    embed-resources: true
 ---
 
-```{r}
-#| include: true
-#| echo: false
-#| results: hide
-#| warning: false
-#| message: false
+# Background
 
-# Do NOT modify
-rm(list = ls())
-```
+We're starting our unit on **data visualization** or **data viz**, thus skipping some steps in the data science workflow. Mainly, it's tough to understand how our data should be *prepared* before we have a sense of what we want to *do* with this data!
 
-```{r List Packages}
-#| include: true
-#| echo: false
-#| results: hide
-#| warning: false
-#| message: false
+![](https://mac-stat.github.io/images/112/legos.png){width="50%"}
 
-# UPDATE THIS
-packages <- c("tidyverse")
-```
+[Source](https://www.effectivedatastorytelling.com/post/a-deeper-dive-into-lego-bricks-and-data-stories)
 
-```{r Insall Missing Packages}
-#| include: true
-#| echo: false
-#| results: hide
-#| warning: false
-#| message: false
+\
+\
+\
 
-# Do NOT modify
-install.packages(setdiff(packages, rownames(installed.packages())))
-```
 
-```{r Load Packages}
-#| include: true
-#| echo: false
-#| results: hide
-#| warning: false
-#| message: false
+::: {.callout-note title="Learning goals"}
+Warm-up (together)
 
-# Do NOT modify
-lapply(packages, require, character.only = TRUE)
-```
+-   Convince ourselves about the importance of data viz.
+-   Explore the "grammar of graphics".
 
-## Background
+Exercises (in groups)
 
-### Data {-}
-
-The word **data** often brings spreadsheets to mind, like the following data on penguins.
-
-```{r echo=FALSE}
-set.seed(112)
-library(palmerpenguins)
-data(penguins)
-penguins |> 
-  select(-year, -sex) |> 
-  group_by(species, island) |> 
-  slice_head(n = 1)
-```
-## Exercises
-
-::: callout-caution
-### Goals
-
-The goal of these exercises are to:
-
--   Familiarize yourself with the RStudio layout.
--   Play around in the RStudio **console** to gain familiarity with the basic structure of R code.
+-   Explore how to create data viz in RStudio.
+-   Understand the different basic univariate visualizations for categorical and quantitative variables.
 :::
 
-::: callout-important
-### Directions
+\
+\
+\
+\
 
-**Be Kind to Yourself**\
-We will all make so many mistakes in RStudio! That's part of learning any new language. If fact, mistakes are *important* to learning any new language.
+::: {.callout-note title="Additional resources"}
+Watch:
 
-**Collaborate**\
-We are and will be sitting in groups for a reason. Collaboration improves higher-level thinking, confidence, communication, community, & more. You are expected to:
+-   [Intro to ggplot](https://www.youtube.com/watch?v=0OtY38LVy-o&list=PLyEH7o09I467e8zck95awweg_bGuLzqjz&index=6) (Lisa Lendway)
+-   [Univariate viz (interpreting)](https://www.youtube.com/watch?v=7zQmWTT_m-Y) (Alicia Johnson) -- you can ignore the parts about numerical summaries.
 
--   Actively contribute to discussion. Don’t work on your own.
--   Actively include all other group members in discussion.
--   Create a space where others feel comfortable making mistakes & sharing ideas.
--   Stay in sync while respecting that everybody has different learning strategies, work styles, note taking strategies, etc. If some people are working on exercise 10 and others on exercise 2, that’s not a good collaboration.
--   Don't rush. You won't hand anything in and can finish up outside of class.
+Read:
 
-**Grow**\
-This 100-level course *assumes* you have NO R experience, but *welcomes* all. *Growth* is expected of every student.
-
--   If you are new to R, I hope you leave class today simply feeling positive about opening RStudio.
--   If you are familiar with R, I hope you think more deeply about concepts you might have taken for granted in the past and support those new to R in your group. Explaining ideas to others deepens your own understanding and retention of these ideas.
-
-**Ask Questions**\
-We will not discuss these exercises as a class. Your group should ask me questions as I walk around the room.
+-   [A grammar for data graphics](https://mdsr-book.github.io/mdsr2e/ch-vizII.html) (Baumer, Kaplan, & Horton)
+-   [Data visualization](https://r4ds.hadley.nz/data-visualize.html) (Wickham, Çetinkaya-Rundel, & Grolemund)
+-   [Visualizing distributions](https://clauswilke.com/dataviz/histograms-density-plots.html) (Wilke)
+-   [ggplot cheat sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-visualization.pdf)
 :::
 
-### Exercise 1: Open RStudio {-}
 
--   If you already downloaded and installed a desktop version of RStudio on your laptop, open that.
--   Otherwise, log on to Mac's RStudio server using your usual Mac credentials: <https://rstudio.macalester.edu/>. For the purposes of everybody being in the same place, use this for now. You'll be prompted to install the software later.
 
-Notice that there are four panes, each serving a different purpose. Today, we'll work solely within the **console** and will *not* save any work.
 
-### Exercise 2: Use R as a calculator {-}
+\
+\
+\
+\
 
-We can do simple calculations in RStudio! Type the following lines in the **console**, one by one. After each line, hit your Return/Enter button and simply take note of what you get. In some cases you might even get an error! This error is *important* to learning how R code does and doesn't work.
+# Warm-up
 
-```{r eval = FALSE}
-4 + 2
-4/2
-4^2
-4*2
-4*(2)
-```
+## The importance of visualizations
 
-::: {.callout-important title="Pause"}
-Make sure you're still in sync with your group.
-:::
+**EXAMPLE 1**
 
-### Exercise 3: Functions and arguments {-}
-
-Having a calculator is nice, but we'll typically use **built-in functions** to perform common (repetitive) and specific tasks. These functions have *names* and require information about *arguments* in order to run:
-
-`function(argument)`
-
-Try out the following functions in your console. Note each function's *name*, the *argument* or information it needs to run, and what *output* it produces (i.e. what the function *does*):
-
-```{r eval = FALSE}
-sqrt(9)
-sqrt(25)
-nchar("snow")
-nchar("macalester")
-sqrt(nchar("snow"))
-```
-
-Some functions require *more than 1 argument*, separated by commas. To keep these straight, we often specify the arguments by name:
-
-`function(argument1 = ___, argument2 = ___)`
-
-Try out the following functions in your console, one by one. Note each function's *name*, the *arguments* it needs to run, when it's necessary to specify these arguments by name, and what *output* it produces.
-
-```{r eval = FALSE}
-rep(x = 2, times = 5)
-rep(times = 5, x = 2)
-rep(2, 5)
-rep(5, 2)
-seq(from = 2, to = 10, by = 2)
-seq(2, 10, 2)
-seq(from = 2, to = 10, length = 3)
-seq(2, 10, 3)
-```
-
-Finally, note that R is case sensitive. Try the following code which uses `Seq()` instead of `seq()`. Take time to read the **error message**. You will experience this type of error message a *lot*! It will happen any time you misspell a function (among other reasons we'll experience later).
-
-```{r eval = FALSE}
-Seq(2, 10, 3)
-```
-
-### Exercise 4: Grammar {-}
-
-We'll learn lots and lots of functions this semester. Nobody has every function memorized. That said, it does help to connect function names with their purpose. Do that for each function you used above.
-
--   `sqrt()` = Square root
--   `nchar()` = Number of characters
--   `rep()` = Replicate
--   `seq()` = Sequence generator
-
-::: {.callout-important title="Pause"}
-Make sure you're still in sync with your group.
-:::
-
-### Exercise 5: Your turn {-}
-
-Use the functions you learned above to do the following:
-
--   Count the number of letters in "data".
+The data below includes information on hiking trails in the 46 "high peaks" in the Adirondack mountains of northern New York state. This includes data on the hike's highest `elevation` (feet), vertical `ascent` (feet), `length` (miles), `time` in hours that it takes to complete, and difficulty `rating`. Open this data in a viewer, through the Environment tab or by typing `View(hikes)` in the *console*.
 
 ```{r}
-nchar("data")
+# Import data
+hikes <- read.csv("https://mac-stat.github.io/data/high_peaks.csv")
 ```
 
--   Create the sequence 3, 6, 9, 12. You might do this 2 ways.
+Tell me about the patterns and trends in hiking trail `elevation`. What about the the relationship between a hike's `elevation` and the typical `time` it takes to summit / reach the top?
+
+**The higher elevation mountains are at the top of the chart and the lower elevation ones are at the bottom. Based on the table, I am not seeing any distinct correlations between a mountains elevation and the time it takes to summit.**
+
+\
+\
+\
+\
+
+**EXAMPLE 2**
+
+What if this [New York Times article](https://www.nytimes.com/2024/01/09/climate/2023-warmest-year-record.html) tried telling this story *without* using data viz? What would that story be like?
+
+![](https://mac-stat.github.io/images/112/nyt_temperature_viz.png)
+
+\
+\
+\
+\
+
+**Benefits of visualization**
+
+-   Understand what we're working with:
+    -   scales & typical outcomes
+    -   outliers, i.e. unusual cases
+    -   patterns & relationships
+-   Refine research questions & inform next steps of our analysis.
+-   Communicate our findings and tell a story.
+
+\
+\
+\
+\
+
+## Components of data graphics
+
+**EXAMPLE 3**
+
+Data viz is the process of *mapping* data to different plot components. For example, in the NYT example above, the research team *mapped* data like the following (but with many more rows!) to the plot:
+
+| observation | decade  | year | date | relative temp |
+|:------------|:-------:|:----:|:----:|:-------------:|
+| 1           | 2020-30 | 2023 | 1/23 |      1.2      |
+| 2           | 1940-60 | 1945 | 3/45 |     -0.05     |
+
+Write down step-by-step directions to use a data table like this one to create the temperature visualization. A computer is your audience. Thus be as precise as possible, but trust that the computer can find the exact numbers if you tell it where.
+
+\
+\
+\
+\
+
+**COMPONENTS OF GRAPHICS**
+
+In data viz, we essentially start with a blank canvas and then map data onto it. There are multiple possible *mapping components*. Some basics from [Wickham](https://ggplot2-book.org/introduction) (which goes into more depth):
+
+-   **a frame, or coordinate system**\
+    The variables or features that define the axes and gridlines of the canvas.
+
+-   **a layer**\
+    The geometric elements (e.g. lines, points) we add to the canvas to represent either the data points themselves or patterns among the data points. Each type of geometric element is a separate layer. These geometric elements are sometimes called "geoms" or "glyphs" (like *heiroglyph*!)
+
+-   **scales**\
+    The aesthetics we might add to geometric elements (e.g. color, size, shape) to incorporate additional information about data scales or groups.
+
+-   **faceting**\
+    The splitting up of the data into multiple subplots, or facets, to examine different groups within the data.
+
+-   **a theme**\
+    Additional controls on the "finer points" of the plot aesthetics, (e.g. font type, background, color scheme).
+
+\
+\
+\
+\
+
+**EXAMPLE**
+
+In the NYT graphic, the data was mapped to the plot as follows:
+
+-   **frame**: x-axis = date, y-axis = temp
+-   **layers:** add one line per year, add dots for each month in 2023
+-   **scales:** color each line by decade
+-   **faceting:** none
+-   **a theme:** NYT style
+
+\
+\
+\
+\
+
+## ggplot + R packages
+
+We will use the powerful `ggplot` tools in RStudio to build (most of) our viz. The `gg` here is short for the **"grammar of graphics"**. These tools are developed in a way that:
+
+-   recognizes that code is communication (it has a grammar!)
+-   connects code to the components / philosophy of data viz
+
+\
+\
+
+**EXAMPLE: ggplot in the news**
+
+-   [MPR journalist David Montgomery](http://dhmontgomery.com/portfolio/): [R data viz](https://github.com/dhmontgomery/personal-work/tree/master/theme-mpr)
+-   [BBC R data viz](https://bbc.github.io/rcookbook/)
+
+\
+\
+
+To use these tools, we must first get them into R/RStudio! Recall that R is *open source*. Anybody can build R tools and share them through special R **packages**. The **tidyverse package** compiles a set of individual packages, including `ggplot2`, that share a common grammar and structure. Though the learning curve can be steep, this grammar is intuitive and generalizable once mastered. Image source: [Posit BBC on X](https://twitter.com/posit_pbc/status/1145592633823244289)
+
+![](https://mac-stat.github.io/images/112/tidyverse.png){width="50%"}
+
+Follow the directions below to *install* this package, the directions depending upon whether or not you're working on Mac's server. Unless the authors of a package add updates, you only need to do this once all semester. To install:
+
+-   **If you're working on Mac's RStudio server**\
+    `tidyverse` is already installed on the server! Check this 2 ways.
+    -   Type `library(tidyverse)` in your console. If you don't get an error, it's installed!
+    -   Check that it appears in the list under the "Packages" tab (bottom right pane).
+-   **If you're working with a desktop version of R/RStudio**\
+    In the "Packages" tab (bottom right pane), click "Install". From there type the name of the package (`tidyverse`), make sure the "Install dependencies" box is checked, and click "Install".
+
+\
+\
+\
+\
+
+# Exercises
+
+**Goals**
+
+We'll talk more later about "good" data viz, and steps to think about when building viz. In these exercises, the goal is to:
+
+-   Familiarize yourself with the `ggplot()` structure and grammar.
+-   Build *univariate* viz, i.e. viz for 1 variable at a time.
+-   Start recognizing the different approaches for visualizing categorical vs quantitative variables.
+
+\
+\
+
+**Directions**
+
+-   General
+    -   Be kind to yourself.
+    -   Collaborate with and be kind to others. You are expected to work together as a group.
+    -   Ask questions. Remember that we won't discuss these exercises as a class.
+-   Activity specific
+    -   The best way to learn `ggplot` is to just play around. Focus on the *patterns* and *potential* of the code. Don't worry about memorizing anything! You will naturally start to remember the most important / common code the more and more you use it.
+
+\
+\
+
+## Exercise 1: Research questions {.unnumbered}
+
+Let's dig into the `hikes` data, starting with the `elevation` and difficulty `ratings` of the hikes:
 
 ```{r}
-seq(from = 3, to = 12, by = 3)
+head(hikes)
 ```
 
--   Create a sequence of 4 numbers that start at 1 and end at 10. You might do this 2 ways.
+a.  What features would we like a visualization of the *categorical* difficulty `rating` variable to capture?
+
+**A bar graph would best visualize the rating of the categorical variable difficulties.**
+
+b.  What about a visualization of the *quantitative* `elevation` variable?
+
+**A histogram would best visualize the quantitative variable elevations.** 
+
+\
+\
+
+## Exercise 2: Load tidyverse {.unnumbered}
+
+We'll address the above questions using `ggplot` tools. Try running the following chunk and simply take note of the error message -- this is one you'll get a lot!
+
+```{r eval = FALSE}
+# Use the ggplot function
+ggplot(hikes, aes(x = rating))
+```
+
+In order to use `ggplot` tools, we have to first *load* the `tidyverse` package in which they live. Mainly, we've *installed* the package but need to tell R when we want to *use* it. Run the chunk below to load the library. You'll need to do this within any .qmd file that uses `ggplot()`.
+
+```{r message=FALSE}
+# Load the package
+library(tidyverse)
+```
+
+\
+\
+\
+\
+
+## Exercise 3: Bar chart of ratings (part 1) {.unnumbered}
+
+Consider some specific research questions about the difficulty `rating` of the hikes:
+
+How many hikes fall into each category? Are the hikes evenly distributed among these categories, or are some more common than others?
+
+All of these questions can be answered with: (1) a **bar chart**; of (2) the *categorical* data recorded in the `rating` column. First, set up the plotting **frame**:
 
 ```{r}
-seq(from = 1, to = 10, by = 3)
+ggplot(hikes, aes(x = rating))
 ```
 
--   Repeat the number "5" 8 times.
+Think about:
+
+-   What did this do? What do you observe?
+-   What, in general, is the first argument of the `ggplot()` function?
+-   What is the purpose of writing `x = rating`?
+-   What do you think `aes` stands for?!?
+
+\
+\
+\
+\
+
+## Exercise 4: Bar chart of ratings (part 2) {.unnumbered}
+
+Now let's add a **geometric layer** to the frame / canvas, and start customizing the plot's **theme**. To this end, try each chunk below, *one by one*. In each chunk, make a comment about how both the code and the corresponding plot both changed.
+
+NOTE:
+
+-   Pay attention to the general code properties and structure, not memorization.
+-   Not all of these are "good" plots. We're just exploring `ggplot`.
 
 ```{r}
-rep(5, 8)
+# The data was added within the frame for difficulty ratings of each hike. 
+ggplot(hikes, aes(x = rating)) +
+  geom_bar()
 ```
-
--   CHALLENGE: *Combine* 2 functions to produce the sequence 3, 6, 9, 12, 3, 6, 9, 12
 
 ```{r}
-rep(seq(from = 3, to = 12, by = 3), 2)
+# This data is comparing the number of hikes and the difficulty rating. 
+ggplot(hikes, aes(x = rating)) +
+  geom_bar() +
+  labs(x = "Rating", y = "Number of hikes")
 ```
-
-
-### Exercise 6: Save it for later {-}
-
-For reasons that will quickly become clear, we'll often want to store some R output for later using assignment operator as follows:
-
-`name <- output`
-
-In the above assignment statement:
-
--   `name` is the name under which to store a result
--   `output` is the result we wish to store
--   `<-` is the **assignment operator**--you can think of this as an arrow pointing the `output` into the `name`.
-
-Try out each line *one at a time*. Some lines will show any output. Why?
-
-```{r eval = FALSE}
-degrees_c <- -13
-degrees_c
-```
-
-Let's now *use* what you stored! Again, do this one by one.
-
-```{r eval = FALSE}
-degrees_c * (9/5) + 32
-degrees_f <- degrees_c * (9/5) + 32
-degrees_f
-```
-
-Finally, try to print `degrees_tomorrow`. Take time to read the **error message**. You will experience this type of error message a *lot*! It will happen when you either haven't yet defined the object you're trying to use, or you've misspelled its name (among other reasons we'll experience later).
-
-```{r eval = FALSE}
-degrees_tomorrow
-```
-
-::: {.callout-important title="Pause"}
-Make sure you're still in sync with your group.
-:::
-
-### Exercise 7: Practice {-}
-
--   Name and store your current age in years.
 
 ```{r}
-my_age <- 21
+# This histogram is comparing the number of hikes and difficulty rating and simultaneously filling the bars with blue. 
+ggplot(hikes, aes(x = rating)) +
+  geom_bar(fill = "blue") +
+  labs(x = "Rating", y = "Number of hikes")
 ```
-
--   Confirm that your age is stored correctly by typing the name and pressing Return/Enter.
 
 ```{r}
-my_age
+# This histogram does the same as the last chart but outlines the bars in orange. 
+ggplot(hikes, aes(x = rating)) +
+  geom_bar(color = "orange", fill = "blue") +
+  labs(x = "Rating", y = "Number of hikes")
 ```
-
--   Use your stored age to calculate how old you'll be in 17 years.
 
 ```{r}
-my_age + 17
+# This turned the background white. 
+ggplot(hikes, aes(x = rating)) +
+  geom_bar(color = "orange", fill = "blue")  +
+  labs(x = "Rating", y = "Number of hikes") +
+  theme_minimal()
 ```
 
+\
+\
+\
+\
 
-### Exercise 8: Code = communication {-}
+## Exercise 5: Bar chart follow-up {.unnumbered}
 
-It's important to recognize from day 1 that **code is a form of communication**, both to yourself and others. Code structure and details are important to readability and clarity just as grammar, punctuation, spelling, paragraphs, and line spacing are important in written essays. All of the code below *works*, but has bad structure. With your group, discuss what is unfortunate about each line.
+### Part a {.unnumbered}
+
+Reflect on the `ggplot()` code.
+
+-   What's the purpose of the `+`? When do we use it?
+
+      *The plus is to add layers to your ggplot.*
+
+-   We added the bars using `geom_bar()`? Why "geom"?
+
+      *Geom refers to the geometric object we use to visualize the data.* 
+
+-   What does `labs()` stand for?
+
+      *Labels, you can modify ggplot labels with this function.* 
+
+-   What's the difference between `color` and `fill`?
+
+      *Color outlines while fill fills in the entire shape.* 
+
+### Part b {.unnumbered}
+
+In general, bar charts allow us to examine the following properties of a *categorical* variable:
+
+-   **observed categories**: What categories did we observe?
+
+      *We observed `rating`.* 
+
+-   **variability between categories**: Are observations evenly spread out among the categories, or are some categories more common than others?
+
+      *The moderate category is more common, so they are not spread evenly.*
+
+We must then *translate* this information into the *context* of our analysis, here hikes in the Adirondacks. Summarize here what you learned from the bar chart, in context.
+
+*Most hikes in the Adirondacks are moderate, second most are easy, and the least amount of hikes are difficult.*
+
+### Part c {.unnumbered}
+
+Is there anything you don't like about this barplot? For example: check out the x-axis again.
+
+
+
+\
+\
+\
+\
+
+## Exercise 6: Sad bar chart {.unnumbered}
+
+Let's now consider some research questions related to the *quantitative* `elevation` variable:
+
+Among the hikes, what's the *range* of elevation and how are the hikes *distributed* within this range (e.g. evenly, in clumps, "normally")? What's a *typical* elevation? Are there any *outliers*, i.e. hikes that have unusually high or low elevations?
+
+Here:
+
+-   Construct a **bar chart** of the *quantitative* `elevation` variable.
+-   Explain why this might *not* be an effective visualization for this and other quantitative variables. (What questions does / doesn't it help answer?)
+
+*This is not helpful for mapping quantitative variables because it can only map a singular variable.*
+
+```{r}
+ggplot(hikes, aes(x = elevation)) +
+  geom_bar()
+```
+
+\
+\
+\
+\
+
+## Exercise 7: A histogram of elevation {.unnumbered}
+
+Quantitative variables require different viz than categorical variables. Especially when there are many possible outcomes of the quantitative variable, it's typically insufficient to simply count up the number of times we've observed a particular outcome (as the bar graph did above). It gives us a sense of ranges and typical outcomes, but not a good sense of how the observations are distributed across this range. We'll explore two methods for graphing quantitative variables: histograms and density plots.
+
+**Histograms** are constructed by (1) dividing up the observed range of the variable into 'bins' of equal width; and (2) counting up the number of cases that fall into each bin. Check out the example below:
+
+![](https://mac-stat.github.io/images/112/histogram_demo.png){width="50%"}
+
+### Part a {.unnumbered}
+
+Let's dig into some details.
+
+-   How many hikes have an elevation between 4500 and 4700 feet?
+
+*About 6.*
+
+-   How many total hikes have an elevation of at least 5100 feet?
+
+*3 or 4.*
+
+### Part b {.unnumbered}
+
+Now the bigger picture. In general, histograms allow us to examine the following properties of a *quantitative* variable:
+
+-   **typical outcome:** Where’s the center of the data points? What's typical?
+-   **variability & range:** How spread out are the outcomes? What are the max and min outcomes?
+-   **shape:** How are values distributed along the observed range? Is the distribution symmetric, right-skewed, left-skewed, bi-modal, or uniform (flat)?
+-   **outliers:** Are there any outliers, i.e. outcomes that are unusually large/small?
+
+We must then *translate* this information into the *context* of our analysis, here hikes in the Adirondacks. Addressing each of the features in the above list, summarize here what you learned from the histogram, in context.
+
+\
+\
+\
+\
+
+## Exercise 8: Building histograms (part 1) {.unnumbered}
+
+2-MINUTE CHALLENGE: Thinking of the bar chart code, try to *intuit* what line you can tack on to the below frame of `elevation` to add a histogram layer. Don't forget a `+`. If it doesn't come to you within 2 minutes, *no problem* -- all will be revealed in the next exercise.
+
+```{r}
+ggplot(hikes, aes(x = elevation)) +
+  geom_histogram()
+```
+
+\
+\
+\
+\
+
+## Exercise 9: Building histograms (part 2) {.unnumbered}
+
+Let's build some histograms. Try each chunk below, *one by one*. In each chunk, make a comment about how both the code and the corresponding plot both changed.
+
+```{r}
+# Count is plotted on the y-axis and elevation is plotted on the x-axis.
+ggplot(hikes, aes(x = elevation)) +
+  geom_histogram()
+```
+
+```{r}
+# The individual bar shapes were outlined in white.
+ggplot(hikes, aes(x = elevation)) +
+  geom_histogram(color = "white") 
+```
+
+```{r}
+# The individual bar shapes were filled in with blue.
+ggplot(hikes, aes(x = elevation)) +
+  geom_histogram(color = "white", fill = "blue") 
+```
+
+```{r}
+# The axis labels were re-named to Number of Hikes and Elevation (feet).
+ggplot(hikes, aes(x = elevation)) +
+  geom_histogram(color = "white") +
+  labs(x = "Elevation (feet)", y = "Number of hikes")
+```
+
+```{r}
+# The individual bar shapes were merged. 
+ggplot(hikes, aes(x = elevation)) +
+  geom_histogram(color = "white", binwidth = 1000) +
+  labs(x = "Elevation (feet)", y = "Number of hikes")
+```
+
+```{r}
+# The individual bars were broken up into more. 
+ggplot(hikes, aes(x = elevation)) +
+  geom_histogram(color = "white", binwidth = 5) +
+  labs(x = "Elevation (feet)", y = "Number of hikes")
+```
+
+```{r}
+# The bar shapes width were changed to 200 which created a more readable plot. 
+ggplot(hikes, aes(x = elevation)) +
+  geom_histogram(color = "white", binwidth = 200) +
+  labs(x = "Elevation (feet)", y = "Number of hikes")
+```
+
+\
+\
+\
+\
+
+## Exercise 10: Histogram follow-up {.unnumbered}
+
+-   What function added the histogram layer / geometry?
+
+```{r}
+geom_histogram
+```
+
+-   What's the difference between `color` and `fill`?
+
+*Color outlines whereas fill fills in the shapes.*
+
+-   Why does adding `color = "white"` improve the visualization?
+
+*It distinguishes the individual bins more.*
+
+-   What did `binwidth` do?
+
+*It changed the width of the bins.*
+
+-   Why does the histogram become ineffective if the `binwidth` is too big (e.g. 1000 feet)?
+
+*It swallows too much data and over generalizes the data points.*
+
+-   Why does the histogram become ineffective if the `binwidth` is too small (e.g. 5 feet)?
+
+*There are too many data points now and they are hard to see.*
+
+\
+\
+\
+\
+
+## Exercise 11: Density plots {.unnumbered}
+
+**Density plots** are essentially smooth versions of the histogram. Instead of sorting observations into discrete bins, the "density" of observations is calculated across the entire range of outcomes. The greater the number of observations, the greater the density! The density is then scaled so that the area under the density curve **always equals 1** and the area under any fraction of the curve represents the fraction of cases that lie in that range.
+
+Check out a density plot of elevation. Notice that the y-axis (density) has no contextual interpretation -- it's a relative measure. The *higher* the density, the more *common* are elevations in that range.
+
+```{r}
+ggplot(hikes, aes(x = elevation)) +
+  geom_density()
+```
+
+**Questions**
+
+-   INTUITION CHECK: Before tweaking the code and thinking back to `geom_bar()` and `geom_histogram()`, how do you *anticipate* the following code will change the plot?
+
+    -   `geom_density(color = "blue")`
+    
+    *This will outline the line in blue.*
+    
+    -   `geom_density(fill = "orange")`
+    
+    *This will fill everything under the line with orange.* 
+
+-   TRY IT! Test out those lines in the chunk below. Was your intuition correct?
+
+```{r}
+ggplot(hikes, aes(x = elevation)) +
+  geom_density(color = "blue", fill = "orange")
+```
+
+-   Examine the density plot. How does it compare to the histogram? What does it tell you about the *typical* elevation, *variability / range* in elevations, and *shape* of the distribution of *elevations* within this range?
+
+\
+\
+\
+\
+
+## Exercise 12: Density plots vs histograms {.unnumbered}
+
+The histogram and density plot both allow us to visualize the behavior of a quantitative variable: typical outcome, variability / range, shape, and outliers. What are the pros/cons of each? What do you like/not like about each?
+
+\
+\
+\
+\
+
+## Exercise 13: Code = communication {.unnumbered}
+
+We *obviously* won't be done until we talk about communication. All code above has a similar *general* structure (where the details can change):
 
 ```{r eval = FALSE}
-seq(from=1,to=9,by=2)
-seq(from = 1, to=9,by=2)
-my_output <- -13
-thisisthetemperaturetodayincelsius <- -13
-this_is_the_temperature_today_in_celsius <- -13
+ggplot(___, aes(x = ___)) + 
+  geom___(color = "___", fill = "___") + 
+  labs(x = "___", y = "___")
 ```
 
-::: callout-tip
-#### Styling Tip: Avoid Smooshy Code
+-   Though not *necessary* to the code working, it's common, good practice to *indent* or *tab* the lines of code after the first line (counterexample below). Why?
 
-```{r eval = FALSE}
-# BAD: tough to read
-seq(from=1,to=9,by=2)
-
-# GOOD: spaces between "words" and punctuation helps
-seq(from = 1, to = 9, by = 2)
-```
-:::
-
-::: callout-tip
-#### Naming Tip: Use Good Naming Conventions
-
-When naming your variables:
-
--   use meaningful names,
--   make them short if possible
--   split up multiple-word names using `snake_case` or `camelCase`
-
-```{r eval = FALSE}
-# BAD: too smooshy and hard to read
-degreescelsius <- -13
-
-# BETTER but not the R-way of naming variables
-# Why is it called camel case?
-degreesCelsius <- -13
-
-# BETTER
-degrees_celsius <- -13
+```{r}
+# YUCK
+ggplot(hikes, aes(x = elevation)) +
+geom_histogram(color = "white", binwidth = 200) +
+labs(x = "Elevation (feet)", y = "Number of hikes")
 ```
 
-It's also *impossible*, not just ill-advised to start names with numbers or symbols, or to use certain symbols in our names. Try the followings:
+-   Though not *necessary* to the code working, it's common, good practice to put a *line break* after each `+` (counterexample below). Why?
 
-```{r eval = FALSE}
-1_18_24_degrees_c <- -13
-_degrees_c <- -13
-Jan/18/24/degrees <- -13
+```{r}
+# YUCK 
+ggplot(hikes, aes(x = elevation)) + geom_histogram(color = "white", binwidth = 200) + labs(x = "Elevation (feet)", y = "Number of hikes")
 ```
-:::
 
-### Exercise 9: You will make so many mistakes! {-}
+\
+\
+\
+\
 
-Mistakes are common when learning any new language. You'll get better and better at interpreting error messages, finding help, and fixing errors. These are all important skills in computer programming in general.
+## Exercise 14: Practice {.unnumbered}
 
-::: callout-tip
-#### Console Shortcut
+### Part a {.unnumbered}
 
-With your cursor at the next prompt in the console (`>`), press the up arrow *multiple times*. What does this do?! This shortcut will be very handy when you make mistakes and want to *modify* your code without having to start over.
-:::
+Practice your viz skills to learn about some of the variables in one of the following datasets from the previous class:
 
-::: callout-tip
-#### Help Files
+```{r}
+# Data on students in this class
+survey <- read.csv("https://mac-stat.github.io/data/high_peaks.csv")
 
-You'll often forget how functions are used. Luckily, there's typically built-in documentation for built-in functions that can be invoked using the `?` operator.
-:::
+# World Cup data
+world_cup <- read.csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-11-29/worldcups.csv")
+```
 
-Let's practice:
+```{r}
+ggplot(world_cup, aes(x = host)) +
+  geom_bar(color = "white") +
+  labs(x = "World Cup Host", y = "Number of Times Hosted")
+```
 
--   In the console, type `?rep` and press Return/Enter.
--   Check out the documentation file that pops up in the Help tab (lower right).
--   Quickly scroll through, noting the type of information provided.
--   Stop at the "Examples" at the bottom. Perhaps the most useful section, this is where a function's functionality is demonstrated! Try out a couple of the provided examples in your console.
+### Part b {.unnumbered}
 
-### Exercise 10: History and environment {-}
+Check out the [RStudio Data Visualization cheat sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-visualization.pdf) to learn more features of `ggplot`.
 
-Finally, let's leave the console.
-
--   Check out the "Environment" tab in the top right pane of RStudio. What do you observe there and when might this be helpful?
-
--   Similarly, check out the "History" tab in the top right pane of RStudio. What do you observe there and when might this be helpful?
-
-### Optional Excersise: Watch Explaination {-}
-
-If you've finished the above exercises, you can watch [Dr. Alicia Johnson talks through the concepts learned today (YouTube)](http://www.youtube.com/embed/JfIo2Ua_oqQ/).
-
-## Wrapping Up
-
--   If you didn’t finish the activity, make sure to complete it outside of class
--   Review the solutions at the bottom of the page
--   Check your understanding of the content by solving checkpoint 1 in Moodle
+\
+\
+\
+\
+\
+\
+\
+\
