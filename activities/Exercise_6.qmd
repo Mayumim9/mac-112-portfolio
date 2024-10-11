@@ -420,14 +420,17 @@ elections_small |>
 ```{r}
 # Arrange the counties in elections_small from lowest to highest percentage of 2020 Republican support
 # Print out just the first 6 rows
-# elections_small |> 
-#   arrange(___) |> 
-#   head()
+ elections_small |> 
+   arrange(repub_pct_20) |> 
+   head()
 ```
 
 ```{r}
 # Arrange the counties in elections_small from highest to lowest percentage of 2020 Republican support
 # Print out just the first 6 rows
+elections_small |> 
+   arrange(desc(repub_pct_20)) |> 
+   head()
 ```
 
 \
@@ -445,23 +448,26 @@ elections_small |>
 
 ```{r}
 # What did this code do?
-# elections_small |> 
-#   mutate(diff_20 = repub_pct_20 - dem_pct_20) |> 
-#   head()
+# It created a new column where the percentage of democratic vote in 2020 was subtracted from percentage of republican vote in 2020
+ elections_small |> 
+  mutate(diff_20 = repub_pct_20 - dem_pct_20) |> 
+  head()
 ```
 
 ```{r}
 # What did this code do?
-# elections_small |> 
-#   mutate(repub_votes_20 = round(total_votes_20 * repub_pct_20/100)) |> 
-#   head()
+# It created a new column with the number of republican voters in 2020
+ elections_small |> 
+   mutate(repub_votes_20 = round(total_votes_20 * repub_pct_20/100)) |> 
+   head()
 ```
 
 ```{r}
 # What did this code do?
-# elections_small |> 
-#   mutate(repub_win_20 = repub_pct_20 > dem_pct_20) |> 
-#   head()
+# It created a new column that identified if there was a larger democratic or republican vote in 2020 
+ elections_small |> 
+   mutate(repub_win_20 = repub_pct_20 > dem_pct_20) |> 
+   head()
 ```
 
 #### Part b {-}
@@ -469,17 +475,17 @@ elections_small |>
 ```{r}
 # You try
 # Define a variable that calculates the change in Dem support in 2020 vs 2016
-#elections_small |> 
-#  mutate(_____) |> 
-#  head()
+elections_small |> 
+  mutate(diff_dem = dem_pct_20 - dem_pct_16) |> 
+  head()
 ```
 
 ```{r}
 # You try
 # Define a variable that determines whether the Dem support was higher in 2020 than in 2016 (TRUE/FALSE)
-#elections_small |> 
-#  mutate(_____) |> 
-#  head()
+elections_small |> 
+  mutate(dem_increase = dem_pct_20 > dem_pct_16) |> 
+  head()
 ```
 
 \
@@ -500,11 +506,11 @@ BEFORE running the below chunk, what do you think it will produce?
 :::
 
 ```{r}
-# elections_small |> 
-#   filter(state_name == "Wisconsin",
-#          repub_pct_20 < dem_pct_20) |> 
-#   arrange(desc(total_votes_20)) |> 
-#   head()
+ elections_small |> 
+   filter(state_name == "Wisconsin",
+          repub_pct_20 < dem_pct_20) |> 
+   arrange(desc(total_votes_20)) |> 
+   head()
 ```
 
 #### Part b {-}
@@ -513,7 +519,7 @@ BEFORE running the below chunk, what do you think it will produce?
 
 BEFORE trying, what do you think will happen if you change the order of filter and arrange:
 
--   the results will be the same
+-   **the results will be the same**
 -   we'll get an error
 -   we won't get an error, but the results will be different
 
@@ -521,16 +527,18 @@ BEFORE trying, what do you think will happen if you change the order of filter a
 
 ```{r}
 # Now try it. Change the order of filter and arrange below.
-# elections_small |> 
-#   filter(state_name == "Wisconsin",
-#          repub_pct_20 < dem_pct_20) |> 
-#   arrange(desc(total_votes_20)) |> 
-#   head()
+ elections_small |> 
+   arrange(desc(total_votes_20)) |> 
+   filter(state_name == "Wisconsin",
+          repub_pct_20 < dem_pct_20) |>
+   head()
 ```
 
 #### Part c {-}
 
 So the order of `filter()` and `arrange()` did *not* matter -- rerranging them produces the same results. BUT what is one *advantage* of filtering before arranging?
+
+*It makes the code easier to interpret.* 
 
 #### Part d {-}
 
@@ -541,10 +549,10 @@ BEFORE running the below chunk, what do you think it will produce?
 :::
 
 ```{r}
-# elections_small |> 
-#   filter(state_name == "Delaware") |> 
-#   mutate(repub_win_20 = repub_pct_20 > dem_pct_20) |> 
-#   select(county_name, repub_pct_20, dem_pct_20, repub_win_20)
+ elections_small |> 
+   filter(state_name == "Delaware") |> 
+   mutate(repub_win_20 = repub_pct_20 > dem_pct_20) |> 
+   select(county_name, repub_pct_20, dem_pct_20, repub_win_20)
 ```
 
 #### Part e {-}
@@ -554,17 +562,17 @@ BEFORE running the below chunk, what do you think it will produce?
 BEFORE trying, what do you think will happen if you change the order of mutate and select:
 
 -   the results will be the same
--   we'll get an error
+-   **we'll get an error**
 -   we won't get an error, but the results will be different
 
 :::
 
 ```{r}
 # Now try it. Change the order of mutate and select below.
-# elections_small |> 
-#   filter(state_name == "Delaware") |> 
-#   mutate(repub_win_20 = repub_pct_20 > dem_pct_20) |> 
-#   select(county_name, repub_pct_20, dem_pct_20, repub_win_20)
+ elections_small |> 
+   filter(state_name == "Delaware") |> 
+   select(county_name, repub_pct_20, dem_pct_20, repub_win_20) |>
+   mutate(repub_win_20 = repub_pct_20 > dem_pct_20)
 ```
 
 \
@@ -584,6 +592,10 @@ We've now learned 4 of the 6 wrangling verbs: `select`, `filter`, `mutate`, `arr
 Show just the counties in Minnesota and their Democratic 2020 vote percentage, from highest to lowest. Your answer should have just 2 columns.
 
 ```{r}
+elections_small |> 
+   filter(state_name == "Minnesota") |>
+   select(county_name, dem_pct_20) |>
+   arrange(desc(dem_pct_20))
 ```
 
 #### Part b {-}
@@ -593,10 +605,14 @@ Create a new dataset named `mn_wi` that sorts the counties in Minnesota and Wisc
 ```{r}
 # Define the dataset
 # Only store the results once you're confident that they're correct
-
+mn_wi <- elections_small |>
+  filter(state_name %in% c("Minnesota", "Wisconsin")) |>
+   select(state_name, county_name, dem_pct_20, dem_pct_16) |>
+   mutate(change_dem = dem_pct_20 - dem_pct_16) |>
+   arrange(desc(change_dem))
 
 # Check out the first 6 rows to confirm your results
-
+head(mn_wi)
 ```
 
 #### Part c {-}
