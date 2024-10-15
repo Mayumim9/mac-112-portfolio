@@ -43,11 +43,13 @@ Tally up the number of male/female penguins by species in 2 ways:
 
 ```{r}
 # Using count()
-
+penguins |>
+  count(species, sex)
 
 # Using group_by() and summarize()
-
-
+penguins |> 
+  group_by(species, sex) |> 
+  summarize(n())
 ```
 
 Define a new column that includes the *proportion* or *relative frequencies* of male/female penguins in each species.
@@ -56,6 +58,7 @@ Define a new column that includes the *proportion* or *relative frequencies* of 
 -   Does the order of `species` and `sex` in `group_by()` matter?
 
 ```{r}
+
 ```
 
 \
