@@ -63,6 +63,9 @@ Construct a plot that allows us to examine how the relationship between body mas
 :::
 
 ```{r}
+ggplot(penguins, aes(x = body_mass_g, y = bill_length_mm, color = species)) +
+  geom_boxplot() +
+  facet_wrap(~sex)
 ```
 
 
@@ -75,30 +78,42 @@ Use the 6 wrangling verbs to address each task in the code chunk below.  You can
 
 ```{r}
 # Get data on only Adelie penguins that weigh more than 4700g
-
+penguins |>
+  filter(species == "Adelie", body_mass_g > 4700)
 
 # Get data on penguin body mass only
 # Show just the first 6 rows
-
+penguins |>
+  select(species, body_mass_g) |>
+  head()
 
 # Sort the penguins from smallest to largest body mass
 # Show just the first 6 rows
-
+penguins |>
+  arrange(body_mass_g) |>
+  head()
 
 
 # Calculate the average body mass across all penguins
 # Note: na.rm = TRUE removes the NAs from the calculation
-
+penguins |>
+  summarize(mean = mean(body_mass_g, na.rm = TRUE)) |>
+  head()
 
 
 # Calculate the average body mass by species
-
+penguins |>
+  group_by(species) |>
+  summarize(mean = mean(body_mass_g, na.rm = TRUE)) |>
+  head()
 
 
 # Create a new column that records body mass in kilograms, not grams
 # NOTE: there are 1000 g in 1 kg
 # Show just the first 6 rows
-
+penguins |>
+  mutate(body_mass_kg = body_mass_g/1000) |>
+  head()
 
 ```
 
@@ -112,7 +127,8 @@ How many penguins of each species do we have? Create a viz that addresses this q
 
 
 ```{r}
-ggplot(penguins, aes(x = species))
+ggplot(penguins, aes(x = species)) +
+  geom_bar()
 ```
 
 ::: {.callout-warning title="Check Understanding"}
@@ -124,6 +140,9 @@ HINT: `n()` calculates group size.
 :::
 
 ```{r}
+penguins |>
+  group_by(species) |>
+  summarize(n())
 ```
 
 
