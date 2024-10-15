@@ -175,13 +175,20 @@ Let's practice *combining* some verbs. For each task:
 ```{r}
 # Sort Gentoo penguins from biggest to smallest with respect to their 
 # bill length in cm (there are 10 mm in a cm)
-
+penguins |>
+  filter(species == "Gentoo") |>
+  mutate(bill_length_cm = bill_length_mm/10) |>
+  arrange(desc(bill_length_cm))
 ```
 
 ```{r}
 # Sort the species from smallest to biggest with respect to their 
 # average bill length in cm
-
+penguins |>
+  mutate(bill_length_cm = bill_length_mm / 10) |> 
+  group_by(species) |> 
+  summarize(mean_bill_length = mean(bill_length_cm, na.rm = TRUE)) |> 
+  arrange(desc(mean_bill_length))
 ```
 
 
@@ -231,17 +238,17 @@ To comment/uncomment several lines of code at once, highlight them then click <k
 ```{r}
 # Create a dataset with just Adelie and Chinstrap using %in%
 # Pipe this into `count(species)` to confirm that you only have these 2 species
-# ___ |> 
-#   filter(___) |> 
-#   count(species)
+ penguins |>
+  filter(species %in% c("Adelie", "Chinstrap")) |>
+  count(species)
 ```
 
 ```{r}
 # Create a dataset with just Adelie and Chinstrap using !=
 # Pipe this into `count(species)` to confirm that you only have these 2 species
-# ___ |> 
-#   filter(___) |> 
-#   count(species)
+ penguins |> 
+   filter(species != "Gentoo") |> 
+   count(species)
 ```
 
 #### Part b {.unnumbered}
@@ -306,7 +313,7 @@ nrow(penguins)
 #### Part c {.unnumbered}
 
 Explain why we should only use `na.omit()` in extreme circumstances.
-
+*You might delete information that you need.*
 \
 \
 \
@@ -328,25 +335,29 @@ names(penguins)
 
 ```{r}
 # Use a shortcut to keep everything but the year and island variables
-
+penguins |>
+  select(-year, -island)
 
 ```
 
 ```{r}
 # Use a shortcut to keep only species and the penguin characteristics measured in mm
-
+penguins |>
+  select(species, ends_with("mm"))
 
 ```
 
 ```{r}
 # Use a shortcut to keep only species and bill-related measurements
-
+penguins |>
+  select(species, contains("bill"))
 
 ```
 
 ```{r}
 # Use a shortcut to keep only species and the length-related characteristics
-
+penguins |>
+  select(species, contains("length"))
 
 ```
 
@@ -363,19 +374,19 @@ We've done examples where we need to `filter()` by more than one variable, or `s
 # Change this code to sort the penguins by species, and then island name
 # NOTE: The first row should be an Adelie penguin living on Biscoe island
 penguins |> 
-  arrange(species)
+  arrange(species, island)
 ```
 
 ```{r}
 # Change this code to count the number of male/female penguins observed for each species
 penguins |> 
-  count(species)
+  count(species, sex)
 ```
 
 ```{r}
 # Change this code to calculate the average body mass by species and sex
 penguins |> 
-  group_by(species) |> 
+  group_by(species, sex) |> 
   summarize(mean = mean(body_mass_g, na.rm = TRUE))
 
 ```
@@ -403,34 +414,40 @@ class(today)
 The `lubridate` package inside `tidyverse` contains functions that can extract various information from dates. Let's learn about some of the most common functions by applying them to `today`. For each, make a comment on what the function does
 
 ```{r}
+#Gives you the year
 year(today)
 ```
 
 ```{r}
 # What do these lines produce / what's their difference?
+# One gives the number of the month, the other gives the name of the month
 month(today)
 month(today, label = TRUE)
 ```
 
 ```{r}
 # What does this number mean?
+# It's the number of the week in the year
 week(today)
 ```
 
 ```{r}
 # What do these lines produce / what's their difference?
+# The first is the day in the month, the second is the day in the year.
 mday(today)
 yday(today)  # This is often called the "Julian day"
 ```
 
 ```{r}
 # What do these lines produce / what's their difference?
+# One gives the number of the day of the week, the other gives the name.
 wday(today)
 wday(today, label = TRUE)
 ```
 
 ```{r}
 # What do the results of these 2 lines tell us?
+# Today is after the date 2/14/24, not before. 
 today >= ymd("2024-02-14")
 today < ymd("2024-02-14")
 ```
@@ -463,13 +480,19 @@ head(Birthdays)
 
 ```{r}
 # How many days of data do we have for each state?
-
+Birthdays |>
+  group_by(state) |>
+  summarize(n_distinct(Birthdays))
 
 # How many total births were there in this time period?
-
+Birthdays |>
+  summarize(total_births = sum(births))
 
 # How many total births were there per state in this time period, sorted from low to high?
-
+Birthdays |>
+  group_by(state) |>
+  mutate(total_birth_state = sum(births)) |>
+  select(state, total_birth_state)
 
 ```
 
@@ -480,11 +503,20 @@ head(Birthdays)
 Create a new dataset named `daily_births` that includes the total number of births per day (across all states) and the corresponding day of the week, eg, Mon. NOTE: Name the column with total births so that it's easier to wrangle and plot.
 
 ```{r}
+daily_births <- Birthdays |>
+  mutate( as.Date(date)) |>
+  mutate(week_day = wday(date, label = TRUE, abbr = TRUE)) |>
+  group_by(date, week_day) |>
+  summarise(total_births = n(), .groups = 'drop')
+
+head(daily_births)
 ```
 
 Using this data, construct a plot of `births` over time, indicating the day of week.
 
 ```{r}
+ggplot(daily_births, aes(x = date, y = total_births, color = week_day)) +
+  geom_line() 
 ```
 
 
@@ -505,6 +537,16 @@ penguins |>
 Calculate the total number of births in each month and year, eg, Jan 1969, Feb 1969, .... Label month by names not numbers, eg, Jan not 1. Then, plot the births by month and comment on what you learn.
 
 ```{r}
+monthly_births <- Birthdays |>
+  mutate(as.Date(date)) |>
+  mutate(Year = year(date), Month = month(date, label = TRUE, abbr = TRUE)) |>
+  group_by(Year, Month) |>
+  summarise(total_births = n(), .groups = 'drop') |>
+  mutate(month_year = paste(Month, Year))
+
+ggplot(monthly_births, aes(x = month_year, y = total_births, group = Year, color = as.factor(Year))) +
+  geom_point() +
+  geom_line()
 ```
 
 #### Part b {.unnumbered}
