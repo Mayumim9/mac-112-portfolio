@@ -23,6 +23,8 @@ book:
       - activities/Exercise_6.qmd
       - activities/Exercise_7.qmd
       - activities/Exercise_8.qmd
+      - activities/Exercise_9.qmd
+      - activities/Exercise_10.qmd
       
     - part: notes/README.qmd
       chapters: 
