@@ -798,38 +798,53 @@ You can find a codebook [here](https://github.com/rfordatascience/tidytuesday/tr
 
 ```{r}
 # In what years did Brazil win the World Cup?
-
+world_cup |>
+  select(year, winner) |>
+  filter(winner == "Brazil")
 ```
 
 ```{r}
 # What were the 6 World Cups with the highest attendance?
-
+world_cup |>
+  arrange(desc(attendance)) |>
+  head()
 ```
 
 ```{r}
 # Construct a univariate plot of goals_scored (no wrangling necessary)
 # This provides a visual summary of how the number of goals_scored varies from World Cup to World Cup
-
+world_cup |>
+ggplot(aes(x = goals_scored)) +
+  geom_bar(color = "white")
 ```
 
 ```{r}
 # Let's follow up the plot with some more precise numerical summaries
 # Calculate the min, median, and max number of goals_scored across all World Cups
 # NOTE: Visually compare these numerical summaries to what you observed in the plot
-
+world_cup |>
+  summarise(min(goals_scored), mean(goals_scored), max(goals_scored))
 ```
 
 ```{r}
 # Construct a bivariate plot of how the number of goals_scored in the World Cup has changed over the years
 # No wrangling necessary
-
+world_cup |>
+  ggplot(aes(x = year, y = goals_scored)) +
+  geom_point() +
+  geom_line()
 ```
 
 ```{r}
 # Our above summaries might be a bit misleading.
 # The number of games played at the World Cup varies.
 # Construct a bivariate plot of how the typical number of goals per game has changed over the years
-
+per_game_data <- world_cup |> 
+  mutate(goals_per_game = goals_scored / games)
+  
+ggplot(per_game_data, aes(x = year, y = goals_per_game)) + 
+  geom_point() + 
+  geom_line()
 
 ```
 

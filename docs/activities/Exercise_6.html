@@ -1758,7 +1758,9 @@ Reflect
 </div>
 <p>You can find a codebook <a href="https://github.com/rfordatascience/tidytuesday/tree/master/data/2022/2022-11-29">here</a>. Use (some of) our 6 verbs (<code>select</code>, <code>filter</code>, <code>arrange</code>, <code>mutate</code>, <code>summarize</code>, <code>group_by</code>) and data viz to address the following prompts.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1"></a><span class="co"># In what years did Brazil win the World Cup?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1"></a><span class="co"># In what years did Brazil win the World Cup?</span></span>
+<span id="cb91-2"><a href="#cb91-2"></a><span class="co">#world_cup |&gt;</span></span>
+<span id="cb91-3"><a href="#cb91-3"></a>  <span class="co">#filter()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb92"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1"></a><span class="co"># What were the 6 World Cups with the highest attendance?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -3822,402 +3824,403 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb150-872"><a href="#cb150-872"></a></span>
 <span id="cb150-875"><a href="#cb150-875"></a><span class="in">```{r}</span></span>
 <span id="cb150-876"><a href="#cb150-876"></a><span class="co"># In what years did Brazil win the World Cup?</span></span>
-<span id="cb150-877"><a href="#cb150-877"></a></span>
-<span id="cb150-878"><a href="#cb150-878"></a><span class="in">```</span></span>
-<span id="cb150-879"><a href="#cb150-879"></a></span>
-<span id="cb150-882"><a href="#cb150-882"></a><span class="in">```{r}</span></span>
-<span id="cb150-883"><a href="#cb150-883"></a><span class="co"># What were the 6 World Cups with the highest attendance?</span></span>
-<span id="cb150-884"><a href="#cb150-884"></a></span>
-<span id="cb150-885"><a href="#cb150-885"></a><span class="in">```</span></span>
-<span id="cb150-886"><a href="#cb150-886"></a></span>
-<span id="cb150-889"><a href="#cb150-889"></a><span class="in">```{r}</span></span>
-<span id="cb150-890"><a href="#cb150-890"></a><span class="co"># Construct a univariate plot of goals_scored (no wrangling necessary)</span></span>
-<span id="cb150-891"><a href="#cb150-891"></a><span class="co"># This provides a visual summary of how the number of goals_scored varies from World Cup to World Cup</span></span>
-<span id="cb150-892"><a href="#cb150-892"></a></span>
-<span id="cb150-893"><a href="#cb150-893"></a><span class="in">```</span></span>
-<span id="cb150-894"><a href="#cb150-894"></a></span>
-<span id="cb150-897"><a href="#cb150-897"></a><span class="in">```{r}</span></span>
-<span id="cb150-898"><a href="#cb150-898"></a><span class="co"># Let's follow up the plot with some more precise numerical summaries</span></span>
-<span id="cb150-899"><a href="#cb150-899"></a><span class="co"># Calculate the min, median, and max number of goals_scored across all World Cups</span></span>
-<span id="cb150-900"><a href="#cb150-900"></a><span class="co"># </span><span class="al">NOTE</span><span class="co">: Visually compare these numerical summaries to what you observed in the plot</span></span>
-<span id="cb150-901"><a href="#cb150-901"></a></span>
-<span id="cb150-902"><a href="#cb150-902"></a><span class="in">```</span></span>
-<span id="cb150-903"><a href="#cb150-903"></a></span>
-<span id="cb150-906"><a href="#cb150-906"></a><span class="in">```{r}</span></span>
-<span id="cb150-907"><a href="#cb150-907"></a><span class="co"># Construct a bivariate plot of how the number of goals_scored in the World Cup has changed over the years</span></span>
-<span id="cb150-908"><a href="#cb150-908"></a><span class="co"># No wrangling necessary</span></span>
-<span id="cb150-909"><a href="#cb150-909"></a></span>
-<span id="cb150-910"><a href="#cb150-910"></a><span class="in">```</span></span>
-<span id="cb150-911"><a href="#cb150-911"></a></span>
-<span id="cb150-914"><a href="#cb150-914"></a><span class="in">```{r}</span></span>
-<span id="cb150-915"><a href="#cb150-915"></a><span class="co"># Our above summaries might be a bit misleading.</span></span>
-<span id="cb150-916"><a href="#cb150-916"></a><span class="co"># The number of games played at the World Cup varies.</span></span>
-<span id="cb150-917"><a href="#cb150-917"></a><span class="co"># Construct a bivariate plot of how the typical number of goals per game has changed over the years</span></span>
-<span id="cb150-918"><a href="#cb150-918"></a></span>
+<span id="cb150-877"><a href="#cb150-877"></a><span class="co">#world_cup |&gt;</span></span>
+<span id="cb150-878"><a href="#cb150-878"></a>  <span class="co">#filter()</span></span>
+<span id="cb150-879"><a href="#cb150-879"></a><span class="in">```</span></span>
+<span id="cb150-880"><a href="#cb150-880"></a></span>
+<span id="cb150-883"><a href="#cb150-883"></a><span class="in">```{r}</span></span>
+<span id="cb150-884"><a href="#cb150-884"></a><span class="co"># What were the 6 World Cups with the highest attendance?</span></span>
+<span id="cb150-885"><a href="#cb150-885"></a></span>
+<span id="cb150-886"><a href="#cb150-886"></a><span class="in">```</span></span>
+<span id="cb150-887"><a href="#cb150-887"></a></span>
+<span id="cb150-890"><a href="#cb150-890"></a><span class="in">```{r}</span></span>
+<span id="cb150-891"><a href="#cb150-891"></a><span class="co"># Construct a univariate plot of goals_scored (no wrangling necessary)</span></span>
+<span id="cb150-892"><a href="#cb150-892"></a><span class="co"># This provides a visual summary of how the number of goals_scored varies from World Cup to World Cup</span></span>
+<span id="cb150-893"><a href="#cb150-893"></a></span>
+<span id="cb150-894"><a href="#cb150-894"></a><span class="in">```</span></span>
+<span id="cb150-895"><a href="#cb150-895"></a></span>
+<span id="cb150-898"><a href="#cb150-898"></a><span class="in">```{r}</span></span>
+<span id="cb150-899"><a href="#cb150-899"></a><span class="co"># Let's follow up the plot with some more precise numerical summaries</span></span>
+<span id="cb150-900"><a href="#cb150-900"></a><span class="co"># Calculate the min, median, and max number of goals_scored across all World Cups</span></span>
+<span id="cb150-901"><a href="#cb150-901"></a><span class="co"># </span><span class="al">NOTE</span><span class="co">: Visually compare these numerical summaries to what you observed in the plot</span></span>
+<span id="cb150-902"><a href="#cb150-902"></a></span>
+<span id="cb150-903"><a href="#cb150-903"></a><span class="in">```</span></span>
+<span id="cb150-904"><a href="#cb150-904"></a></span>
+<span id="cb150-907"><a href="#cb150-907"></a><span class="in">```{r}</span></span>
+<span id="cb150-908"><a href="#cb150-908"></a><span class="co"># Construct a bivariate plot of how the number of goals_scored in the World Cup has changed over the years</span></span>
+<span id="cb150-909"><a href="#cb150-909"></a><span class="co"># No wrangling necessary</span></span>
+<span id="cb150-910"><a href="#cb150-910"></a></span>
+<span id="cb150-911"><a href="#cb150-911"></a><span class="in">```</span></span>
+<span id="cb150-912"><a href="#cb150-912"></a></span>
+<span id="cb150-915"><a href="#cb150-915"></a><span class="in">```{r}</span></span>
+<span id="cb150-916"><a href="#cb150-916"></a><span class="co"># Our above summaries might be a bit misleading.</span></span>
+<span id="cb150-917"><a href="#cb150-917"></a><span class="co"># The number of games played at the World Cup varies.</span></span>
+<span id="cb150-918"><a href="#cb150-918"></a><span class="co"># Construct a bivariate plot of how the typical number of goals per game has changed over the years</span></span>
 <span id="cb150-919"><a href="#cb150-919"></a></span>
-<span id="cb150-920"><a href="#cb150-920"></a><span class="in">```</span></span>
-<span id="cb150-921"><a href="#cb150-921"></a></span>
-<span id="cb150-922"><a href="#cb150-922"></a>\</span>
+<span id="cb150-920"><a href="#cb150-920"></a></span>
+<span id="cb150-921"><a href="#cb150-921"></a><span class="in">```</span></span>
+<span id="cb150-922"><a href="#cb150-922"></a></span>
 <span id="cb150-923"><a href="#cb150-923"></a>\</span>
 <span id="cb150-924"><a href="#cb150-924"></a>\</span>
 <span id="cb150-925"><a href="#cb150-925"></a>\</span>
-<span id="cb150-926"><a href="#cb150-926"></a></span>
-<span id="cb150-927"><a href="#cb150-927"></a><span class="fu">### Exercise 11: Practice on your data {-}</span></span>
-<span id="cb150-928"><a href="#cb150-928"></a></span>
-<span id="cb150-929"><a href="#cb150-929"></a>Return to the TidyTuesday data you're using in Homework 3. Use your new wrangling skills to play around. What new insights can you gain?!</span>
-<span id="cb150-930"><a href="#cb150-930"></a></span>
-<span id="cb150-931"><a href="#cb150-931"></a>\</span>
+<span id="cb150-926"><a href="#cb150-926"></a>\</span>
+<span id="cb150-927"><a href="#cb150-927"></a></span>
+<span id="cb150-928"><a href="#cb150-928"></a><span class="fu">### Exercise 11: Practice on your data {-}</span></span>
+<span id="cb150-929"><a href="#cb150-929"></a></span>
+<span id="cb150-930"><a href="#cb150-930"></a>Return to the TidyTuesday data you're using in Homework 3. Use your new wrangling skills to play around. What new insights can you gain?!</span>
+<span id="cb150-931"><a href="#cb150-931"></a></span>
 <span id="cb150-932"><a href="#cb150-932"></a>\</span>
 <span id="cb150-933"><a href="#cb150-933"></a>\</span>
 <span id="cb150-934"><a href="#cb150-934"></a>\</span>
-<span id="cb150-935"><a href="#cb150-935"></a></span>
-<span id="cb150-936"><a href="#cb150-936"></a>::: content-hidden</span>
-<span id="cb150-937"><a href="#cb150-937"></a><span class="fu">## Wrap-up</span></span>
-<span id="cb150-938"><a href="#cb150-938"></a></span>
-<span id="cb150-939"><a href="#cb150-939"></a><span class="ss">-   </span>Homework 3 is due Tuesday!</span>
-<span id="cb150-940"><a href="#cb150-940"></a><span class="ss">-   </span>Make sure to complete any exercises from today's activity before our next class.</span>
-<span id="cb150-941"><a href="#cb150-941"></a><span class="ss">-   </span>Reach out on Slack, in office hours, etc.</span>
-<span id="cb150-942"><a href="#cb150-942"></a></span>
-<span id="cb150-943"><a href="#cb150-943"></a>\</span>
+<span id="cb150-935"><a href="#cb150-935"></a>\</span>
+<span id="cb150-936"><a href="#cb150-936"></a></span>
+<span id="cb150-937"><a href="#cb150-937"></a>::: content-hidden</span>
+<span id="cb150-938"><a href="#cb150-938"></a><span class="fu">## Wrap-up</span></span>
+<span id="cb150-939"><a href="#cb150-939"></a></span>
+<span id="cb150-940"><a href="#cb150-940"></a><span class="ss">-   </span>Homework 3 is due Tuesday!</span>
+<span id="cb150-941"><a href="#cb150-941"></a><span class="ss">-   </span>Make sure to complete any exercises from today's activity before our next class.</span>
+<span id="cb150-942"><a href="#cb150-942"></a><span class="ss">-   </span>Reach out on Slack, in office hours, etc.</span>
+<span id="cb150-943"><a href="#cb150-943"></a></span>
 <span id="cb150-944"><a href="#cb150-944"></a>\</span>
 <span id="cb150-945"><a href="#cb150-945"></a>\</span>
 <span id="cb150-946"><a href="#cb150-946"></a>\</span>
-<span id="cb150-947"><a href="#cb150-947"></a>:::</span>
-<span id="cb150-948"><a href="#cb150-948"></a></span>
-<span id="cb150-949"><a href="#cb150-949"></a><span class="fu">## Solutions</span></span>
-<span id="cb150-950"><a href="#cb150-950"></a></span>
-<span id="cb150-951"><a href="#cb150-951"></a>&lt;details&gt;</span>
-<span id="cb150-952"><a href="#cb150-952"></a></span>
-<span id="cb150-953"><a href="#cb150-953"></a>&lt;summary&gt;Click for Solutions&lt;/summary&gt;</span>
-<span id="cb150-954"><a href="#cb150-954"></a></span>
-<span id="cb150-955"><a href="#cb150-955"></a><span class="fu">### EXAMPLE 1</span></span>
-<span id="cb150-956"><a href="#cb150-956"></a></span>
-<span id="cb150-957"><a href="#cb150-957"></a>a.  select</span>
-<span id="cb150-958"><a href="#cb150-958"></a>b.  filter</span>
-<span id="cb150-959"><a href="#cb150-959"></a>c.  mutate</span>
-<span id="cb150-960"><a href="#cb150-960"></a>d.  arrange</span>
-<span id="cb150-961"><a href="#cb150-961"></a>e.  summarize</span>
-<span id="cb150-962"><a href="#cb150-962"></a></span>
-<span id="cb150-963"><a href="#cb150-963"></a>\</span>
+<span id="cb150-947"><a href="#cb150-947"></a>\</span>
+<span id="cb150-948"><a href="#cb150-948"></a>:::</span>
+<span id="cb150-949"><a href="#cb150-949"></a></span>
+<span id="cb150-950"><a href="#cb150-950"></a><span class="fu">## Solutions</span></span>
+<span id="cb150-951"><a href="#cb150-951"></a></span>
+<span id="cb150-952"><a href="#cb150-952"></a>&lt;details&gt;</span>
+<span id="cb150-953"><a href="#cb150-953"></a></span>
+<span id="cb150-954"><a href="#cb150-954"></a>&lt;summary&gt;Click for Solutions&lt;/summary&gt;</span>
+<span id="cb150-955"><a href="#cb150-955"></a></span>
+<span id="cb150-956"><a href="#cb150-956"></a><span class="fu">### EXAMPLE 1</span></span>
+<span id="cb150-957"><a href="#cb150-957"></a></span>
+<span id="cb150-958"><a href="#cb150-958"></a>a.  select</span>
+<span id="cb150-959"><a href="#cb150-959"></a>b.  filter</span>
+<span id="cb150-960"><a href="#cb150-960"></a>c.  mutate</span>
+<span id="cb150-961"><a href="#cb150-961"></a>d.  arrange</span>
+<span id="cb150-962"><a href="#cb150-962"></a>e.  summarize</span>
+<span id="cb150-963"><a href="#cb150-963"></a></span>
 <span id="cb150-964"><a href="#cb150-964"></a>\</span>
 <span id="cb150-965"><a href="#cb150-965"></a>\</span>
 <span id="cb150-966"><a href="#cb150-966"></a>\</span>
-<span id="cb150-967"><a href="#cb150-967"></a></span>
-<span id="cb150-968"><a href="#cb150-968"></a><span class="fu">### Exercise 1: select practice {-}</span></span>
-<span id="cb150-969"><a href="#cb150-969"></a></span>
-<span id="cb150-972"><a href="#cb150-972"></a><span class="in">```{r}</span></span>
-<span id="cb150-973"><a href="#cb150-973"></a><span class="co"># Define elections_small</span></span>
-<span id="cb150-974"><a href="#cb150-974"></a>elections_small <span class="ot">&lt;-</span> elections <span class="sc">|&gt;</span></span>
-<span id="cb150-975"><a href="#cb150-975"></a>  <span class="fu">select</span>(state_name, county_name, total_votes_20, repub_pct_20, dem_pct_20, total_votes_16, dem_pct_16)</span>
-<span id="cb150-976"><a href="#cb150-976"></a></span>
-<span id="cb150-977"><a href="#cb150-977"></a><span class="co"># Check out the first 6 rows to confirm your code did what you think it did!</span></span>
-<span id="cb150-978"><a href="#cb150-978"></a><span class="fu">head</span>(elections_small)</span>
-<span id="cb150-979"><a href="#cb150-979"></a></span>
-<span id="cb150-980"><a href="#cb150-980"></a><span class="in">```</span></span>
-<span id="cb150-981"><a href="#cb150-981"></a></span>
-<span id="cb150-982"><a href="#cb150-982"></a>\</span>
+<span id="cb150-967"><a href="#cb150-967"></a>\</span>
+<span id="cb150-968"><a href="#cb150-968"></a></span>
+<span id="cb150-969"><a href="#cb150-969"></a><span class="fu">### Exercise 1: select practice {-}</span></span>
+<span id="cb150-970"><a href="#cb150-970"></a></span>
+<span id="cb150-973"><a href="#cb150-973"></a><span class="in">```{r}</span></span>
+<span id="cb150-974"><a href="#cb150-974"></a><span class="co"># Define elections_small</span></span>
+<span id="cb150-975"><a href="#cb150-975"></a>elections_small <span class="ot">&lt;-</span> elections <span class="sc">|&gt;</span></span>
+<span id="cb150-976"><a href="#cb150-976"></a>  <span class="fu">select</span>(state_name, county_name, total_votes_20, repub_pct_20, dem_pct_20, total_votes_16, dem_pct_16)</span>
+<span id="cb150-977"><a href="#cb150-977"></a></span>
+<span id="cb150-978"><a href="#cb150-978"></a><span class="co"># Check out the first 6 rows to confirm your code did what you think it did!</span></span>
+<span id="cb150-979"><a href="#cb150-979"></a><span class="fu">head</span>(elections_small)</span>
+<span id="cb150-980"><a href="#cb150-980"></a></span>
+<span id="cb150-981"><a href="#cb150-981"></a><span class="in">```</span></span>
+<span id="cb150-982"><a href="#cb150-982"></a></span>
 <span id="cb150-983"><a href="#cb150-983"></a>\</span>
 <span id="cb150-984"><a href="#cb150-984"></a>\</span>
 <span id="cb150-985"><a href="#cb150-985"></a>\</span>
-<span id="cb150-986"><a href="#cb150-986"></a></span>
-<span id="cb150-987"><a href="#cb150-987"></a><span class="fu">### Exercise 2: filter demo {-}</span></span>
-<span id="cb150-988"><a href="#cb150-988"></a></span>
-<span id="cb150-991"><a href="#cb150-991"></a><span class="in">```{r}</span></span>
-<span id="cb150-992"><a href="#cb150-992"></a><span class="co"># Keep only data on counties in Hawaii</span></span>
-<span id="cb150-993"><a href="#cb150-993"></a>elections_small <span class="sc">|&gt;</span></span>
-<span id="cb150-994"><a href="#cb150-994"></a> <span class="fu">filter</span>(state_name <span class="sc">==</span> <span class="st">"Hawaii"</span>)</span>
-<span id="cb150-995"><a href="#cb150-995"></a><span class="in">```</span></span>
-<span id="cb150-996"><a href="#cb150-996"></a></span>
-<span id="cb150-999"><a href="#cb150-999"></a><span class="in">```{r}</span></span>
-<span id="cb150-1000"><a href="#cb150-1000"></a><span class="co"># Keep counties in Hawaii AND Delaware</span></span>
-<span id="cb150-1001"><a href="#cb150-1001"></a>elections_small <span class="sc">|&gt;</span> </span>
-<span id="cb150-1002"><a href="#cb150-1002"></a>  <span class="fu">filter</span>(state_name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Hawaii"</span>, <span class="st">"Delaware"</span>))</span>
-<span id="cb150-1003"><a href="#cb150-1003"></a><span class="in">```</span></span>
-<span id="cb150-1004"><a href="#cb150-1004"></a></span>
-<span id="cb150-1007"><a href="#cb150-1007"></a><span class="in">```{r}</span></span>
-<span id="cb150-1008"><a href="#cb150-1008"></a><span class="co"># Keep only data on counties where the Republican got MORE THAN 93.97% of the vote in 2020</span></span>
-<span id="cb150-1009"><a href="#cb150-1009"></a>elections_small <span class="sc">|&gt;</span> </span>
-<span id="cb150-1010"><a href="#cb150-1010"></a>  <span class="fu">filter</span>(repub_pct_20 <span class="sc">&gt;</span> <span class="fl">93.97</span>)</span>
-<span id="cb150-1011"><a href="#cb150-1011"></a><span class="in">```</span></span>
-<span id="cb150-1012"><a href="#cb150-1012"></a></span>
-<span id="cb150-1015"><a href="#cb150-1015"></a><span class="in">```{r}</span></span>
-<span id="cb150-1016"><a href="#cb150-1016"></a><span class="co"># Keep only data on counties where the Republican got AT LEAST 93.97% of the vote in 2020</span></span>
-<span id="cb150-1017"><a href="#cb150-1017"></a><span class="co"># This should have 1 more row than your answer above</span></span>
-<span id="cb150-1018"><a href="#cb150-1018"></a>elections_small <span class="sc">|&gt;</span> </span>
-<span id="cb150-1019"><a href="#cb150-1019"></a>  <span class="fu">filter</span>(repub_pct_20 <span class="sc">&gt;=</span> <span class="fl">93.97</span>)</span>
-<span id="cb150-1020"><a href="#cb150-1020"></a><span class="in">```</span></span>
-<span id="cb150-1021"><a href="#cb150-1021"></a></span>
-<span id="cb150-1024"><a href="#cb150-1024"></a><span class="in">```{r}</span></span>
-<span id="cb150-1025"><a href="#cb150-1025"></a><span class="co"># Keep only data on counties in Texas where the Democrat got more than 65% of the vote in 2020</span></span>
-<span id="cb150-1026"><a href="#cb150-1026"></a><span class="co"># Do this 2 ways.</span></span>
-<span id="cb150-1027"><a href="#cb150-1027"></a><span class="co"># Method 1: 2 filters with 1 condition each</span></span>
-<span id="cb150-1028"><a href="#cb150-1028"></a>elections_small <span class="sc">|&gt;</span></span>
-<span id="cb150-1029"><a href="#cb150-1029"></a> <span class="fu">filter</span>(state_name <span class="sc">==</span> <span class="st">"Texas"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb150-1030"><a href="#cb150-1030"></a> <span class="fu">filter</span>(dem_pct_20 <span class="sc">&gt;</span> <span class="dv">65</span>)</span>
-<span id="cb150-1031"><a href="#cb150-1031"></a></span>
-<span id="cb150-1032"><a href="#cb150-1032"></a><span class="co"># Method 2: 1 filter with 2 conditions</span></span>
-<span id="cb150-1033"><a href="#cb150-1033"></a>elections_small <span class="sc">|&gt;</span></span>
-<span id="cb150-1034"><a href="#cb150-1034"></a> <span class="fu">filter</span>(state_name <span class="sc">==</span> <span class="st">"Texas"</span>, dem_pct_20 <span class="sc">&gt;</span> <span class="dv">65</span>)</span>
-<span id="cb150-1035"><a href="#cb150-1035"></a><span class="in">```</span></span>
-<span id="cb150-1036"><a href="#cb150-1036"></a></span>
-<span id="cb150-1037"><a href="#cb150-1037"></a>\</span>
+<span id="cb150-986"><a href="#cb150-986"></a>\</span>
+<span id="cb150-987"><a href="#cb150-987"></a></span>
+<span id="cb150-988"><a href="#cb150-988"></a><span class="fu">### Exercise 2: filter demo {-}</span></span>
+<span id="cb150-989"><a href="#cb150-989"></a></span>
+<span id="cb150-992"><a href="#cb150-992"></a><span class="in">```{r}</span></span>
+<span id="cb150-993"><a href="#cb150-993"></a><span class="co"># Keep only data on counties in Hawaii</span></span>
+<span id="cb150-994"><a href="#cb150-994"></a>elections_small <span class="sc">|&gt;</span></span>
+<span id="cb150-995"><a href="#cb150-995"></a> <span class="fu">filter</span>(state_name <span class="sc">==</span> <span class="st">"Hawaii"</span>)</span>
+<span id="cb150-996"><a href="#cb150-996"></a><span class="in">```</span></span>
+<span id="cb150-997"><a href="#cb150-997"></a></span>
+<span id="cb150-1000"><a href="#cb150-1000"></a><span class="in">```{r}</span></span>
+<span id="cb150-1001"><a href="#cb150-1001"></a><span class="co"># Keep counties in Hawaii AND Delaware</span></span>
+<span id="cb150-1002"><a href="#cb150-1002"></a>elections_small <span class="sc">|&gt;</span> </span>
+<span id="cb150-1003"><a href="#cb150-1003"></a>  <span class="fu">filter</span>(state_name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Hawaii"</span>, <span class="st">"Delaware"</span>))</span>
+<span id="cb150-1004"><a href="#cb150-1004"></a><span class="in">```</span></span>
+<span id="cb150-1005"><a href="#cb150-1005"></a></span>
+<span id="cb150-1008"><a href="#cb150-1008"></a><span class="in">```{r}</span></span>
+<span id="cb150-1009"><a href="#cb150-1009"></a><span class="co"># Keep only data on counties where the Republican got MORE THAN 93.97% of the vote in 2020</span></span>
+<span id="cb150-1010"><a href="#cb150-1010"></a>elections_small <span class="sc">|&gt;</span> </span>
+<span id="cb150-1011"><a href="#cb150-1011"></a>  <span class="fu">filter</span>(repub_pct_20 <span class="sc">&gt;</span> <span class="fl">93.97</span>)</span>
+<span id="cb150-1012"><a href="#cb150-1012"></a><span class="in">```</span></span>
+<span id="cb150-1013"><a href="#cb150-1013"></a></span>
+<span id="cb150-1016"><a href="#cb150-1016"></a><span class="in">```{r}</span></span>
+<span id="cb150-1017"><a href="#cb150-1017"></a><span class="co"># Keep only data on counties where the Republican got AT LEAST 93.97% of the vote in 2020</span></span>
+<span id="cb150-1018"><a href="#cb150-1018"></a><span class="co"># This should have 1 more row than your answer above</span></span>
+<span id="cb150-1019"><a href="#cb150-1019"></a>elections_small <span class="sc">|&gt;</span> </span>
+<span id="cb150-1020"><a href="#cb150-1020"></a>  <span class="fu">filter</span>(repub_pct_20 <span class="sc">&gt;=</span> <span class="fl">93.97</span>)</span>
+<span id="cb150-1021"><a href="#cb150-1021"></a><span class="in">```</span></span>
+<span id="cb150-1022"><a href="#cb150-1022"></a></span>
+<span id="cb150-1025"><a href="#cb150-1025"></a><span class="in">```{r}</span></span>
+<span id="cb150-1026"><a href="#cb150-1026"></a><span class="co"># Keep only data on counties in Texas where the Democrat got more than 65% of the vote in 2020</span></span>
+<span id="cb150-1027"><a href="#cb150-1027"></a><span class="co"># Do this 2 ways.</span></span>
+<span id="cb150-1028"><a href="#cb150-1028"></a><span class="co"># Method 1: 2 filters with 1 condition each</span></span>
+<span id="cb150-1029"><a href="#cb150-1029"></a>elections_small <span class="sc">|&gt;</span></span>
+<span id="cb150-1030"><a href="#cb150-1030"></a> <span class="fu">filter</span>(state_name <span class="sc">==</span> <span class="st">"Texas"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb150-1031"><a href="#cb150-1031"></a> <span class="fu">filter</span>(dem_pct_20 <span class="sc">&gt;</span> <span class="dv">65</span>)</span>
+<span id="cb150-1032"><a href="#cb150-1032"></a></span>
+<span id="cb150-1033"><a href="#cb150-1033"></a><span class="co"># Method 2: 1 filter with 2 conditions</span></span>
+<span id="cb150-1034"><a href="#cb150-1034"></a>elections_small <span class="sc">|&gt;</span></span>
+<span id="cb150-1035"><a href="#cb150-1035"></a> <span class="fu">filter</span>(state_name <span class="sc">==</span> <span class="st">"Texas"</span>, dem_pct_20 <span class="sc">&gt;</span> <span class="dv">65</span>)</span>
+<span id="cb150-1036"><a href="#cb150-1036"></a><span class="in">```</span></span>
+<span id="cb150-1037"><a href="#cb150-1037"></a></span>
 <span id="cb150-1038"><a href="#cb150-1038"></a>\</span>
 <span id="cb150-1039"><a href="#cb150-1039"></a>\</span>
 <span id="cb150-1040"><a href="#cb150-1040"></a>\</span>
-<span id="cb150-1041"><a href="#cb150-1041"></a></span>
-<span id="cb150-1042"><a href="#cb150-1042"></a><span class="fu">### Exercise 3: arrange demo {-}</span></span>
-<span id="cb150-1043"><a href="#cb150-1043"></a></span>
-<span id="cb150-1046"><a href="#cb150-1046"></a><span class="in">```{r}</span></span>
-<span id="cb150-1047"><a href="#cb150-1047"></a><span class="co"># Arrange the counties in elections_small from lowest to highest percentage of 2020 Republican support</span></span>
-<span id="cb150-1048"><a href="#cb150-1048"></a><span class="co"># Print out just the first 6 rows</span></span>
-<span id="cb150-1049"><a href="#cb150-1049"></a>elections_small <span class="sc">|&gt;</span></span>
-<span id="cb150-1050"><a href="#cb150-1050"></a>  <span class="fu">arrange</span>(repub_pct_20) <span class="sc">|&gt;</span></span>
-<span id="cb150-1051"><a href="#cb150-1051"></a>  <span class="fu">head</span>()</span>
-<span id="cb150-1052"><a href="#cb150-1052"></a><span class="in">```</span></span>
-<span id="cb150-1053"><a href="#cb150-1053"></a></span>
-<span id="cb150-1056"><a href="#cb150-1056"></a><span class="in">```{r}</span></span>
-<span id="cb150-1057"><a href="#cb150-1057"></a><span class="co"># Arrange the counties in elections_small from highest to lowest percentage of 2020 Republican support</span></span>
-<span id="cb150-1058"><a href="#cb150-1058"></a><span class="co"># Print out just the first 6 rows</span></span>
-<span id="cb150-1059"><a href="#cb150-1059"></a>elections_small <span class="sc">|&gt;</span></span>
-<span id="cb150-1060"><a href="#cb150-1060"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(repub_pct_20)) <span class="sc">|&gt;</span></span>
-<span id="cb150-1061"><a href="#cb150-1061"></a>  <span class="fu">head</span>()</span>
-<span id="cb150-1062"><a href="#cb150-1062"></a><span class="in">```</span></span>
-<span id="cb150-1063"><a href="#cb150-1063"></a></span>
-<span id="cb150-1064"><a href="#cb150-1064"></a>\</span>
+<span id="cb150-1041"><a href="#cb150-1041"></a>\</span>
+<span id="cb150-1042"><a href="#cb150-1042"></a></span>
+<span id="cb150-1043"><a href="#cb150-1043"></a><span class="fu">### Exercise 3: arrange demo {-}</span></span>
+<span id="cb150-1044"><a href="#cb150-1044"></a></span>
+<span id="cb150-1047"><a href="#cb150-1047"></a><span class="in">```{r}</span></span>
+<span id="cb150-1048"><a href="#cb150-1048"></a><span class="co"># Arrange the counties in elections_small from lowest to highest percentage of 2020 Republican support</span></span>
+<span id="cb150-1049"><a href="#cb150-1049"></a><span class="co"># Print out just the first 6 rows</span></span>
+<span id="cb150-1050"><a href="#cb150-1050"></a>elections_small <span class="sc">|&gt;</span></span>
+<span id="cb150-1051"><a href="#cb150-1051"></a>  <span class="fu">arrange</span>(repub_pct_20) <span class="sc">|&gt;</span></span>
+<span id="cb150-1052"><a href="#cb150-1052"></a>  <span class="fu">head</span>()</span>
+<span id="cb150-1053"><a href="#cb150-1053"></a><span class="in">```</span></span>
+<span id="cb150-1054"><a href="#cb150-1054"></a></span>
+<span id="cb150-1057"><a href="#cb150-1057"></a><span class="in">```{r}</span></span>
+<span id="cb150-1058"><a href="#cb150-1058"></a><span class="co"># Arrange the counties in elections_small from highest to lowest percentage of 2020 Republican support</span></span>
+<span id="cb150-1059"><a href="#cb150-1059"></a><span class="co"># Print out just the first 6 rows</span></span>
+<span id="cb150-1060"><a href="#cb150-1060"></a>elections_small <span class="sc">|&gt;</span></span>
+<span id="cb150-1061"><a href="#cb150-1061"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(repub_pct_20)) <span class="sc">|&gt;</span></span>
+<span id="cb150-1062"><a href="#cb150-1062"></a>  <span class="fu">head</span>()</span>
+<span id="cb150-1063"><a href="#cb150-1063"></a><span class="in">```</span></span>
+<span id="cb150-1064"><a href="#cb150-1064"></a></span>
 <span id="cb150-1065"><a href="#cb150-1065"></a>\</span>
 <span id="cb150-1066"><a href="#cb150-1066"></a>\</span>
 <span id="cb150-1067"><a href="#cb150-1067"></a>\</span>
-<span id="cb150-1068"><a href="#cb150-1068"></a></span>
-<span id="cb150-1069"><a href="#cb150-1069"></a><span class="fu">### Exercise 4: mutate demo {-}</span></span>
-<span id="cb150-1070"><a href="#cb150-1070"></a></span>
-<span id="cb150-1073"><a href="#cb150-1073"></a><span class="in">```{r}</span></span>
-<span id="cb150-1074"><a href="#cb150-1074"></a><span class="co"># Define diff_20, the difference btwn the Repub and Dem percent in 2020</span></span>
-<span id="cb150-1075"><a href="#cb150-1075"></a>elections_small <span class="sc">|&gt;</span> </span>
-<span id="cb150-1076"><a href="#cb150-1076"></a>  <span class="fu">mutate</span>(<span class="at">diff_20 =</span> repub_pct_20 <span class="sc">-</span> dem_pct_20) <span class="sc">|&gt;</span> </span>
-<span id="cb150-1077"><a href="#cb150-1077"></a>  <span class="fu">head</span>()</span>
-<span id="cb150-1078"><a href="#cb150-1078"></a><span class="in">```</span></span>
-<span id="cb150-1079"><a href="#cb150-1079"></a></span>
-<span id="cb150-1082"><a href="#cb150-1082"></a><span class="in">```{r}</span></span>
-<span id="cb150-1083"><a href="#cb150-1083"></a><span class="co"># Define repub_votes_20, the number (not percent) of Repub votes in 2020</span></span>
-<span id="cb150-1084"><a href="#cb150-1084"></a>elections_small <span class="sc">|&gt;</span> </span>
-<span id="cb150-1085"><a href="#cb150-1085"></a>  <span class="fu">mutate</span>(<span class="at">repub_votes_20 =</span> <span class="fu">round</span>(total_votes_20 <span class="sc">*</span> repub_pct_20<span class="sc">/</span><span class="dv">100</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb150-1086"><a href="#cb150-1086"></a>  <span class="fu">head</span>()</span>
-<span id="cb150-1087"><a href="#cb150-1087"></a><span class="in">```</span></span>
-<span id="cb150-1088"><a href="#cb150-1088"></a></span>
-<span id="cb150-1091"><a href="#cb150-1091"></a><span class="in">```{r}</span></span>
-<span id="cb150-1092"><a href="#cb150-1092"></a><span class="co"># Define repub_win_20, whether the Repub won in 2020 (TRUE or FALSE!)</span></span>
-<span id="cb150-1093"><a href="#cb150-1093"></a>elections_small <span class="sc">|&gt;</span> </span>
-<span id="cb150-1094"><a href="#cb150-1094"></a>  <span class="fu">mutate</span>(<span class="at">repub_win_20 =</span> repub_pct_20 <span class="sc">&gt;</span> dem_pct_20) <span class="sc">|&gt;</span> </span>
-<span id="cb150-1095"><a href="#cb150-1095"></a>  <span class="fu">head</span>()</span>
-<span id="cb150-1096"><a href="#cb150-1096"></a><span class="in">```</span></span>
-<span id="cb150-1097"><a href="#cb150-1097"></a></span>
-<span id="cb150-1098"><a href="#cb150-1098"></a>\</span>
+<span id="cb150-1068"><a href="#cb150-1068"></a>\</span>
+<span id="cb150-1069"><a href="#cb150-1069"></a></span>
+<span id="cb150-1070"><a href="#cb150-1070"></a><span class="fu">### Exercise 4: mutate demo {-}</span></span>
+<span id="cb150-1071"><a href="#cb150-1071"></a></span>
+<span id="cb150-1074"><a href="#cb150-1074"></a><span class="in">```{r}</span></span>
+<span id="cb150-1075"><a href="#cb150-1075"></a><span class="co"># Define diff_20, the difference btwn the Repub and Dem percent in 2020</span></span>
+<span id="cb150-1076"><a href="#cb150-1076"></a>elections_small <span class="sc">|&gt;</span> </span>
+<span id="cb150-1077"><a href="#cb150-1077"></a>  <span class="fu">mutate</span>(<span class="at">diff_20 =</span> repub_pct_20 <span class="sc">-</span> dem_pct_20) <span class="sc">|&gt;</span> </span>
+<span id="cb150-1078"><a href="#cb150-1078"></a>  <span class="fu">head</span>()</span>
+<span id="cb150-1079"><a href="#cb150-1079"></a><span class="in">```</span></span>
+<span id="cb150-1080"><a href="#cb150-1080"></a></span>
+<span id="cb150-1083"><a href="#cb150-1083"></a><span class="in">```{r}</span></span>
+<span id="cb150-1084"><a href="#cb150-1084"></a><span class="co"># Define repub_votes_20, the number (not percent) of Repub votes in 2020</span></span>
+<span id="cb150-1085"><a href="#cb150-1085"></a>elections_small <span class="sc">|&gt;</span> </span>
+<span id="cb150-1086"><a href="#cb150-1086"></a>  <span class="fu">mutate</span>(<span class="at">repub_votes_20 =</span> <span class="fu">round</span>(total_votes_20 <span class="sc">*</span> repub_pct_20<span class="sc">/</span><span class="dv">100</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb150-1087"><a href="#cb150-1087"></a>  <span class="fu">head</span>()</span>
+<span id="cb150-1088"><a href="#cb150-1088"></a><span class="in">```</span></span>
+<span id="cb150-1089"><a href="#cb150-1089"></a></span>
+<span id="cb150-1092"><a href="#cb150-1092"></a><span class="in">```{r}</span></span>
+<span id="cb150-1093"><a href="#cb150-1093"></a><span class="co"># Define repub_win_20, whether the Repub won in 2020 (TRUE or FALSE!)</span></span>
+<span id="cb150-1094"><a href="#cb150-1094"></a>elections_small <span class="sc">|&gt;</span> </span>
+<span id="cb150-1095"><a href="#cb150-1095"></a>  <span class="fu">mutate</span>(<span class="at">repub_win_20 =</span> repub_pct_20 <span class="sc">&gt;</span> dem_pct_20) <span class="sc">|&gt;</span> </span>
+<span id="cb150-1096"><a href="#cb150-1096"></a>  <span class="fu">head</span>()</span>
+<span id="cb150-1097"><a href="#cb150-1097"></a><span class="in">```</span></span>
+<span id="cb150-1098"><a href="#cb150-1098"></a></span>
 <span id="cb150-1099"><a href="#cb150-1099"></a>\</span>
 <span id="cb150-1100"><a href="#cb150-1100"></a>\</span>
 <span id="cb150-1101"><a href="#cb150-1101"></a>\</span>
-<span id="cb150-1102"><a href="#cb150-1102"></a></span>
-<span id="cb150-1103"><a href="#cb150-1103"></a><span class="fu">### Exercise 5: Pipe series {-}</span></span>
-<span id="cb150-1104"><a href="#cb150-1104"></a></span>
-<span id="cb150-1105"><a href="#cb150-1105"></a><span class="fu">#### Part c {-}</span></span>
-<span id="cb150-1106"><a href="#cb150-1106"></a></span>
-<span id="cb150-1107"><a href="#cb150-1107"></a>It's more "computationally efficient" to get rid of some rows before arranging.</span>
-<span id="cb150-1108"><a href="#cb150-1108"></a></span>
-<span id="cb150-1109"><a href="#cb150-1109"></a><span class="fu">#### Part e {-}</span></span>
-<span id="cb150-1110"><a href="#cb150-1110"></a></span>
-<span id="cb150-1111"><a href="#cb150-1111"></a>We can't select a variable before we define it!</span>
-<span id="cb150-1112"><a href="#cb150-1112"></a></span>
-<span id="cb150-1113"><a href="#cb150-1113"></a>\</span>
+<span id="cb150-1102"><a href="#cb150-1102"></a>\</span>
+<span id="cb150-1103"><a href="#cb150-1103"></a></span>
+<span id="cb150-1104"><a href="#cb150-1104"></a><span class="fu">### Exercise 5: Pipe series {-}</span></span>
+<span id="cb150-1105"><a href="#cb150-1105"></a></span>
+<span id="cb150-1106"><a href="#cb150-1106"></a><span class="fu">#### Part c {-}</span></span>
+<span id="cb150-1107"><a href="#cb150-1107"></a></span>
+<span id="cb150-1108"><a href="#cb150-1108"></a>It's more "computationally efficient" to get rid of some rows before arranging.</span>
+<span id="cb150-1109"><a href="#cb150-1109"></a></span>
+<span id="cb150-1110"><a href="#cb150-1110"></a><span class="fu">#### Part e {-}</span></span>
+<span id="cb150-1111"><a href="#cb150-1111"></a></span>
+<span id="cb150-1112"><a href="#cb150-1112"></a>We can't select a variable before we define it!</span>
+<span id="cb150-1113"><a href="#cb150-1113"></a></span>
 <span id="cb150-1114"><a href="#cb150-1114"></a>\</span>
 <span id="cb150-1115"><a href="#cb150-1115"></a>\</span>
 <span id="cb150-1116"><a href="#cb150-1116"></a>\</span>
-<span id="cb150-1117"><a href="#cb150-1117"></a></span>
-<span id="cb150-1118"><a href="#cb150-1118"></a><span class="fu">### Exercise 6: DIY pipe series {-}</span></span>
-<span id="cb150-1119"><a href="#cb150-1119"></a></span>
-<span id="cb150-1120"><a href="#cb150-1120"></a><span class="fu">#### Part a {-}</span></span>
-<span id="cb150-1121"><a href="#cb150-1121"></a></span>
-<span id="cb150-1122"><a href="#cb150-1122"></a>Here's my translation:</span>
-<span id="cb150-1123"><a href="#cb150-1123"></a></span>
-<span id="cb150-1124"><a href="#cb150-1124"></a><span class="ss">-   </span>just the counties in Minnesota ---<span class="sc">\&gt;</span> filter</span>
-<span id="cb150-1125"><a href="#cb150-1125"></a><span class="ss">-   </span>just the counties in Minnesota and their Democratic 2020 vote percentage ---<span class="sc">\&gt;</span> select</span>
-<span id="cb150-1126"><a href="#cb150-1126"></a><span class="ss">-   </span>from highest to lowest ---<span class="sc">\&gt;</span> arrange</span>
-<span id="cb150-1127"><a href="#cb150-1127"></a></span>
-<span id="cb150-1130"><a href="#cb150-1130"></a><span class="in">```{r}</span></span>
-<span id="cb150-1131"><a href="#cb150-1131"></a><span class="co"># Remember to try this 1 line at a time</span></span>
-<span id="cb150-1132"><a href="#cb150-1132"></a>elections_small <span class="sc">|&gt;</span> </span>
-<span id="cb150-1133"><a href="#cb150-1133"></a>  <span class="fu">filter</span>(state_name <span class="sc">==</span> <span class="st">"Minnesota"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb150-1134"><a href="#cb150-1134"></a>  <span class="fu">select</span>(county_name, dem_pct_20) <span class="sc">|&gt;</span> </span>
-<span id="cb150-1135"><a href="#cb150-1135"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(dem_pct_20))</span>
-<span id="cb150-1136"><a href="#cb150-1136"></a></span>
-<span id="cb150-1137"><a href="#cb150-1137"></a><span class="in">```</span></span>
-<span id="cb150-1138"><a href="#cb150-1138"></a></span>
-<span id="cb150-1139"><a href="#cb150-1139"></a><span class="fu">#### Part b {-}</span></span>
-<span id="cb150-1140"><a href="#cb150-1140"></a></span>
-<span id="cb150-1141"><a href="#cb150-1141"></a>Here's my translation:</span>
-<span id="cb150-1142"><a href="#cb150-1142"></a></span>
-<span id="cb150-1143"><a href="#cb150-1143"></a><span class="ss">-   </span>counties in Minnesota and Wisconsin ---<span class="sc">\&gt;</span> filter</span>
-<span id="cb150-1144"><a href="#cb150-1144"></a><span class="ss">-   </span>change in Democratic vote percentage in 2020 vs 2016 ---<span class="sc">\&gt;</span> mutate (we don't already have this)</span>
-<span id="cb150-1145"><a href="#cb150-1145"></a><span class="ss">-   </span>sorts the counties from highest to lowest ---<span class="sc">\&gt;</span> arrange</span>
-<span id="cb150-1146"><a href="#cb150-1146"></a><span class="ss">-   </span>include the following variables (and only these variables) ---<span class="sc">\&gt;</span> select</span>
-<span id="cb150-1147"><a href="#cb150-1147"></a></span>
-<span id="cb150-1150"><a href="#cb150-1150"></a><span class="in">```{r}</span></span>
-<span id="cb150-1151"><a href="#cb150-1151"></a><span class="co"># Remember to try this 1 line at a time before storing!</span></span>
-<span id="cb150-1152"><a href="#cb150-1152"></a>mn_wi <span class="ot">&lt;-</span> elections_small <span class="sc">|&gt;</span> </span>
-<span id="cb150-1153"><a href="#cb150-1153"></a>  <span class="fu">filter</span>(state_name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Minnesota"</span>, <span class="st">"Wisconsin"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb150-1154"><a href="#cb150-1154"></a>  <span class="fu">select</span>(state_name, county_name, dem_pct_20, dem_pct_16) <span class="sc">|&gt;</span></span>
-<span id="cb150-1155"><a href="#cb150-1155"></a>  <span class="fu">mutate</span>(<span class="at">dem_change =</span> dem_pct_20 <span class="sc">-</span> dem_pct_16) <span class="sc">|&gt;</span> </span>
-<span id="cb150-1156"><a href="#cb150-1156"></a>  <span class="fu">arrange</span>(dem_change)</span>
-<span id="cb150-1157"><a href="#cb150-1157"></a>  </span>
-<span id="cb150-1158"><a href="#cb150-1158"></a><span class="co"># Check it out</span></span>
-<span id="cb150-1159"><a href="#cb150-1159"></a><span class="fu">head</span>(mn_wi)</span>
-<span id="cb150-1160"><a href="#cb150-1160"></a><span class="in">```</span></span>
-<span id="cb150-1161"><a href="#cb150-1161"></a></span>
-<span id="cb150-1162"><a href="#cb150-1162"></a><span class="fu">#### Part c {-}</span></span>
-<span id="cb150-1163"><a href="#cb150-1163"></a></span>
-<span id="cb150-1164"><a href="#cb150-1164"></a>There was a stronger Dem shift from 2016 to 2020 in Minnesota. Further, in most counties across both states, the percent Dem tended to be higher in 2020 than in 2016.</span>
-<span id="cb150-1165"><a href="#cb150-1165"></a></span>
-<span id="cb150-1168"><a href="#cb150-1168"></a><span class="in">```{r}</span></span>
-<span id="cb150-1169"><a href="#cb150-1169"></a><span class="fu">ggplot</span>(mn_wi, <span class="fu">aes</span>(<span class="at">x =</span> dem_change, <span class="at">fill =</span> state_name)) <span class="sc">+</span> </span>
-<span id="cb150-1170"><a href="#cb150-1170"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>)</span>
-<span id="cb150-1171"><a href="#cb150-1171"></a><span class="fu">ggplot</span>(mn_wi, <span class="fu">aes</span>(<span class="at">y =</span> dem_change, <span class="at">x =</span> state_name)) <span class="sc">+</span> </span>
-<span id="cb150-1172"><a href="#cb150-1172"></a>  <span class="fu">geom_boxplot</span>()</span>
-<span id="cb150-1173"><a href="#cb150-1173"></a><span class="in">```</span></span>
-<span id="cb150-1174"><a href="#cb150-1174"></a></span>
-<span id="cb150-1175"><a href="#cb150-1175"></a>\</span>
+<span id="cb150-1117"><a href="#cb150-1117"></a>\</span>
+<span id="cb150-1118"><a href="#cb150-1118"></a></span>
+<span id="cb150-1119"><a href="#cb150-1119"></a><span class="fu">### Exercise 6: DIY pipe series {-}</span></span>
+<span id="cb150-1120"><a href="#cb150-1120"></a></span>
+<span id="cb150-1121"><a href="#cb150-1121"></a><span class="fu">#### Part a {-}</span></span>
+<span id="cb150-1122"><a href="#cb150-1122"></a></span>
+<span id="cb150-1123"><a href="#cb150-1123"></a>Here's my translation:</span>
+<span id="cb150-1124"><a href="#cb150-1124"></a></span>
+<span id="cb150-1125"><a href="#cb150-1125"></a><span class="ss">-   </span>just the counties in Minnesota ---<span class="sc">\&gt;</span> filter</span>
+<span id="cb150-1126"><a href="#cb150-1126"></a><span class="ss">-   </span>just the counties in Minnesota and their Democratic 2020 vote percentage ---<span class="sc">\&gt;</span> select</span>
+<span id="cb150-1127"><a href="#cb150-1127"></a><span class="ss">-   </span>from highest to lowest ---<span class="sc">\&gt;</span> arrange</span>
+<span id="cb150-1128"><a href="#cb150-1128"></a></span>
+<span id="cb150-1131"><a href="#cb150-1131"></a><span class="in">```{r}</span></span>
+<span id="cb150-1132"><a href="#cb150-1132"></a><span class="co"># Remember to try this 1 line at a time</span></span>
+<span id="cb150-1133"><a href="#cb150-1133"></a>elections_small <span class="sc">|&gt;</span> </span>
+<span id="cb150-1134"><a href="#cb150-1134"></a>  <span class="fu">filter</span>(state_name <span class="sc">==</span> <span class="st">"Minnesota"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb150-1135"><a href="#cb150-1135"></a>  <span class="fu">select</span>(county_name, dem_pct_20) <span class="sc">|&gt;</span> </span>
+<span id="cb150-1136"><a href="#cb150-1136"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(dem_pct_20))</span>
+<span id="cb150-1137"><a href="#cb150-1137"></a></span>
+<span id="cb150-1138"><a href="#cb150-1138"></a><span class="in">```</span></span>
+<span id="cb150-1139"><a href="#cb150-1139"></a></span>
+<span id="cb150-1140"><a href="#cb150-1140"></a><span class="fu">#### Part b {-}</span></span>
+<span id="cb150-1141"><a href="#cb150-1141"></a></span>
+<span id="cb150-1142"><a href="#cb150-1142"></a>Here's my translation:</span>
+<span id="cb150-1143"><a href="#cb150-1143"></a></span>
+<span id="cb150-1144"><a href="#cb150-1144"></a><span class="ss">-   </span>counties in Minnesota and Wisconsin ---<span class="sc">\&gt;</span> filter</span>
+<span id="cb150-1145"><a href="#cb150-1145"></a><span class="ss">-   </span>change in Democratic vote percentage in 2020 vs 2016 ---<span class="sc">\&gt;</span> mutate (we don't already have this)</span>
+<span id="cb150-1146"><a href="#cb150-1146"></a><span class="ss">-   </span>sorts the counties from highest to lowest ---<span class="sc">\&gt;</span> arrange</span>
+<span id="cb150-1147"><a href="#cb150-1147"></a><span class="ss">-   </span>include the following variables (and only these variables) ---<span class="sc">\&gt;</span> select</span>
+<span id="cb150-1148"><a href="#cb150-1148"></a></span>
+<span id="cb150-1151"><a href="#cb150-1151"></a><span class="in">```{r}</span></span>
+<span id="cb150-1152"><a href="#cb150-1152"></a><span class="co"># Remember to try this 1 line at a time before storing!</span></span>
+<span id="cb150-1153"><a href="#cb150-1153"></a>mn_wi <span class="ot">&lt;-</span> elections_small <span class="sc">|&gt;</span> </span>
+<span id="cb150-1154"><a href="#cb150-1154"></a>  <span class="fu">filter</span>(state_name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Minnesota"</span>, <span class="st">"Wisconsin"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb150-1155"><a href="#cb150-1155"></a>  <span class="fu">select</span>(state_name, county_name, dem_pct_20, dem_pct_16) <span class="sc">|&gt;</span></span>
+<span id="cb150-1156"><a href="#cb150-1156"></a>  <span class="fu">mutate</span>(<span class="at">dem_change =</span> dem_pct_20 <span class="sc">-</span> dem_pct_16) <span class="sc">|&gt;</span> </span>
+<span id="cb150-1157"><a href="#cb150-1157"></a>  <span class="fu">arrange</span>(dem_change)</span>
+<span id="cb150-1158"><a href="#cb150-1158"></a>  </span>
+<span id="cb150-1159"><a href="#cb150-1159"></a><span class="co"># Check it out</span></span>
+<span id="cb150-1160"><a href="#cb150-1160"></a><span class="fu">head</span>(mn_wi)</span>
+<span id="cb150-1161"><a href="#cb150-1161"></a><span class="in">```</span></span>
+<span id="cb150-1162"><a href="#cb150-1162"></a></span>
+<span id="cb150-1163"><a href="#cb150-1163"></a><span class="fu">#### Part c {-}</span></span>
+<span id="cb150-1164"><a href="#cb150-1164"></a></span>
+<span id="cb150-1165"><a href="#cb150-1165"></a>There was a stronger Dem shift from 2016 to 2020 in Minnesota. Further, in most counties across both states, the percent Dem tended to be higher in 2020 than in 2016.</span>
+<span id="cb150-1166"><a href="#cb150-1166"></a></span>
+<span id="cb150-1169"><a href="#cb150-1169"></a><span class="in">```{r}</span></span>
+<span id="cb150-1170"><a href="#cb150-1170"></a><span class="fu">ggplot</span>(mn_wi, <span class="fu">aes</span>(<span class="at">x =</span> dem_change, <span class="at">fill =</span> state_name)) <span class="sc">+</span> </span>
+<span id="cb150-1171"><a href="#cb150-1171"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>)</span>
+<span id="cb150-1172"><a href="#cb150-1172"></a><span class="fu">ggplot</span>(mn_wi, <span class="fu">aes</span>(<span class="at">y =</span> dem_change, <span class="at">x =</span> state_name)) <span class="sc">+</span> </span>
+<span id="cb150-1173"><a href="#cb150-1173"></a>  <span class="fu">geom_boxplot</span>()</span>
+<span id="cb150-1174"><a href="#cb150-1174"></a><span class="in">```</span></span>
+<span id="cb150-1175"><a href="#cb150-1175"></a></span>
 <span id="cb150-1176"><a href="#cb150-1176"></a>\</span>
 <span id="cb150-1177"><a href="#cb150-1177"></a>\</span>
 <span id="cb150-1178"><a href="#cb150-1178"></a>\</span>
-<span id="cb150-1179"><a href="#cb150-1179"></a></span>
-<span id="cb150-1180"><a href="#cb150-1180"></a><span class="fu">### Exercise 7: summarize demo {-}</span></span>
-<span id="cb150-1181"><a href="#cb150-1181"></a></span>
-<span id="cb150-1184"><a href="#cb150-1184"></a><span class="in">```{r}</span></span>
-<span id="cb150-1185"><a href="#cb150-1185"></a><span class="co"># Calculate the median Repub vote percentage in 2020 across all counties</span></span>
-<span id="cb150-1186"><a href="#cb150-1186"></a>elections_small <span class="sc">|&gt;</span> </span>
-<span id="cb150-1187"><a href="#cb150-1187"></a>  <span class="fu">summarize</span>(<span class="fu">median</span>(repub_pct_20))</span>
-<span id="cb150-1188"><a href="#cb150-1188"></a><span class="in">```</span></span>
-<span id="cb150-1189"><a href="#cb150-1189"></a></span>
-<span id="cb150-1192"><a href="#cb150-1192"></a><span class="in">```{r}</span></span>
-<span id="cb150-1193"><a href="#cb150-1193"></a><span class="co"># Calculate the median Repub vote percentage in 2020 across all counties</span></span>
-<span id="cb150-1194"><a href="#cb150-1194"></a><span class="co"># AND name it "median_repub"</span></span>
-<span id="cb150-1195"><a href="#cb150-1195"></a>elections_small <span class="sc">|&gt;</span> </span>
-<span id="cb150-1196"><a href="#cb150-1196"></a>  <span class="fu">summarize</span>(<span class="at">median_repub =</span> <span class="fu">median</span>(repub_pct_20))</span>
-<span id="cb150-1197"><a href="#cb150-1197"></a><span class="in">```</span></span>
-<span id="cb150-1198"><a href="#cb150-1198"></a></span>
-<span id="cb150-1201"><a href="#cb150-1201"></a><span class="in">```{r}</span></span>
-<span id="cb150-1202"><a href="#cb150-1202"></a><span class="co"># Calculate the median Repub vote percentage in 2020 across all counties</span></span>
-<span id="cb150-1203"><a href="#cb150-1203"></a><span class="co"># AND the total number of votes across all counties</span></span>
-<span id="cb150-1204"><a href="#cb150-1204"></a><span class="co"># AND name the results</span></span>
-<span id="cb150-1205"><a href="#cb150-1205"></a>elections_small <span class="sc">|&gt;</span> </span>
-<span id="cb150-1206"><a href="#cb150-1206"></a>  <span class="fu">summarize</span>(<span class="at">median_repub =</span> <span class="fu">median</span>(repub_pct_20), <span class="at">total_votes =</span> <span class="fu">sum</span>(total_votes_20))</span>
-<span id="cb150-1207"><a href="#cb150-1207"></a><span class="in">```</span></span>
-<span id="cb150-1208"><a href="#cb150-1208"></a></span>
-<span id="cb150-1209"><a href="#cb150-1209"></a>\</span>
+<span id="cb150-1179"><a href="#cb150-1179"></a>\</span>
+<span id="cb150-1180"><a href="#cb150-1180"></a></span>
+<span id="cb150-1181"><a href="#cb150-1181"></a><span class="fu">### Exercise 7: summarize demo {-}</span></span>
+<span id="cb150-1182"><a href="#cb150-1182"></a></span>
+<span id="cb150-1185"><a href="#cb150-1185"></a><span class="in">```{r}</span></span>
+<span id="cb150-1186"><a href="#cb150-1186"></a><span class="co"># Calculate the median Repub vote percentage in 2020 across all counties</span></span>
+<span id="cb150-1187"><a href="#cb150-1187"></a>elections_small <span class="sc">|&gt;</span> </span>
+<span id="cb150-1188"><a href="#cb150-1188"></a>  <span class="fu">summarize</span>(<span class="fu">median</span>(repub_pct_20))</span>
+<span id="cb150-1189"><a href="#cb150-1189"></a><span class="in">```</span></span>
+<span id="cb150-1190"><a href="#cb150-1190"></a></span>
+<span id="cb150-1193"><a href="#cb150-1193"></a><span class="in">```{r}</span></span>
+<span id="cb150-1194"><a href="#cb150-1194"></a><span class="co"># Calculate the median Repub vote percentage in 2020 across all counties</span></span>
+<span id="cb150-1195"><a href="#cb150-1195"></a><span class="co"># AND name it "median_repub"</span></span>
+<span id="cb150-1196"><a href="#cb150-1196"></a>elections_small <span class="sc">|&gt;</span> </span>
+<span id="cb150-1197"><a href="#cb150-1197"></a>  <span class="fu">summarize</span>(<span class="at">median_repub =</span> <span class="fu">median</span>(repub_pct_20))</span>
+<span id="cb150-1198"><a href="#cb150-1198"></a><span class="in">```</span></span>
+<span id="cb150-1199"><a href="#cb150-1199"></a></span>
+<span id="cb150-1202"><a href="#cb150-1202"></a><span class="in">```{r}</span></span>
+<span id="cb150-1203"><a href="#cb150-1203"></a><span class="co"># Calculate the median Repub vote percentage in 2020 across all counties</span></span>
+<span id="cb150-1204"><a href="#cb150-1204"></a><span class="co"># AND the total number of votes across all counties</span></span>
+<span id="cb150-1205"><a href="#cb150-1205"></a><span class="co"># AND name the results</span></span>
+<span id="cb150-1206"><a href="#cb150-1206"></a>elections_small <span class="sc">|&gt;</span> </span>
+<span id="cb150-1207"><a href="#cb150-1207"></a>  <span class="fu">summarize</span>(<span class="at">median_repub =</span> <span class="fu">median</span>(repub_pct_20), <span class="at">total_votes =</span> <span class="fu">sum</span>(total_votes_20))</span>
+<span id="cb150-1208"><a href="#cb150-1208"></a><span class="in">```</span></span>
+<span id="cb150-1209"><a href="#cb150-1209"></a></span>
 <span id="cb150-1210"><a href="#cb150-1210"></a>\</span>
 <span id="cb150-1211"><a href="#cb150-1211"></a>\</span>
 <span id="cb150-1212"><a href="#cb150-1212"></a>\</span>
-<span id="cb150-1213"><a href="#cb150-1213"></a></span>
-<span id="cb150-1214"><a href="#cb150-1214"></a><span class="fu">### Exercise 8: `summarize` + `group_by` demo {-}</span></span>
-<span id="cb150-1215"><a href="#cb150-1215"></a></span>
-<span id="cb150-1218"><a href="#cb150-1218"></a><span class="in">```{r}</span></span>
-<span id="cb150-1219"><a href="#cb150-1219"></a><span class="co"># Calculate the median 2020 Repub percent and total votes BY STATE</span></span>
-<span id="cb150-1220"><a href="#cb150-1220"></a>elections_small <span class="sc">|&gt;</span> </span>
-<span id="cb150-1221"><a href="#cb150-1221"></a>  <span class="fu">group_by</span>(state_name) <span class="sc">|&gt;</span> </span>
-<span id="cb150-1222"><a href="#cb150-1222"></a>  <span class="fu">summarize</span>(<span class="at">median_repub =</span> <span class="fu">median</span>(repub_pct_20), <span class="at">total_votes =</span> <span class="fu">sum</span>(total_votes_20)) </span>
-<span id="cb150-1223"><a href="#cb150-1223"></a><span class="in">```</span></span>
-<span id="cb150-1224"><a href="#cb150-1224"></a></span>
-<span id="cb150-1225"><a href="#cb150-1225"></a>\</span>
+<span id="cb150-1213"><a href="#cb150-1213"></a>\</span>
+<span id="cb150-1214"><a href="#cb150-1214"></a></span>
+<span id="cb150-1215"><a href="#cb150-1215"></a><span class="fu">### Exercise 8: `summarize` + `group_by` demo {-}</span></span>
+<span id="cb150-1216"><a href="#cb150-1216"></a></span>
+<span id="cb150-1219"><a href="#cb150-1219"></a><span class="in">```{r}</span></span>
+<span id="cb150-1220"><a href="#cb150-1220"></a><span class="co"># Calculate the median 2020 Repub percent and total votes BY STATE</span></span>
+<span id="cb150-1221"><a href="#cb150-1221"></a>elections_small <span class="sc">|&gt;</span> </span>
+<span id="cb150-1222"><a href="#cb150-1222"></a>  <span class="fu">group_by</span>(state_name) <span class="sc">|&gt;</span> </span>
+<span id="cb150-1223"><a href="#cb150-1223"></a>  <span class="fu">summarize</span>(<span class="at">median_repub =</span> <span class="fu">median</span>(repub_pct_20), <span class="at">total_votes =</span> <span class="fu">sum</span>(total_votes_20)) </span>
+<span id="cb150-1224"><a href="#cb150-1224"></a><span class="in">```</span></span>
+<span id="cb150-1225"><a href="#cb150-1225"></a></span>
 <span id="cb150-1226"><a href="#cb150-1226"></a>\</span>
 <span id="cb150-1227"><a href="#cb150-1227"></a>\</span>
 <span id="cb150-1228"><a href="#cb150-1228"></a>\</span>
-<span id="cb150-1229"><a href="#cb150-1229"></a></span>
-<span id="cb150-1230"><a href="#cb150-1230"></a><span class="fu">### Exercise 9: DIY {-}</span></span>
-<span id="cb150-1231"><a href="#cb150-1231"></a></span>
-<span id="cb150-1232"><a href="#cb150-1232"></a><span class="fu">#### Part a {-}</span></span>
-<span id="cb150-1233"><a href="#cb150-1233"></a></span>
-<span id="cb150-1236"><a href="#cb150-1236"></a><span class="in">```{r}</span></span>
-<span id="cb150-1237"><a href="#cb150-1237"></a><span class="co"># Sort the states from the most to least total votes in 2020</span></span>
-<span id="cb150-1238"><a href="#cb150-1238"></a>elections_small <span class="sc">|&gt;</span> </span>
-<span id="cb150-1239"><a href="#cb150-1239"></a>  <span class="fu">group_by</span>(state_name) <span class="sc">|&gt;</span> </span>
-<span id="cb150-1240"><a href="#cb150-1240"></a>  <span class="fu">summarize</span>(<span class="at">total =</span> <span class="fu">sum</span>(total_votes_20)) <span class="sc">|&gt;</span> </span>
-<span id="cb150-1241"><a href="#cb150-1241"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(total))</span>
-<span id="cb150-1242"><a href="#cb150-1242"></a><span class="in">```</span></span>
-<span id="cb150-1243"><a href="#cb150-1243"></a></span>
-<span id="cb150-1246"><a href="#cb150-1246"></a><span class="in">```{r}</span></span>
-<span id="cb150-1247"><a href="#cb150-1247"></a><span class="co"># In 2020, what were the total number of votes for the Democratic candidate and the total number of votes for the Republican candidate in each *state*?</span></span>
-<span id="cb150-1248"><a href="#cb150-1248"></a>elections_small <span class="sc">|&gt;</span> </span>
-<span id="cb150-1249"><a href="#cb150-1249"></a>  <span class="fu">mutate</span>(<span class="at">dem_votes_20 =</span> <span class="fu">round</span>(total_votes_20 <span class="sc">*</span> dem_pct_20 <span class="sc">/</span> <span class="dv">100</span>), </span>
-<span id="cb150-1250"><a href="#cb150-1250"></a>         <span class="at">repub_votes_20 =</span> <span class="fu">round</span>(total_votes_20 <span class="sc">*</span> repub_pct_20 <span class="sc">/</span> <span class="dv">100</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb150-1251"><a href="#cb150-1251"></a>  <span class="fu">group_by</span>(state_name) <span class="sc">|&gt;</span> </span>
-<span id="cb150-1252"><a href="#cb150-1252"></a>  <span class="fu">summarize</span>(<span class="at">dem_total =</span> <span class="fu">sum</span>(dem_votes_20),</span>
-<span id="cb150-1253"><a href="#cb150-1253"></a>            <span class="at">repub_total =</span> <span class="fu">sum</span>(repub_votes_20))</span>
-<span id="cb150-1254"><a href="#cb150-1254"></a><span class="in">```</span></span>
-<span id="cb150-1255"><a href="#cb150-1255"></a></span>
-<span id="cb150-1258"><a href="#cb150-1258"></a><span class="in">```{r}</span></span>
-<span id="cb150-1259"><a href="#cb150-1259"></a><span class="co"># What states did the Democratic candidate win in 2020?</span></span>
-<span id="cb150-1260"><a href="#cb150-1260"></a>elections_small <span class="sc">|&gt;</span> </span>
-<span id="cb150-1261"><a href="#cb150-1261"></a>  <span class="fu">mutate</span>(<span class="at">dem_votes_20 =</span> <span class="fu">round</span>(total_votes_20 <span class="sc">*</span> dem_pct_20 <span class="sc">/</span> <span class="dv">100</span>), </span>
-<span id="cb150-1262"><a href="#cb150-1262"></a>         <span class="at">repub_votes_20 =</span> <span class="fu">round</span>(total_votes_20 <span class="sc">*</span> repub_pct_20 <span class="sc">/</span> <span class="dv">100</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb150-1263"><a href="#cb150-1263"></a>  <span class="fu">group_by</span>(state_name) <span class="sc">|&gt;</span> </span>
-<span id="cb150-1264"><a href="#cb150-1264"></a>  <span class="fu">summarize</span>(<span class="at">dem_total =</span> <span class="fu">sum</span>(dem_votes_20),</span>
-<span id="cb150-1265"><a href="#cb150-1265"></a>            <span class="at">repub_total =</span> <span class="fu">sum</span>(repub_votes_20)) <span class="sc">|&gt;</span> </span>
-<span id="cb150-1266"><a href="#cb150-1266"></a>  <span class="fu">filter</span>(dem_total <span class="sc">&gt;</span> repub_total)</span>
-<span id="cb150-1267"><a href="#cb150-1267"></a><span class="in">```</span></span>
-<span id="cb150-1268"><a href="#cb150-1268"></a></span>
-<span id="cb150-1269"><a href="#cb150-1269"></a>\</span>
+<span id="cb150-1229"><a href="#cb150-1229"></a>\</span>
+<span id="cb150-1230"><a href="#cb150-1230"></a></span>
+<span id="cb150-1231"><a href="#cb150-1231"></a><span class="fu">### Exercise 9: DIY {-}</span></span>
+<span id="cb150-1232"><a href="#cb150-1232"></a></span>
+<span id="cb150-1233"><a href="#cb150-1233"></a><span class="fu">#### Part a {-}</span></span>
+<span id="cb150-1234"><a href="#cb150-1234"></a></span>
+<span id="cb150-1237"><a href="#cb150-1237"></a><span class="in">```{r}</span></span>
+<span id="cb150-1238"><a href="#cb150-1238"></a><span class="co"># Sort the states from the most to least total votes in 2020</span></span>
+<span id="cb150-1239"><a href="#cb150-1239"></a>elections_small <span class="sc">|&gt;</span> </span>
+<span id="cb150-1240"><a href="#cb150-1240"></a>  <span class="fu">group_by</span>(state_name) <span class="sc">|&gt;</span> </span>
+<span id="cb150-1241"><a href="#cb150-1241"></a>  <span class="fu">summarize</span>(<span class="at">total =</span> <span class="fu">sum</span>(total_votes_20)) <span class="sc">|&gt;</span> </span>
+<span id="cb150-1242"><a href="#cb150-1242"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(total))</span>
+<span id="cb150-1243"><a href="#cb150-1243"></a><span class="in">```</span></span>
+<span id="cb150-1244"><a href="#cb150-1244"></a></span>
+<span id="cb150-1247"><a href="#cb150-1247"></a><span class="in">```{r}</span></span>
+<span id="cb150-1248"><a href="#cb150-1248"></a><span class="co"># In 2020, what were the total number of votes for the Democratic candidate and the total number of votes for the Republican candidate in each *state*?</span></span>
+<span id="cb150-1249"><a href="#cb150-1249"></a>elections_small <span class="sc">|&gt;</span> </span>
+<span id="cb150-1250"><a href="#cb150-1250"></a>  <span class="fu">mutate</span>(<span class="at">dem_votes_20 =</span> <span class="fu">round</span>(total_votes_20 <span class="sc">*</span> dem_pct_20 <span class="sc">/</span> <span class="dv">100</span>), </span>
+<span id="cb150-1251"><a href="#cb150-1251"></a>         <span class="at">repub_votes_20 =</span> <span class="fu">round</span>(total_votes_20 <span class="sc">*</span> repub_pct_20 <span class="sc">/</span> <span class="dv">100</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb150-1252"><a href="#cb150-1252"></a>  <span class="fu">group_by</span>(state_name) <span class="sc">|&gt;</span> </span>
+<span id="cb150-1253"><a href="#cb150-1253"></a>  <span class="fu">summarize</span>(<span class="at">dem_total =</span> <span class="fu">sum</span>(dem_votes_20),</span>
+<span id="cb150-1254"><a href="#cb150-1254"></a>            <span class="at">repub_total =</span> <span class="fu">sum</span>(repub_votes_20))</span>
+<span id="cb150-1255"><a href="#cb150-1255"></a><span class="in">```</span></span>
+<span id="cb150-1256"><a href="#cb150-1256"></a></span>
+<span id="cb150-1259"><a href="#cb150-1259"></a><span class="in">```{r}</span></span>
+<span id="cb150-1260"><a href="#cb150-1260"></a><span class="co"># What states did the Democratic candidate win in 2020?</span></span>
+<span id="cb150-1261"><a href="#cb150-1261"></a>elections_small <span class="sc">|&gt;</span> </span>
+<span id="cb150-1262"><a href="#cb150-1262"></a>  <span class="fu">mutate</span>(<span class="at">dem_votes_20 =</span> <span class="fu">round</span>(total_votes_20 <span class="sc">*</span> dem_pct_20 <span class="sc">/</span> <span class="dv">100</span>), </span>
+<span id="cb150-1263"><a href="#cb150-1263"></a>         <span class="at">repub_votes_20 =</span> <span class="fu">round</span>(total_votes_20 <span class="sc">*</span> repub_pct_20 <span class="sc">/</span> <span class="dv">100</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb150-1264"><a href="#cb150-1264"></a>  <span class="fu">group_by</span>(state_name) <span class="sc">|&gt;</span> </span>
+<span id="cb150-1265"><a href="#cb150-1265"></a>  <span class="fu">summarize</span>(<span class="at">dem_total =</span> <span class="fu">sum</span>(dem_votes_20),</span>
+<span id="cb150-1266"><a href="#cb150-1266"></a>            <span class="at">repub_total =</span> <span class="fu">sum</span>(repub_votes_20)) <span class="sc">|&gt;</span> </span>
+<span id="cb150-1267"><a href="#cb150-1267"></a>  <span class="fu">filter</span>(dem_total <span class="sc">&gt;</span> repub_total)</span>
+<span id="cb150-1268"><a href="#cb150-1268"></a><span class="in">```</span></span>
+<span id="cb150-1269"><a href="#cb150-1269"></a></span>
 <span id="cb150-1270"><a href="#cb150-1270"></a>\</span>
 <span id="cb150-1271"><a href="#cb150-1271"></a>\</span>
 <span id="cb150-1272"><a href="#cb150-1272"></a>\</span>
-<span id="cb150-1273"><a href="#cb150-1273"></a></span>
-<span id="cb150-1274"><a href="#cb150-1274"></a><span class="fu">### Exercise 10: Practice on new data {-}</span></span>
-<span id="cb150-1275"><a href="#cb150-1275"></a></span>
-<span id="cb150-1278"><a href="#cb150-1278"></a><span class="in">```{r}</span></span>
-<span id="cb150-1279"><a href="#cb150-1279"></a><span class="co"># In what years did Brazil win the World Cup?</span></span>
-<span id="cb150-1280"><a href="#cb150-1280"></a>world_cup <span class="sc">|&gt;</span> </span>
-<span id="cb150-1281"><a href="#cb150-1281"></a>  <span class="fu">filter</span>(winner <span class="sc">==</span> <span class="st">"Brazil"</span>)</span>
-<span id="cb150-1282"><a href="#cb150-1282"></a><span class="in">```</span></span>
-<span id="cb150-1283"><a href="#cb150-1283"></a></span>
-<span id="cb150-1286"><a href="#cb150-1286"></a><span class="in">```{r}</span></span>
-<span id="cb150-1287"><a href="#cb150-1287"></a><span class="co"># What were the 6 World Cups with the highest attendance?</span></span>
-<span id="cb150-1288"><a href="#cb150-1288"></a>world_cup <span class="sc">|&gt;</span> </span>
-<span id="cb150-1289"><a href="#cb150-1289"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(attendance)) <span class="sc">|&gt;</span> </span>
-<span id="cb150-1290"><a href="#cb150-1290"></a>  <span class="fu">head</span>()</span>
-<span id="cb150-1291"><a href="#cb150-1291"></a><span class="in">```</span></span>
-<span id="cb150-1292"><a href="#cb150-1292"></a></span>
-<span id="cb150-1295"><a href="#cb150-1295"></a><span class="in">```{r}</span></span>
-<span id="cb150-1296"><a href="#cb150-1296"></a><span class="co"># Construct a univariate plot of goals_scored (no wrangling necessary)</span></span>
-<span id="cb150-1297"><a href="#cb150-1297"></a><span class="co"># This provides a visual summary of how the number of goals_scored varies from World Cup to World Cup</span></span>
-<span id="cb150-1298"><a href="#cb150-1298"></a><span class="fu">ggplot</span>(world_cup, <span class="fu">aes</span>(<span class="at">x =</span> goals_scored)) <span class="sc">+</span> </span>
-<span id="cb150-1299"><a href="#cb150-1299"></a>  <span class="fu">geom_histogram</span>(<span class="at">color =</span> <span class="st">"white"</span>)</span>
-<span id="cb150-1300"><a href="#cb150-1300"></a><span class="in">```</span></span>
-<span id="cb150-1301"><a href="#cb150-1301"></a></span>
-<span id="cb150-1304"><a href="#cb150-1304"></a><span class="in">```{r}</span></span>
-<span id="cb150-1305"><a href="#cb150-1305"></a><span class="co"># Let's follow up the plot with some more precise numerical summaries</span></span>
-<span id="cb150-1306"><a href="#cb150-1306"></a><span class="co"># Calculate the min, median, and max number of goals_scored across all World Cups</span></span>
-<span id="cb150-1307"><a href="#cb150-1307"></a><span class="co"># </span><span class="al">NOTE</span><span class="co">: Visually compare these numerical summaries to what you observed in the plot</span></span>
-<span id="cb150-1308"><a href="#cb150-1308"></a>world_cup <span class="sc">|&gt;</span> </span>
-<span id="cb150-1309"><a href="#cb150-1309"></a>  <span class="fu">summarize</span>(<span class="fu">min</span>(goals_scored), <span class="fu">median</span>(goals_scored), <span class="fu">max</span>(goals_scored))</span>
-<span id="cb150-1310"><a href="#cb150-1310"></a><span class="in">```</span></span>
-<span id="cb150-1311"><a href="#cb150-1311"></a></span>
-<span id="cb150-1314"><a href="#cb150-1314"></a><span class="in">```{r}</span></span>
-<span id="cb150-1315"><a href="#cb150-1315"></a><span class="co"># Construct a bivariate plot of how the number of goals_scored in the World Cup has changed over the years</span></span>
-<span id="cb150-1316"><a href="#cb150-1316"></a><span class="co"># No wrangling necessary</span></span>
-<span id="cb150-1317"><a href="#cb150-1317"></a><span class="fu">ggplot</span>(world_cup, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> goals_scored)) <span class="sc">+</span> </span>
-<span id="cb150-1318"><a href="#cb150-1318"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb150-1319"><a href="#cb150-1319"></a>  <span class="fu">geom_line</span>()</span>
-<span id="cb150-1320"><a href="#cb150-1320"></a><span class="in">```</span></span>
-<span id="cb150-1321"><a href="#cb150-1321"></a></span>
-<span id="cb150-1324"><a href="#cb150-1324"></a><span class="in">```{r}</span></span>
-<span id="cb150-1325"><a href="#cb150-1325"></a><span class="co"># Our above summaries might be a bit misleading.</span></span>
-<span id="cb150-1326"><a href="#cb150-1326"></a><span class="co"># The number of games played at the World Cup varies.</span></span>
-<span id="cb150-1327"><a href="#cb150-1327"></a><span class="co"># Construct a bivariate plot of how the typical number of goals per game has changed over the years</span></span>
-<span id="cb150-1328"><a href="#cb150-1328"></a>per_game_data <span class="ot">&lt;-</span> world_cup <span class="sc">|&gt;</span> </span>
-<span id="cb150-1329"><a href="#cb150-1329"></a>  <span class="fu">mutate</span>(<span class="at">goals_per_game =</span> goals_scored <span class="sc">/</span> games)</span>
-<span id="cb150-1330"><a href="#cb150-1330"></a></span>
-<span id="cb150-1331"><a href="#cb150-1331"></a><span class="fu">ggplot</span>(per_game_data, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> goals_per_game)) <span class="sc">+</span> </span>
-<span id="cb150-1332"><a href="#cb150-1332"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb150-1333"><a href="#cb150-1333"></a>  <span class="fu">geom_line</span>()</span>
-<span id="cb150-1334"><a href="#cb150-1334"></a><span class="in">```</span></span>
-<span id="cb150-1335"><a href="#cb150-1335"></a></span>
-<span id="cb150-1336"><a href="#cb150-1336"></a>&lt;/details&gt;</span>
+<span id="cb150-1273"><a href="#cb150-1273"></a>\</span>
+<span id="cb150-1274"><a href="#cb150-1274"></a></span>
+<span id="cb150-1275"><a href="#cb150-1275"></a><span class="fu">### Exercise 10: Practice on new data {-}</span></span>
+<span id="cb150-1276"><a href="#cb150-1276"></a></span>
+<span id="cb150-1279"><a href="#cb150-1279"></a><span class="in">```{r}</span></span>
+<span id="cb150-1280"><a href="#cb150-1280"></a><span class="co"># In what years did Brazil win the World Cup?</span></span>
+<span id="cb150-1281"><a href="#cb150-1281"></a>world_cup <span class="sc">|&gt;</span> </span>
+<span id="cb150-1282"><a href="#cb150-1282"></a>  <span class="fu">filter</span>(winner <span class="sc">==</span> <span class="st">"Brazil"</span>)</span>
+<span id="cb150-1283"><a href="#cb150-1283"></a><span class="in">```</span></span>
+<span id="cb150-1284"><a href="#cb150-1284"></a></span>
+<span id="cb150-1287"><a href="#cb150-1287"></a><span class="in">```{r}</span></span>
+<span id="cb150-1288"><a href="#cb150-1288"></a><span class="co"># What were the 6 World Cups with the highest attendance?</span></span>
+<span id="cb150-1289"><a href="#cb150-1289"></a>world_cup <span class="sc">|&gt;</span> </span>
+<span id="cb150-1290"><a href="#cb150-1290"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(attendance)) <span class="sc">|&gt;</span> </span>
+<span id="cb150-1291"><a href="#cb150-1291"></a>  <span class="fu">head</span>()</span>
+<span id="cb150-1292"><a href="#cb150-1292"></a><span class="in">```</span></span>
+<span id="cb150-1293"><a href="#cb150-1293"></a></span>
+<span id="cb150-1296"><a href="#cb150-1296"></a><span class="in">```{r}</span></span>
+<span id="cb150-1297"><a href="#cb150-1297"></a><span class="co"># Construct a univariate plot of goals_scored (no wrangling necessary)</span></span>
+<span id="cb150-1298"><a href="#cb150-1298"></a><span class="co"># This provides a visual summary of how the number of goals_scored varies from World Cup to World Cup</span></span>
+<span id="cb150-1299"><a href="#cb150-1299"></a><span class="fu">ggplot</span>(world_cup, <span class="fu">aes</span>(<span class="at">x =</span> goals_scored)) <span class="sc">+</span> </span>
+<span id="cb150-1300"><a href="#cb150-1300"></a>  <span class="fu">geom_histogram</span>(<span class="at">color =</span> <span class="st">"white"</span>)</span>
+<span id="cb150-1301"><a href="#cb150-1301"></a><span class="in">```</span></span>
+<span id="cb150-1302"><a href="#cb150-1302"></a></span>
+<span id="cb150-1305"><a href="#cb150-1305"></a><span class="in">```{r}</span></span>
+<span id="cb150-1306"><a href="#cb150-1306"></a><span class="co"># Let's follow up the plot with some more precise numerical summaries</span></span>
+<span id="cb150-1307"><a href="#cb150-1307"></a><span class="co"># Calculate the min, median, and max number of goals_scored across all World Cups</span></span>
+<span id="cb150-1308"><a href="#cb150-1308"></a><span class="co"># </span><span class="al">NOTE</span><span class="co">: Visually compare these numerical summaries to what you observed in the plot</span></span>
+<span id="cb150-1309"><a href="#cb150-1309"></a>world_cup <span class="sc">|&gt;</span> </span>
+<span id="cb150-1310"><a href="#cb150-1310"></a>  <span class="fu">summarize</span>(<span class="fu">min</span>(goals_scored), <span class="fu">median</span>(goals_scored), <span class="fu">max</span>(goals_scored))</span>
+<span id="cb150-1311"><a href="#cb150-1311"></a><span class="in">```</span></span>
+<span id="cb150-1312"><a href="#cb150-1312"></a></span>
+<span id="cb150-1315"><a href="#cb150-1315"></a><span class="in">```{r}</span></span>
+<span id="cb150-1316"><a href="#cb150-1316"></a><span class="co"># Construct a bivariate plot of how the number of goals_scored in the World Cup has changed over the years</span></span>
+<span id="cb150-1317"><a href="#cb150-1317"></a><span class="co"># No wrangling necessary</span></span>
+<span id="cb150-1318"><a href="#cb150-1318"></a><span class="fu">ggplot</span>(world_cup, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> goals_scored)) <span class="sc">+</span> </span>
+<span id="cb150-1319"><a href="#cb150-1319"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb150-1320"><a href="#cb150-1320"></a>  <span class="fu">geom_line</span>()</span>
+<span id="cb150-1321"><a href="#cb150-1321"></a><span class="in">```</span></span>
+<span id="cb150-1322"><a href="#cb150-1322"></a></span>
+<span id="cb150-1325"><a href="#cb150-1325"></a><span class="in">```{r}</span></span>
+<span id="cb150-1326"><a href="#cb150-1326"></a><span class="co"># Our above summaries might be a bit misleading.</span></span>
+<span id="cb150-1327"><a href="#cb150-1327"></a><span class="co"># The number of games played at the World Cup varies.</span></span>
+<span id="cb150-1328"><a href="#cb150-1328"></a><span class="co"># Construct a bivariate plot of how the typical number of goals per game has changed over the years</span></span>
+<span id="cb150-1329"><a href="#cb150-1329"></a>per_game_data <span class="ot">&lt;-</span> world_cup <span class="sc">|&gt;</span> </span>
+<span id="cb150-1330"><a href="#cb150-1330"></a>  <span class="fu">mutate</span>(<span class="at">goals_per_game =</span> goals_scored <span class="sc">/</span> games)</span>
+<span id="cb150-1331"><a href="#cb150-1331"></a></span>
+<span id="cb150-1332"><a href="#cb150-1332"></a><span class="fu">ggplot</span>(per_game_data, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> goals_per_game)) <span class="sc">+</span> </span>
+<span id="cb150-1333"><a href="#cb150-1333"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb150-1334"><a href="#cb150-1334"></a>  <span class="fu">geom_line</span>()</span>
+<span id="cb150-1335"><a href="#cb150-1335"></a><span class="in">```</span></span>
+<span id="cb150-1336"><a href="#cb150-1336"></a></span>
+<span id="cb150-1337"><a href="#cb150-1337"></a>&lt;/details&gt;</span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
