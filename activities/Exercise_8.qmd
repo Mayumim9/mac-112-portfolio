@@ -312,11 +312,13 @@ head(sleep_wide)
 
 What are the units of observation in `sleep_wide`?
 
+*Individual subjects/students*
+
 #### Part b {.unnumbered}
 
 Suppose I ask you to plot each subject's reaction time (y-axis) vs the number of days of sleep restriction (x-axis). "Sketch" out in words what the first few rows of the data need to look like in order to do this. It might help to think about what you'd need to complete the plotting frame:
 
-`ggplot(___, aes(y = ___, x = ___, color = ___))`
+`ggplot(sleep_wide), aes(y = reaction_time, x = day, color = ___))`
 
 #### Part c {.unnumbered}
 
@@ -325,6 +327,8 @@ How can you obtain the dataset you sketched in part b?
 -   just using `sleep_wide`
 -   `pivot_longer()`
 -   `pivot_wider()`
+
+**pivot_longer**
 
 \
 \
@@ -347,8 +351,8 @@ Use `pivot_longer()` to create the long-format dataset above. Show the first 3 l
 
 ```{r}
 # For cols, try 2 appproaches: using - and starts_with
-# ___ |> 
-#   pivot_longer(cols = ___, names_to = "___", values_to = "___")
+ sleep_wide |> 
+   pivot_longer(cols = -Subject, names_to = "Day", values_to = "Reaction Time")
 ```
 
 #### Part b {.unnumbered}
@@ -368,13 +372,21 @@ head(sleep_long)
 Follow-up:
 
 -   Besides putting each argument on a different line for readability and storing the results, what changed in the code?
+
+*The way the days are expressed*
+
 -   How did this impact how the values are recorded in the `day` column?
+
+*It removed the day_ prior to each value*
 
 #### Part c {.unnumbered}
 
 Using `sleep_long`, construct a line plot of reaction time vs day for each subject. This will look goofy no matter what you do. Why? HINT: look back at `head(sleep_long)`. What class or type of variables are `Subject` and `day`? What do we *want* them to be?
 
 ```{r}
+sleep_long |>
+  ggplot(aes(x = day, y = reaction_time, color = Subject)) +
+  geom_line()
 ```
 
 \
