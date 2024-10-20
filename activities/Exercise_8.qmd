@@ -58,7 +58,10 @@ Define a new column that includes the *proportion* or *relative frequencies* of 
 -   Does the order of `species` and `sex` in `group_by()` matter?
 
 ```{r}
-
+penguins |> 
+  group_by(species, sex) |> 
+  summarize(number = n()) |> 
+  mutate(proportion = number / sum(number))
 ```
 
 \
@@ -89,15 +92,16 @@ To get the information on average body masses, we *reshaped* our original data.
 1.  Did the *reshaping* process change the units of observation?
 
 ```{r}
-# Units of observation = ???
+# Units of observation = inidvidual penguins
 head(penguins)
 
-# Units of observation = ???
+# Units of observation = penguin species by sex
 head(penguin_avg)
 ```
 
 2.  Did the reshaping process result in any information loss from the original data?
 
+*Yes because we lost data on individual observations in exchange for general species data.*
 \
 \
 \
@@ -128,6 +132,7 @@ Let's calculate the *difference* in average body mass, male vs female, for each 
 -   Identify the units of observation.
 
 ```{r}
+# Units of observation: species
 penguin_avg
 ```
 
@@ -167,6 +172,8 @@ With the goal of being able to calculate the *difference* in average body mass, 
 penguin_avg |\> pivot_wider(names_from = sex, values_from = avg_body_mass)
 
 ```{r}
+penguin_avg |>
+  pivot_wider(names_from = sex, values_from = avg_body_mass)
 ```
 
 ::: {.callout-note title="Pivot Wider"}
@@ -180,7 +187,11 @@ FOLLOW-UP:
 
 -   What are the units of observation?
 
+*Units of obersvation are the three species*
+
 -   Did we lose any information when we widened the data?
+
+*No*
 
 -   Use the wide data to calculate the difference in average body mass, male vs female, for each species.
 
@@ -224,7 +235,11 @@ FOLLOW-UP:
 
 -   What are the units of observation?
 
+*The three species gender*
+
 -   Did we lose any information when we lengthened the data?
+
+*No*
 
 -   Why did we put the variables in quotes "" here but not when we used `pivot_wider()`?
 
