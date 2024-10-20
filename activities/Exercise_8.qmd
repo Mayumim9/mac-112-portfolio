@@ -243,6 +243,8 @@ FOLLOW-UP:
 
 -   Why did we put the variables in quotes "" here but not when we used `pivot_wider()`?
 
+*Because you are renaming the columns in pivot_longer so they need to be in quotations*
+
 \
 \
 \
@@ -264,6 +266,8 @@ food
 The units of observation in `food` are customer / restaurant combinations. Wrangle this data so that the units of observation are customers, spreading the restaurants into separate columns.
 
 ```{r}
+food |>
+  pivot_wider(names_from = restaurant, values_from = order)
 ```
 
 Consider 2 more customers:
@@ -281,6 +285,8 @@ more_food
 Wrangle this data so that the 3 restaurant columns are combined into 1, hence the units of observation are customer / restaurant combinations.
 
 ```{r}
+more_food |>
+  pivot_longer(cols = c(Shish, FrenchMeadow, DunnBros), names_to = "Restaurant", values_to = "Orders")
 ```
 
 \
