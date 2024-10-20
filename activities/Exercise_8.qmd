@@ -418,13 +418,16 @@ head(sleep_long)
 ```{r}
 # Make a line plot of reaction time by day for each subject
 # Put these all on the same frame
-
+  ggplot(sleep_long, aes(x = day, y = reaction_time, color = Subject)) +
+  geom_line()
 ```
 
 ```{r}
 # Make a line plot of reaction time by day for each subject
 # Put these all on separate frames (one per subject)
-
+ggplot(sleep_long, aes(x = day, y = reaction_time)) +
+  geom_line() +
+  facet_wrap(~Subject)
 ```
 
 #### Part b {.unnumbered}
@@ -432,7 +435,12 @@ head(sleep_long)
 Summarize what you learned from the plots. For example:
 
 -   What's the general relationship between reaction time and sleep?
+
+*Overall, the longer subjects without sufficent sleep, the slower their reaction time became.*
+
 -   Is this the same for everybody? What differs?
+
+*This is not the same for everyone, subject 335, 332, and 310 experienced drops in their reaction times later in the week.*
 
 \
 \
@@ -447,10 +455,12 @@ Make the data *wide* again, with each day becoming its own column.
 
 Adjust the code below. What don't you like about the column labels?
 
+*They don't specify that they are days, they are currently just numbers*
+
 ```{r}
-# sleep_long |>
-#   pivot_wider(names_from = ___, values_from = ___) |> 
-#   head()
+ sleep_long |>
+   pivot_wider(names_from = day, values_from = reaction_time) |> 
+   head()
 ```
 
 #### Part b {.unnumbered}
@@ -458,9 +468,9 @@ Adjust the code below. What don't you like about the column labels?
 Using your intuition, adjust your code from part a to name the reaction time columns "day_0", "day_1", etc.
 
 ```{r}
-# sleep_long |>
-#   pivot_wider(names_from = ___, values_from = ___, names_prefix = "___") |> 
-#   head()
+ sleep_long |>
+   pivot_wider(names_from = day, values_from = reaction_time, names_prefix = "Day_") |> 
+   head()
 ```
 
 \
@@ -488,6 +498,7 @@ In using this data, you'll need to determine if and when the data needs to be re
 Construct and summarize a plot of how a song's Billboard ranking its 2nd week on the chart (y-axis) is related to its ranking the 1st week on the charts (x-axis). Add a reference line `geom_abline(intercept = 0, slope = 1)`. Songs *above* this line *improved* their rankings from the 1st to 2nd week.
 
 ```{r}
+#billboard |>
 ```
 
 #### Part b {.unnumbered}
