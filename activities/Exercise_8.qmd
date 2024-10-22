@@ -498,14 +498,22 @@ In using this data, you'll need to determine if and when the data needs to be re
 Construct and summarize a plot of how a song's Billboard ranking its 2nd week on the chart (y-axis) is related to its ranking the 1st week on the charts (x-axis). Add a reference line `geom_abline(intercept = 0, slope = 1)`. Songs *above* this line *improved* their rankings from the 1st to 2nd week.
 
 ```{r}
-#billboard |>
+billboard |>
+  select(artist, track, wk1, wk2)
+
+ggplot(billboard_kryptonite, aes(x = wk1, y = wk2)) +
+  geom_point() +
+  geom_abline(intercept = 0, slope = 1)
 ```
 
 #### Part b {.unnumbered}
 
-Use your wrangling tools to identify *which* songs are those above the line in Part a, i.e. with rankgings that went up from week 1 to week 2.
+Use your wrangling tools to identify *which* songs are those above the line in Part a, i.e. with rankings that went up from week 1 to week 2.
 
 ```{r}
+billboard |>
+  filter(wk2 > wk1) |>
+  select(artist, track, wk1, wk2)
 ```
 
 #### Part c {.unnumbered}
@@ -517,10 +525,12 @@ Define a new dataset, `nov_1999`, which:
 
 ```{r}
 # Define nov_1999
-
+nov_1999 <- billboard |>
+  filter(date.entered == "1999-11-06") |>
+  select(-track, -date.entered)
 
 # Confirm that nov_1999 has 2 rows (songs) and 77 columns
-
+nov_1999
 
 ```
 
@@ -529,6 +539,8 @@ Define a new dataset, `nov_1999`, which:
 Create and discuss a visualization of the rankings (y-axis) over time (x-axis) for the 2 songs in `nov_1999`. There are hints below (if you scroll), but you're encouraged to play around and use as few hints as possible.
 
 ```{r}
+nov_1999 |>
+  pivot_longer()
 ```
 
 Hints:
