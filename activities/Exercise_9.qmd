@@ -110,7 +110,11 @@ First, consider the following:
 
 -   Relative to this key, what info does `students_1` have that `enrollments_1` doesn't?
 
+*students_1 has the student letter*
+
 -   Relative to this key, what info does `enrollments_1` have that `students_1` doesn't?
+
+*enrollments_1 has the number of students in each class*
 
 \
 \
@@ -133,9 +137,16 @@ students_1 |>
 
 -   What did this do? What are the roles of `students_1` (the *left* table) and `enrollments_1` (the *right* table)?
 
+*The letter of the students and class was kept from students_1 and a column with enrollment was added*
+
 -   What, if anything, would change if we reversed the order of the data tables? Think about it, then try.
 
+*You would have ART instead of ANTH and a column with the students letter will be added.*
+
 ```{r}
+library(tidyverse)
+enrollments_1 |> 
+  right_join(students_1)
 ```
 
 \
@@ -156,9 +167,15 @@ students_1 |>
 
 -   What did this do? What are the roles of `students_1` (the *left* table) and `enrollments_1` (the *right* table)?
 
+*It joined the rows that had data on all sections between students_1 and enrollments_1*
+
 -   What, if anything, would change if we reversed the order of the data tables? Think about it, then try.
 
+*The columns would move around I think*
+
 ```{r}
+enrollments_1 |> 
+  inner_join(students_1)
 ```
 
 \
@@ -179,9 +196,15 @@ students_1 |>
 
 -   What did this do? What are the roles of `students_1` (the *left* table) and `enrollments_1` (the *right* table)?
 
+*All the date from both tables was added*
+
 -   What, if anything, would change if we reversed the order of the data tables? Think about it, then try.
 
+*The column order would change* 
+
 ```{r}
+enrollments_1 |> 
+  full_join(students_1)
 ```
 
 \
@@ -235,6 +258,8 @@ students_1 |>
 -   What, if anything, would change if we reversed the order of the data tables? Think about it, then try.
 
 ```{r}
+enrollments_1 |> 
+  semi_join(students_1)
 ```
 
 \
@@ -258,6 +283,8 @@ students_1 |>
 -   What, if anything, would change if we reversed the order of the data tables? Think about it, then try.
 
 ```{r}
+enrollments_1 |> 
+  anti_join(students_1)
 ```
 
 \
@@ -324,7 +351,7 @@ To connect the course enrollments to the students' courses, try do a `left_join(
 ```{r eval = FALSE}
 # eval = FALSE: don't evaluate this chunk when knitting. it produces an error.
 students_2 |> 
-  left_join(enrollments_2)
+  cross_join(enrollments_2)
 ```
 
 #### Part b {.unnumbered}
@@ -340,8 +367,8 @@ students_2 |>
 # The order of the keys is important:
 # by = c("left data key" = "right data key")
 # The order is mixed up here, thus we get an error:
-students_2 |> 
-  left_join(enrollments_2, by = c("course" = "class"))
+#students_2 |> 
+  #left_join(enrollments_2, by = c("course" = "class"))
 ```
 
 #### Part c {.unnumbered}
@@ -374,12 +401,14 @@ Try doing a `left_join()` to link the students' classes to their enrollment info
 
 ```{r}
 students_3 |> 
-  left_join(enrollments_3)
+  right_join(enrollments_3)
 ```
 
 #### Part d {.unnumbered}
 
 The issue here is that our datasets have *2* column names in common: `class` and `grade`. BUT `grade` is measuring 2 different things here: individual student grades in `students_3` and average student grades in `enrollments_3`. Thus it doesn't make sense to try to join the datasets with respect to this variable. We can again solve this by specifying that we want to join the datasets using the `class` variable or *key*. What are `grade.x` and `grade.y`?
+
+*grade.x are the average grades, grade.y are the individual grades*
 
 ```{r}
 students_3 |> 
@@ -421,16 +450,20 @@ Use the appropriate join for each prompt below. In each case, think before you t
 
 ```{r}
 # 1. We want contact info for people who HAVEN'T voted
-
+contact |> 
+  anti_join(voters, by = c("name" = "id"))
 
 # 2. We want contact info for people who HAVE voted
-
+contact |> 
+  semi_join(voters, by = c("name" = "id"))
 
 # 3. We want any data available on each person
-
+contact |> 
+  full_join(voters, by = c("name" = "id"))
 
 # 4. When possible, we want to add contact info to the voting roster
-
+voters |> 
+  full_join(contact, by = c("id" = "name"))
 
 ```
 
@@ -476,10 +509,10 @@ Use R code to take a quick glance at the data.
 
 ```{r}
 # How many observations (rows) and variables (columns) are there in the grades data?
-
+dim(grades)
 
 # How many observations (rows) and variables (columns) are there in the courses data?
-
+dim(courses)
 
 ```
 
@@ -512,12 +545,12 @@ courses |>
 For our class size exploration, obtain the *total* enrollments in each `sessionID`, combining any cross-listed sections. Save this as `courses_combined`. NOTE: There's no joining to do here!
 
 ```{r}
-# courses_combined <- courses |> 
-#   ___(sessionID) |> 
-#   ___(enroll = sum(___))
+ courses_combined <- courses |>
+  group_by(sessionID) |>
+  summarize(enroll = sum(enroll))
 
 # Check that this has 1695 rows and 2 columns
-# dim(courses_combined)
+dim(courses_combined)
 ```
 
 #### Part b {.unnumbered}
@@ -529,6 +562,7 @@ Let's first examine the question of class size from the *administration*'s viewp
 -   Do you have to do any joining? If so, which dataset will go on the left, i.e. which dataset includes your primary observations of interest? Which join function will you need?
 
 ```{r}
+
 ```
 
 #### Part c {.unnumbered}
