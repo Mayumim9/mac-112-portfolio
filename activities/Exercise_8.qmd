@@ -539,8 +539,12 @@ nov_1999
 Create and discuss a visualization of the rankings (y-axis) over time (x-axis) for the 2 songs in `nov_1999`. There are hints below (if you scroll), but you're encouraged to play around and use as few hints as possible.
 
 ```{r}
-#nov_1999 |>
-  #pivot_longer()
+billboard |>
+  filter(artist %in% c("Counting Crows", "Hill, Faith")) |>
+  filter(track %in% c("Hanginaround", "Breathe"))
+
+
+  #ggplot(aes(nov_1999), x = )
 ```
 
 Hints:
