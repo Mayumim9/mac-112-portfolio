@@ -501,7 +501,7 @@ Construct and summarize a plot of how a song's Billboard ranking its 2nd week on
 billboard |>
   select(artist, track, wk1, wk2)
 
-ggplot(billboard_kryptonite, aes(x = wk1, y = wk2)) +
+ggplot(billboard, aes(x = wk1, y = wk2)) +
   geom_point() +
   geom_abline(intercept = 0, slope = 1)
 ```
@@ -539,12 +539,11 @@ nov_1999
 Create and discuss a visualization of the rankings (y-axis) over time (x-axis) for the 2 songs in `nov_1999`. There are hints below (if you scroll), but you're encouraged to play around and use as few hints as possible.
 
 ```{r}
-billboard |>
-  filter(artist %in% c("Counting Crows", "Hill, Faith")) |>
-  filter(track %in% c("Hanginaround", "Breathe"))
-
-
-  #ggplot(aes(nov_1999), x = )
+nov_1999 |> 
+  pivot_longer(cols = -artist, names_to = "week", names_prefix = "wk", values_to = "ranking") |> 
+  mutate(week = as.numeric(week)) |> 
+  ggplot(aes(y = ranking, x = week, color = artist)) + 
+    geom_line()
 ```
 
 Hints:
@@ -574,6 +573,10 @@ In analyzing this data, you'll need to determine if and when the data needs to b
 Identify the 15 guests that appeared the most. (This isn't a very diverse guest list!)
 
 ```{r}
+daily_show_guests |>
+  count(raw_guest_list) |>
+  arrange(desc(n)) |>
+  head(15)
 ```
 
 #### Part b {.unnumbered}
@@ -587,6 +590,13 @@ CHALLENGE: Create the following data set containing 19 columns:
 There are hints below (if you scroll), but you're encouraged to play around and use as few hints as possible.
 
 ```{r}
+daily_show_guests |>
+  count(year, raw_guest_list) |>
+  group_by(raw_guest_list) |>
+  mutate(total = sum(n)) |>
+  pivot_wider(names_from = year, values_from = n, values_fill = 0) |>
+  arrange(desc(total)) |>
+  head(15)
 ```
 
 HINTS: There are lots of ways to do this. You don't necessarily need all of these hints.
@@ -621,6 +631,12 @@ plot_data <- daily |>
 Now, using the `broad_group` variable in `plot_data`, recreate the graphic from the article, with three different lines showing the fraction of guests in each group over time. Note: You'll have to wrangle the data first.
 
 ```{r}
+plot_data |>
+  group_by(year, broad_group) |>
+  summarise(n = n()) |>
+  mutate(freq = n / sum(n)) |> 
+  ggplot(aes(y = freq, x = year, color = broad_group)) + 
+    geom_line()
 ```
 
 \
