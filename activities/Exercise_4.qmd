@@ -454,8 +454,8 @@ ggplot(cma_boundaries) +
     size = 0.2,
     color = "darkgreen"
   ) +
-  coord_sf(xlim = c(-179.14, -50)) +
-  theme_map()
+   coord_sf(xlim = c(-179.14, -50)) +
+   theme_map()
 ```
 
 #### Exercise 6: A state and county-level map {.unnumbered}
