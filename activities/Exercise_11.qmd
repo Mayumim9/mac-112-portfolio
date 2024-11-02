@@ -37,6 +37,8 @@ The `courses` data includes *actual* data scraped from Mac's [class schedule](ht
 If you want to learn how to scrape data, take COMP/STAT 212, Intermediate Data Science! NOTE: For simplicity, I removed classes that had "TBA" for the `days`.
 
 ```{r}
+library(tidyverse)
+
 courses <- read.csv("https://mac-stat.github.io/data/registrar.csv")
 
 # Check it out

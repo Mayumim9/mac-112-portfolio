@@ -37,6 +37,8 @@ We'll talk more later about "good" data viz, and steps to think about when build
 Let's dig into the `hikes` data, starting with the `elevation` and difficulty `ratings` of the hikes:
 
 ```{r}
+hikes <- read.csv("https://mac-stat.github.io/data/high_peaks.csv")
+
 head(hikes)
 ```
 
