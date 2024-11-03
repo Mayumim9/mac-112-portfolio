@@ -479,13 +479,25 @@ Print out the first 6 rows and confirm that your dataset has 366 rows (1 per day
 
 ```{r}
 # Define daily_births_1980
+daily_births <- Birthdays |>
+  group_by(date) |>
+  summarize(total_births = sum(births, na.rm = TRUE), .groups = "drop") |>
+  mutate(year = year(date),
+         month_day = mday(date),
+         week_day = wday(date, label = TRUE))
 
+
+daily_births_1980 <- daily_births |>
+  filter(year == 1980) |>
+  left_join(holidays) |>
+  mutate(is_holiday = !is.na(holiday))
 
 # Check out the first 6 rows
+head(daily_births_1980)
 
 
 # Confirm that daily_births_1980 has 366 rows and 7 columns
-
+dim(daily_births_1980)
 
 ```
 
@@ -494,6 +506,11 @@ Print out the first 6 rows and confirm that your dataset has 366 rows (1 per day
 Plot the total number of babies born (y-axis) per day (x-axis) in 1980. Color each date according to its day of the week, and `shape` each date according to whether or not it's a holiday. (This is a modified version of 3c!)
 
 ```{r}
+ggplot(daily_births_1980, aes(x = date, 
+                              y = total_births, 
+                              color = week_day, 
+                              shape = is_holiday)) +
+  geom_point()
 ```
 
 #### Part c {.unnumbered}
